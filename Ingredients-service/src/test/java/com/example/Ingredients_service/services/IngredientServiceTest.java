@@ -1,6 +1,9 @@
 package com.example.Ingredients_service.services;
 
+import com.example.Ingredients_service.clients.IngredientCategoryClient;
+import com.example.Ingredients_service.dtos.IngredientCategoryDto;
 import com.example.Ingredients_service.dtos.IngredientDto;
+import com.example.Ingredients_service.dtos.IngredientResponseDto;
 import com.example.Ingredients_service.dtos.IngredientUpdateDto;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.repositories.IngredientRepository;
@@ -26,11 +29,19 @@ class IngredientServiceTest {
     @Mock
     private IngredientRepository ingredientRepository;
 
+    @Mock
+    private IngredientCategoryClient ingredientCategoryClient;
+
+    private IngredientCategoryDto vegetables;
     private IngredientDto tomatoDto;
     private Ingredient savedTomato;
 
     @BeforeEach()
     void setup(){
+        this.vegetables = IngredientCategoryDto.builder()
+                .id(1)
+                .name("Vegetables")
+                .build();
 
         this.tomatoDto = IngredientDto.builder()
                 .name("Tomato")
@@ -55,15 +66,19 @@ class IngredientServiceTest {
     }
 
     @Test
-    void getIngredientById() {
+    void getIngredientWithCategoryById() {
         //Arrest
         Integer tomatoId = this.savedTomato.getId();
+
         when(ingredientRepository.findById(tomatoId)).thenReturn(Optional.of(savedTomato));
+
+        when(ingredientCategoryClient.getIngredientCategoryById(this.vegetables.getId())).thenReturn(this.vegetables);
         //Act
-        Ingredient result = ingredientService.getIngredientById(tomatoId);
+        IngredientResponseDto result = ingredientService.getIngredientWithCategoryById(tomatoId);
         //Assert
         assertNotNull(result);
-        assertEquals(this.savedTomato, result);
+        assertEquals(this.savedTomato.getName(), result.getName());
+        assertTrue(result.getCategories().contains(this.vegetables));
         verify(ingredientRepository, times(1)).findById(tomatoId);
     }
 
@@ -107,5 +122,26 @@ class IngredientServiceTest {
         assertNotNull(result);
         assertTrue(result.contains(this.savedTomato));
         verify(ingredientRepository, times(1)).findAll();
+    }
+
+    @Test
+    void getAllIngredientsWithCategories() {
+        //Arrest
+        Integer tomatoId = this.savedTomato.getId();
+        Integer vegetablesId = this.vegetables.getId();
+
+        List<Integer> ids = List.of(tomatoId);
+
+        when(ingredientRepository.findAllIds()).thenReturn(ids);
+
+        when(ingredientRepository.findById(tomatoId)).thenReturn(Optional.of(this.savedTomato));
+
+        when(ingredientCategoryClient.getIngredientCategoryById(vegetablesId)).thenReturn(this.vegetables);
+        //Act
+        List<IngredientResponseDto> result = ingredientService.getAllIngredientsWithCategories();
+        //Assert
+        assertNotNull(result);
+        assertTrue(result.stream().anyMatch(iDto -> iDto.getCategories().contains(this.vegetables)));
+        verify(ingredientRepository, times(1)).findAllIds();
     }
 }

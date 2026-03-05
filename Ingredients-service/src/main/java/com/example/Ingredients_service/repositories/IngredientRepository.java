@@ -17,4 +17,9 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Integer>
             WHERE c = :categoryId
             """)
     List<Ingredient> findAllByCategoryId(@Param("categoryId")Integer categoryId);
+
+    @Query("""
+            SELECT i.id Ingredient i
+            """)
+    List<Integer> findAllIds();
 }

@@ -38,4 +38,13 @@ class IngredientRepositoryTest {
         assertNotNull(result);
         assertTrue(result.stream().anyMatch(i -> i.getName().equals(this.tomato.getName())));
     }
+
+    @Test
+    void findAllIds() {
+        //Act
+        List<Integer> result = ingredientRepository.findAllIds();
+        //Assert
+        assertNotNull(result);
+        assertTrue(result.contains(this.tomato.getId()));
+    }
 }

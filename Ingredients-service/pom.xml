@@ -37,6 +37,11 @@
             <artifactId>spring-boot-starter-webmvc</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
         <!-- Spring Cloud Eureka Client: Allows this service to register with a Eureka server for service discovery -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
