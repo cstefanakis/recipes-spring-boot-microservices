@@ -1,0 +1,32 @@
+package com.example.Ingredients_service.models;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name="ingredients")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class Ingredient {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    @Column(name = "name")
+    private String name;
+
+    @Builder.Default
+    @ElementCollection
+    @CollectionTable(
+            name = "ingredient_category",
+            joinColumns = @JoinColumn(name = "ingredient_id")
+    )
+    private List<Integer> categoriesId = new ArrayList<>();
+}
