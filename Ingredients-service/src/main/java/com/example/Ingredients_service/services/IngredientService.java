@@ -30,16 +30,16 @@ public class IngredientService {
         ingredientRepository.deleteById(ingredientId);
     }
 
-    public void updateIngredient(Integer ingredientId, IngredientUpdateDto ingredientUpdateDto){
+    public Ingredient updateIngredient(Integer ingredientId, IngredientUpdateDto ingredientUpdateDto){
         Ingredient ingredient = getIngredientById(ingredientId);
-        updateToEntity(ingredient, ingredientUpdateDto);
+        return updateToEntity(ingredient, ingredientUpdateDto);
     }
 
     public List<Ingredient> getAllIngredients(){
         return ingredientRepository.findAll();
     }
 
-    private void updateToEntity(Ingredient ingredient, IngredientUpdateDto ingredientUpdateDto) {
+    private Ingredient updateToEntity(Ingredient ingredient, IngredientUpdateDto ingredientUpdateDto) {
 
         String nameDto = ingredientUpdateDto.getName();
         List<Integer> categoriesIdDto = ingredientUpdateDto.getCategoriesId();
@@ -50,6 +50,8 @@ public class IngredientService {
         ingredient.setCategoriesId(categoriesIdDto == null
                 ? ingredient.getCategoriesId()
                 : categoriesIdDto);
+
+        return ingredient;
     }
 
     private Ingredient toEntity(IngredientDto ingredientDto) {
