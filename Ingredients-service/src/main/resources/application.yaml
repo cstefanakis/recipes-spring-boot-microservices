@@ -3,6 +3,9 @@ spring:
     name: Ingredients-service
   config:
     import: "optional:configserver:http://localhost:8888"
+  cloud:
+    config:
+      enabled: false
 
 server:
   port: 8081
