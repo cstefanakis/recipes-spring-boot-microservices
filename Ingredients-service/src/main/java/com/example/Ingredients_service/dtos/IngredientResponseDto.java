@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class IngredientResponseDto {
+
     private String name;
     private List<IngredientCategoryDto> categories;
 }
