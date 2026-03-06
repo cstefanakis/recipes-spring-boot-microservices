@@ -102,6 +102,10 @@ class IngredientServiceTest {
                 .build();
 
         when(ingredientRepository.findById(tomatoId)).thenReturn(Optional.of(this.savedTomato));
+
+        this.savedTomato.setName(tomatoUpdateDto.getName());
+
+        when(ingredientRepository.save(any(Ingredient.class))).thenReturn(this.savedTomato);
         //Act
         Ingredient result = ingredientService.updateIngredient(tomatoId, tomatoUpdateDto);
         //Assert
@@ -109,6 +113,7 @@ class IngredientServiceTest {
         assertEquals(tomatoUpdateDto.getName(), result.getName());
         assertTrue(result.getCategoriesId().contains(2));
         verify(ingredientRepository, times(1)).findById(tomatoId);
+        verify(ingredientRepository, times(1)).save(any(Ingredient.class));
     }
 
     @Test

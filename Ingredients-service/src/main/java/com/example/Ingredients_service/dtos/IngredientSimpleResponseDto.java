@@ -2,14 +2,11 @@ package com.example.Ingredients_service.dtos;
 
 import lombok.*;
 
-import java.util.List;
-
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class IngredientResponseDto {
+public class IngredientSimpleResponseDto {
     private String name;
-    private List<IngredientCategoryDto> categories;
 }
