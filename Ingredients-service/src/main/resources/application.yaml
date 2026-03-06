@@ -1,3 +1,19 @@
 spring:
   application:
     name: Ingredients-service
+
+server:
+  port: 8081
+
+datasource:
+  driver-class-name: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/ingredients
+  username: test
+  password: test
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
