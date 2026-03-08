@@ -6,6 +6,7 @@ import com.example.Ingredients_service.dtos.IngredientSimpleResponseDto;
 import com.example.Ingredients_service.dtos.IngredientUpdateDto;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.services.IngredientService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ public class IngredientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createIngredient(@RequestBody IngredientDto ingredientDto){
+    public void createIngredient(@Valid @RequestBody IngredientDto ingredientDto){
         ingredientService.createIngredient(ingredientDto);
     }
 
@@ -41,7 +42,7 @@ public class IngredientController {
         return ResponseEntity.ok(ingredients);
     }
 
-    @GetMapping
+    @GetMapping("/with-categories")
     public ResponseEntity<List<IngredientResponseDto>> getAllIngredientsWithCategories(){
         List<IngredientResponseDto> ingredients = ingredientService.getAllIngredientsWithCategories();
         return ResponseEntity.ok(ingredients);
@@ -62,9 +63,9 @@ public class IngredientController {
     }
 
     @GetMapping("/simple/{categoryId}")
-    public ResponseEntity<List<IngredientSimpleResponseDto>> getIngredientSimpleById(
-            @PathVariable("ingredientId") Integer ingredientId){
-        List<IngredientSimpleResponseDto> simpleIngredientDto = ingredientService.getIngredientsSimpleByCategoryId(ingredientId);
+    public ResponseEntity<List<IngredientSimpleResponseDto>> getIngredientsSimpleByCategoryId(
+            @PathVariable("categoryId") Integer categoryId){
+        List<IngredientSimpleResponseDto> simpleIngredientDto = ingredientService.getIngredientsSimpleByCategoryId(categoryId);
         return ResponseEntity.ok(simpleIngredientDto);
     }
 }
