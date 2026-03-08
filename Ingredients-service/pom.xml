@@ -31,12 +31,19 @@
         <spring-cloud.version>2025.1.0</spring-cloud.version>
     </properties>
     <dependencies>
-        <!-- Spring Web MVC starter: Provides support for building web applications using Spring MVC -->
+        <!-- Spring Boot Starter Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-webmvc</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
+        <!--
+        Spring Cloud OpenFeign starter:
+        Provides declarative REST client support.
+        Allows defining Java interfaces annotated with @FeignClient
+        to call external HTTP APIs without manually writing HTTP requests.
+        Useful for microservices or any external API integration.
+        -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
@@ -46,6 +53,12 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+        </dependency>
+
+        <!-- Spring Boot Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- PostgreSQL JDBC driver: Required to connect to a PostgreSQL database -->

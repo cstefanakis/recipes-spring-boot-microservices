@@ -8,6 +8,7 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -46,5 +47,30 @@ class IngredientRepositoryTest {
         //Assert
         assertNotNull(result);
         assertTrue(result.contains(this.tomato.getId()));
+    }
+
+    @Test
+    void findIngredientNameById() {
+        //Arrest
+        Integer tomatoId = this.tomato.getId();
+        String name = this.tomato.getName();
+        //Act
+        Optional<String> result = ingredientRepository.findIngredientNameById(tomatoId);
+        //Assert
+        assertNotNull(result);
+        assertTrue(result.isPresent());
+        assertEquals(name, result.get());
+    }
+
+    @Test
+    void findAllIdByCategoryId() {
+        //Arrest
+        Integer vegetablesId = 1;
+        Integer tomatoId = this.tomato.getId();
+        //Act
+        List<Integer> result = ingredientRepository.findAllIdByCategoryId(vegetablesId);
+        //Assert
+        assertNotNull(result);
+        assertTrue(result.contains(tomatoId));
     }
 }

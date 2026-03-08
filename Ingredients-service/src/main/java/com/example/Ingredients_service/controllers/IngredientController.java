@@ -2,6 +2,7 @@ package com.example.Ingredients_service.controllers;
 
 import com.example.Ingredients_service.dtos.IngredientDto;
 import com.example.Ingredients_service.dtos.IngredientResponseDto;
+import com.example.Ingredients_service.dtos.IngredientSimpleResponseDto;
 import com.example.Ingredients_service.dtos.IngredientUpdateDto;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.services.IngredientService;
@@ -58,5 +59,12 @@ public class IngredientController {
             @RequestBody IngredientUpdateDto ingredientUpdateDto){
         Ingredient updatedIngredient = ingredientService.updateIngredient(ingredientId, ingredientUpdateDto);
         return ResponseEntity.ok(updatedIngredient);
+    }
+
+    @GetMapping("/simple/{categoryId}")
+    public ResponseEntity<List<IngredientSimpleResponseDto>> getIngredientSimpleById(
+            @PathVariable("ingredientId") Integer ingredientId){
+        List<IngredientSimpleResponseDto> simpleIngredientDto = ingredientService.getIngredientsSimpleByCategoryId(ingredientId);
+        return ResponseEntity.ok(simpleIngredientDto);
     }
 }

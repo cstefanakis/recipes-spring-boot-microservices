@@ -1,10 +1,7 @@
 package com.example.Ingredients_service.services;
 
 import com.example.Ingredients_service.clients.IngredientCategoryClient;
-import com.example.Ingredients_service.dtos.IngredientCategoryDto;
-import com.example.Ingredients_service.dtos.IngredientDto;
-import com.example.Ingredients_service.dtos.IngredientResponseDto;
-import com.example.Ingredients_service.dtos.IngredientUpdateDto;
+import com.example.Ingredients_service.dtos.*;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.repositories.IngredientRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -59,6 +56,22 @@ public class IngredientService {
                 .toList();
     }
 
+    public List<IngredientSimpleResponseDto> getIngredientsSimpleByCategoryId(Integer categoryId){
+
+        List<Integer> ingredientsId = ingredientRepository.findAllIdByCategoryId(categoryId);
+
+        return ingredientsId.stream()
+                .map(ingredientId -> IngredientSimpleResponseDto.builder()
+                        .name(getIngredientNameById(ingredientId))
+                        .build()).toList();
+    }
+
+    private String getIngredientNameById(Integer ingredientId) {
+        return ingredientRepository.findIngredientNameById(ingredientId).orElseThrow(() -> new EntityNotFoundException(
+                String.format("Ingredient with id: %s not found", ingredientId)
+        ));
+    }
+
     private Ingredient getIngredientById(Integer ingredientId) {
         return ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Ingredient with id: %s not found", ingredientId)));
@@ -76,7 +89,7 @@ public class IngredientService {
                 ? ingredient.getCategoriesId()
                 : categoriesIdDto);
 
-        return ingredient;
+        return ingredientRepository.save(ingredient);
     }
 
     private Ingredient toEntity(IngredientDto ingredientDto) {
