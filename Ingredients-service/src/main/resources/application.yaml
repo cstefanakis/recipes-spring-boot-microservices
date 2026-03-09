@@ -3,19 +3,6 @@ spring:
     name: ingredients-service
   config:
     import: "optional:configserver:http://localhost:8888"
-  cloud:
-    config:
-      enabled: false
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/ingredients
-    username: test
-    password: test
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-
 
 server:
   port: 8081
