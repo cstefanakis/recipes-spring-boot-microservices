@@ -6,15 +6,19 @@ spring:
   cloud:
     config:
       enabled: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/ingredients
+    username: test
+    password: test
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
 
 server:
   port: 8081
-
-datasource:
-  driver-class-name: org.postgresql.Driver
-  url: jdbc:postgresql://localhost:5432/ingredients
-  username: test
-  password: test
 
 eureka:
   instance:
