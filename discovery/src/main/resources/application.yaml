@@ -1,10 +1,6 @@
 spring:
   application:
     name: discovery
-  cloud:
-    config:
-      enabled: false
-
 
 eureka:
   instance:
@@ -14,5 +10,6 @@ eureka:
     fetch-registry: false
     service-url:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
 server:
   port: 8761

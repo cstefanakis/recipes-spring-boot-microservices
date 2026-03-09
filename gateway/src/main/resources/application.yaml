@@ -4,18 +4,6 @@ server:
 spring:
   application:
     name: gateway
-  cloud:
-    gateway:
-      routes:
-        - id: ingredient-categories-service
-          uri: lb://ingredient-categories-service
-          predicates:
-            - Path=/api/ingredient-categories/**
-
-        - id: ingredients-service
-          uri: lb://ingredients-service
-          predicates:
-            - Path=/api/ingredients/**
 
 eureka:
   client:
