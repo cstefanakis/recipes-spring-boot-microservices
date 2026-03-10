@@ -19,8 +19,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CategoryController.class)
 @ActiveProfiles("test")
@@ -135,11 +134,35 @@ class CategoryControllerTest {
 
     @Test
     void deleteCategory() throws Exception {
-        //Act
+        //Perform Delete
         mockMvc.perform(delete("/api/ingredient-categories/1"))
                 .andExpect(status().isNoContent());
 
-        //Assert
+        //Verify
         verify(categoryService).deleteCategory(1);
+    }
+
+    @Test
+    void categoryExists_isTrue() throws Exception {
+        //Mock service
+        Integer categoryId = 1;
+
+        when(categoryService.categoryExists(categoryId)).thenReturn(true);
+        //Perform Get
+        mockMvc.perform(get("/api/ingredient-categories/exists/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+    }
+
+    @Test
+    void categoryExists_isFalse() throws Exception {
+        //Mock service
+        Integer categoryId = 1;
+
+        when(categoryService.categoryExists(categoryId)).thenReturn(false);
+        //Perform Get
+        mockMvc.perform(get("/api/ingredient-categories/exists/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("false"));
     }
 }

@@ -67,4 +67,8 @@ public class CategoryService {
                 .name(categoryDto.getName())
                 .build();
     }
+
+    public boolean categoryExists(Integer categoryId) {
+        return categoryRepository.existsById(categoryId);
+    }
 }

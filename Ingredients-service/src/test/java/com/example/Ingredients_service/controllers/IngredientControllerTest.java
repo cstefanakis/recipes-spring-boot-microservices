@@ -40,7 +40,6 @@ class IngredientControllerTest {
                 "categories": [1]
             }
             """;
-
         doNothing().when(ingredientService).createIngredient(any(IngredientDto.class));
 
         //Perform Post
