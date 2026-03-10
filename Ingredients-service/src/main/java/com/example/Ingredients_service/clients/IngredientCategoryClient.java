@@ -10,4 +10,7 @@ public interface IngredientCategoryClient {
 
     @GetMapping("/api/ingredient-categories/{categoryId}")
     IngredientCategoryDto getIngredientCategoryById(@PathVariable ("categoryId") Integer categoryId);
+
+    @GetMapping("/api/ingredient-categories/exists/{categoryId}")
+    boolean ingredientCategoryExistsByCategoryId(@PathVariable ("categoryId") Integer categoryId);
 }

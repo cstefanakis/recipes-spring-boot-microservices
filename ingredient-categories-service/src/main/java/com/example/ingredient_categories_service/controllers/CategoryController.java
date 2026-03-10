@@ -53,6 +53,11 @@ public class CategoryController {
         return ResponseEntity.ok(categoryWithIngredients);
     }
 
+    @GetMapping("/exists/{categoryId}")
+    public boolean categoryExists(@PathVariable ("categoryId") Integer categoryId){
+        return categoryService.categoryExists(categoryId);
+    }
+
     @PutMapping("/{categoryId}")
     public ResponseEntity<Category> updateCategory(@PathVariable ("categoryId") Integer categoryId,
                                                    @RequestBody UpdateCategoryDto updateCategoryDto){

@@ -151,4 +151,30 @@ class CategoryServiceTest {
         assertEquals(this.savedVegetables, result);
         verify(categoryRepository, times(1)).findById(categoryId);
     }
+
+    @Test
+    void categoryExists_isTrue() {
+        //Arrest
+        Integer categoryId = 1;
+        when(categoryRepository.existsById(categoryId)).thenReturn(true);
+        //Act
+        boolean result = categoryService.categoryExists(categoryId);
+        //Assert
+        assertTrue(result);
+        //Verify
+        verify(categoryRepository).existsById(categoryId);
+    }
+
+    @Test
+    void categoryExists_isFalse() {
+        //Arrest
+        Integer categoryId = 1;
+        when(categoryRepository.existsById(categoryId)).thenReturn(false);
+        //Act
+        boolean result = categoryService.categoryExists(categoryId);
+        //Assert
+        assertFalse(result);
+        //Verify
+        verify(categoryRepository).existsById(categoryId);
+    }
 }

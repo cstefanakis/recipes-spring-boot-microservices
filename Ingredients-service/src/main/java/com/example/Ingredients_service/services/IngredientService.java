@@ -18,6 +18,14 @@ public class IngredientService {
     private final IngredientCategoryClient ingredientCategoryClient;
 
     public void createIngredient(IngredientDto ingredientDto){
+
+        //Filter ids if category exists
+        List<Integer> filteredCategory = ingredientDto.getCategoriesId().stream()
+                .filter(ingredientCategoryClient::ingredientCategoryExistsByCategoryId)
+                .toList();
+
+        ingredientDto.setCategoriesId(filteredCategory);
+
         Ingredient ingredient = toEntity(ingredientDto);
         ingredientRepository.save(ingredient);
     }
