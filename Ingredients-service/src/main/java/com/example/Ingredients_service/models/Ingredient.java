@@ -25,7 +25,7 @@ public class Ingredient {
     @Builder.Default
     @ElementCollection
     @CollectionTable(
-            name = "ingredient_category",
+            name = "ingredient_categories",
             joinColumns = @JoinColumn(name = "ingredient_id")
     )
     private List<Integer> categoriesId = new ArrayList<>();
