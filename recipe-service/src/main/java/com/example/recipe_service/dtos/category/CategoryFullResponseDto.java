@@ -1,6 +1,6 @@
 package com.example.recipe_service.dtos.category;
 
-import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
+import com.example.recipe_service.dtos.ingredient.IngredientGlobalResponseDto;
 import lombok.*;
 
 import java.util.List;
@@ -13,5 +13,5 @@ import java.util.List;
 public class CategoryFullResponseDto {
     private String name;
     private String imgUrl;
-    private List<IngredientSimpleResponseDto> ingredient;
+    private List<IngredientGlobalResponseDto> ingredient;
 }

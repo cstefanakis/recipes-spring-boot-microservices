@@ -24,4 +24,8 @@ public class RecipeIngredient {
 
     @Column(name = "quantity")
     private Double quantity;
+
+    @ManyToOne
+    @JoinColumn(name = "recipe_id")
+    private Recipe recipe;
 }

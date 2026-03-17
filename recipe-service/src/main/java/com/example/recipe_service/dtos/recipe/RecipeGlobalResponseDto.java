@@ -1,7 +1,7 @@
 package com.example.recipe_service.dtos.recipe;
 
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
-import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
+import com.example.recipe_service.dtos.ingredient.IngredientGlobalResponseDto;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -12,12 +12,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RecipeSimpleResponseDto {
+public class RecipeGlobalResponseDto {
     private String title;
     private String description;
     private String imgUrl;
     @Builder.Default
-    private List<IngredientSimpleResponseDto> ingredients = new ArrayList<>();
+    private List<IngredientGlobalResponseDto> ingredients = new ArrayList<>();
     @Builder.Default
     private List<CategoryResponseDto> categories = new ArrayList<>();
 }

@@ -9,4 +9,5 @@ import lombok.*;
 @Builder
 public class IngredientSimpleResponseDto {
     private String name;
+    private String imgUrl;
 }

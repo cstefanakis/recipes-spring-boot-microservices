@@ -1,5 +1,7 @@
 package com.example.recipe_service.models;
 
+import com.example.recipe_service.dtos.ingredient.IngredientGlobalResponseDto;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,6 +37,7 @@ public class Recipe {
 
     @Builder.Default
     @ManyToMany
+    @JsonManagedReference
     @JoinTable(
             name = "recipe_categories",
             joinColumns = @JoinColumn(name = "recipe_id"),
@@ -42,10 +45,10 @@ public class Recipe {
     )
     private List<Category> categories = new ArrayList<>();
 
-    @ElementCollection
-    @CollectionTable(
-            name = "ingredientId",
-            joinColumns = @JoinColumn(name = "recipeId")
+    @Builder.Default
+    @OneToMany(mappedBy = "recipe",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private List<Integer> ingredientsId;
+    private List<RecipeIngredient> ingredients = new ArrayList<>();
 }

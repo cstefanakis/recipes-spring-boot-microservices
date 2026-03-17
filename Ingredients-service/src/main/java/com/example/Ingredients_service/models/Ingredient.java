@@ -22,6 +22,9 @@ public class Ingredient {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "image")
+    private String imgUrl;
+
     @Builder.Default
     @ElementCollection
     @CollectionTable(

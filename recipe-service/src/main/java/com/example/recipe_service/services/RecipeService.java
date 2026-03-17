@@ -1,12 +1,16 @@
 package com.example.recipe_service.services;
 
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
-import com.example.recipe_service.dtos.ingredient.IngredientRequestDto;
-import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
-import com.example.recipe_service.dtos.recipe.RecipeRequestDto;
-import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
+import com.example.recipe_service.dtos.ingredient.IngredientResponseDto;
+import com.example.recipe_service.dtos.ingredient.IngredientGlobalResponseDto;
+import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
+import com.example.recipe_service.dtos.recipe.RecipeGlobalResponseDto;
+import com.example.recipe_service.dtos.recipe.RecipeResponseDto;
+import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
+import com.example.recipe_service.models.RecipeIngredient;
+import com.example.recipe_service.models.RecipeStep;
 import com.example.recipe_service.repositories.RecipeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +25,14 @@ public class RecipeService {
     private final RecipeRepository recipeRepository;
     private final CategoryService categoryService;
     private final RecipeIngredientService recipeIngredientService;
+    private final RecipeStepService recipeStepService;
 
-    public void createRecipe(RecipeRequestDto recipeRequestDto) {
+    public void createRecipe(RecipeCreateRequestDto recipeRequestDto) {
         Recipe recipe = toEntity(recipeRequestDto);
         recipeRepository.save(recipe);
     }
 
-    private Recipe toEntity(RecipeRequestDto recipeRequestDto) {
+    private Recipe toEntity(RecipeCreateRequestDto recipeRequestDto) {
 
         List<Category> categories = recipeRequestDto.getCategoriesId().stream()
                 .filter(categoryService::existsCategoryById)
@@ -41,8 +46,28 @@ public class RecipeService {
                 .build();
     }
 
-    public List<Recipe> getAllRecipes() {
-        return recipeRepository.findAll();
+    public void updateRecipe(Recipe recipe, RecipeUpdateRequestDto recipeUpdateRequestDto){
+
+        String titleDto = recipeUpdateRequestDto.getTitle();
+        String descriptionDto = recipeUpdateRequestDto.getDescription();
+        String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
+        List<RecipeStep> recipeSteps = recipeStepService.updateRecipeSteps(recipe.getRecipeSteps(), recipeUpdateRequestDto.getRecipeSteps());
+        List<RecipeIngredient> recipeIngredients = recipeIngredientService.updateRecipeIngredients(recipe.getIngredients(), recipeUpdateRequestDto.getIngredients());
+        List<Category> categories = categoryService.updateCategories(recipe.getCategories(), recipeUpdateRequestDto.getCategoriesId());
+
+        recipe.setTitle(titleDto == null
+                ? recipe.getTitle()
+                : titleDto);
+        recipe.setDescription(descriptionDto == null
+                ? recipe.getDescription()
+                : descriptionDto);
+        recipe.setImgUrl(imgUrlDto == null
+                ? recipe.getImgUrl()
+                : imgUrlDto);
+        recipe.setRecipeSteps(recipeSteps);
+        recipe.setIngredients(recipeUpdateRequestDto.getIngredients());
+        recipe.setCategories(recipeUpdateRequestDto.getCategoriesId())
+                .build();
     }
 
     public Recipe getRecipeById(Integer recipeId) {
@@ -50,32 +75,54 @@ public class RecipeService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Recipe with id: %s doesn't found", recipeId)));
     }
 
-    public List<RecipeSimpleResponseDto> getAllRecipesWithCategories() {
+    public List<RecipeGlobalResponseDto> getAllRecipesWithCategories() {
         List<Recipe> recipes = recipeRepository.findAll();
         return recipes.stream()
-                .map(this::toRecipeSimpleResponseDto)
+                .map(this::toRecipeGlobalResponseDto)
                 .toList();
     }
 
-    private RecipeSimpleResponseDto toRecipeSimpleResponseDto(Recipe recipe) {
+    private RecipeGlobalResponseDto toRecipeGlobalResponseDto(Recipe recipe) {
 
-        List<IngredientSimpleResponseDto> ingredients = recipe.getIngredientsId().stream()
-                .map(ingredientId -> recipeIngredientService.toIngredientSimpleResponseDto(ingredientId))
+        List<IngredientGlobalResponseDto> ingredientsDto = recipe.getIngredients().stream()
+                .map(recipeIngredientService::toIngredientGlobalResponseDto)
                 .toList();
 
-        List<CategoryResponseDto> categories = recipe.getCategories().stream()
-                .map(categoryId -> categoryService.toCategoryResponseDto)
+        List<Category> categories = recipe.getCategories();
+
+        List<CategoryResponseDto> categoriesDto = toCategoriesResponseDto(categories);
+
+        return RecipeGlobalResponseDto.builder()
+                .title(recipe.getTitle())
+                .description(recipe.getDescription())
+                .imgUrl(recipe.getImgUrl())
+                .ingredients(ingredientsDto)
+                .categories(categoriesDto)
+                .build();
+    }
+
+    private List<CategoryResponseDto> toCategoriesResponseDto(List<Category> categories){
+        return categories.stream()
+                .map(categoryService::toCategoryResponseDto)
+                .toList();
+    }
+
+    public RecipeResponseDto toRecipeResponseDto(Recipe recipe) {
+
+        List <IngredientResponseDto> ingredients = recipe.getIngredients().stream()
+                .map(recipeIngredientService::toIngredientResponseDto)
                 .toList();
 
-        return RecipeSimpleResponseDto.builder()
+        List<Category> categories = recipe.getCategories();
+
+        List<CategoryResponseDto> categoriesDto = toCategoriesResponseDto(categories);
+
+        return RecipeResponseDto.builder()
                 .title(recipe.getTitle())
                 .description(recipe.getDescription())
                 .imgUrl(recipe.getImgUrl())
                 .ingredients(ingredients)
-                .categories(categories)
+                .categories(categoriesDto)
                 .build();
-    }
-
-    public void addIngredientToRecipe(Integer recipeId, IngredientRequestDto ingredientRequestDto) {
     }
 }

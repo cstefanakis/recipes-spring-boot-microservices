@@ -106,4 +106,18 @@ public class IngredientService {
                 .categoriesId(ingredientDto.getCategoriesId())
                 .build();
     }
+
+    public IngredientSimpleResponseDto getSimpleIngredientById(Integer ingredientId) {
+
+        Ingredient ingredient = getIngredientById(ingredientId);
+
+        return toIngredientSimpleResponseDto(ingredient);
+    }
+
+    private IngredientSimpleResponseDto toIngredientSimpleResponseDto(Ingredient ingredient) {
+        return IngredientSimpleResponseDto.builder()
+                .name(ingredient.getName())
+                .imgUrl(ingredient.getImgUrl())
+                .build();
+    }
 }

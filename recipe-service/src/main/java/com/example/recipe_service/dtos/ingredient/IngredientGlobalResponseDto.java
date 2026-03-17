@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class IngredientSimpleResponseDto {
+public class IngredientGlobalResponseDto {
     private String name;
     private String imgUrl;
 }

@@ -1,8 +1,6 @@
 package com.example.recipe_service.dtos.recipe;
 
 import com.example.recipe_service.dtos.ingredient.IngredientRequestDto;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.List;
@@ -12,19 +10,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RecipeRequestDto {
+public class RecipeUpdateRequestDto {
 
-    @NotBlank
     private String title;
 
-    @NotBlank
     private String description;
 
     private String imgUrl;
 
-    @NotNull
+    private List<RecipeUpdateRequestDto> recipeSteps;
+
     private List<IngredientRequestDto> ingredients;
 
-    @NotNull
     private List<Integer> categoriesId;
 }

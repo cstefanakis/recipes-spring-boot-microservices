@@ -6,6 +6,7 @@ import com.example.Ingredients_service.dtos.IngredientSimpleResponseDto;
 import com.example.Ingredients_service.dtos.IngredientUpdateDto;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.services.IngredientService;
+import feign.Response;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -62,10 +63,16 @@ public class IngredientController {
         return ResponseEntity.ok(updatedIngredient);
     }
 
-    @GetMapping("/simple/{categoryId}")
+    @GetMapping("/simples/{categoryId}")
     public ResponseEntity<List<IngredientSimpleResponseDto>> getIngredientsSimpleByCategoryId(
             @PathVariable("categoryId") Integer categoryId){
         List<IngredientSimpleResponseDto> simpleIngredientDto = ingredientService.getIngredientsSimpleByCategoryId(categoryId);
         return ResponseEntity.ok(simpleIngredientDto);
+    }
+
+    @GetMapping("/simple/{ingredientId}")
+    public ResponseEntity<IngredientSimpleResponseDto> getSimpleIngredientById(@PathVariable ("ingredientId") Integer ingredientId){
+        IngredientSimpleResponseDto ingredient = ingredientService.getSimpleIngredientById(ingredientId);
+        return ResponseEntity.ok(ingredient);
     }
 }

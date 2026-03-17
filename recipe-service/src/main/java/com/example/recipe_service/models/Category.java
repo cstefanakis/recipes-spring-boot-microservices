@@ -1,5 +1,6 @@
 package com.example.recipe_service.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,5 +28,6 @@ public class Category {
 
     @Builder.Default
     @ManyToMany(mappedBy = "categories")
+    @JsonBackReference
     private List<Recipe> recipes = new ArrayList<>();
 }
