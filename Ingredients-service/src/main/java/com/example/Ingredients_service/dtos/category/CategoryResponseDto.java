@@ -1,4 +1,4 @@
-package com.example.Ingredients_service.dtos;
+package com.example.Ingredients_service.dtos.category;
 
 import lombok.*;
 
@@ -7,7 +7,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class IngredientCategoryDto {
+public class CategoryResponseDto {
+
     private Integer id;
     private String name;
+    private String imgUrl;
 }

@@ -1,11 +1,14 @@
 package com.example.Ingredients_service.services;
 
-import com.example.Ingredients_service.clients.IngredientCategoryClient;
-import com.example.Ingredients_service.dtos.*;
+import com.example.Ingredients_service.dtos.category.CategoryResponseDto;
+import com.example.Ingredients_service.dtos.ingredient.*;
+import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.repositories.IngredientRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,31 +18,23 @@ import java.util.List;
 public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
-    private final IngredientCategoryClient ingredientCategoryClient;
+    private final CategoryService categoryService;
 
-    public void createIngredient(IngredientDto ingredientDto){
-
-        //Filter ids if category exists
-        List<Integer> filteredCategory = ingredientDto.getCategoriesId().stream()
-                .filter(ingredientCategoryClient::ingredientCategoryExistsByCategoryId)
-                .toList();
-
-        ingredientDto.setCategoriesId(filteredCategory);
-
-        Ingredient ingredient = toEntity(ingredientDto);
+    public void createIngredient(IngredientCreateRequestDto ingredientCreateRequestDto){
+        Ingredient ingredient = toEntity(ingredientCreateRequestDto);
         ingredientRepository.save(ingredient);
     }
 
     public IngredientResponseDto getIngredientWithCategoryById(Integer ingredientId){
         Ingredient ingredient = getIngredientById(ingredientId);
 
-        List<IngredientCategoryDto> categories = ingredient.getCategoriesId().stream()
-                .map(ingredientCategoryClient::getIngredientCategoryById)
-                .toList();
+        List<Category> categories = ingredient.getCategories();
+
+        List<CategoryResponseDto> categoryResponseDto = categoryService.toCategoriesResponseDto(categories);
 
         return IngredientResponseDto.builder()
                 .name(ingredient.getName())
-                .categories(categories)
+                .categories(categoryResponseDto)
                 .build();
     }
 
@@ -47,37 +42,9 @@ public class IngredientService {
         ingredientRepository.deleteById(ingredientId);
     }
 
-    public Ingredient updateIngredient(Integer ingredientId, IngredientUpdateDto ingredientUpdateDto){
+    public Ingredient updateIngredient(Integer ingredientId, IngredientUpdateRequestDto ingredientUpdateRequestDto){
         Ingredient ingredient = getIngredientById(ingredientId);
-        return updateToEntity(ingredient, ingredientUpdateDto);
-    }
-
-    public List<Ingredient> getAllIngredients(){
-        return ingredientRepository.findAll();
-    }
-
-    public List<IngredientResponseDto> getAllIngredientsWithCategories(){
-        List<Integer> ingredientsId = ingredientRepository.findAllIds();
-
-        return ingredientsId.stream()
-                .map(this::getIngredientWithCategoryById)
-                .toList();
-    }
-
-    public List<IngredientSimpleResponseDto> getIngredientsSimpleByCategoryId(Integer categoryId){
-
-        List<Integer> ingredientsId = ingredientRepository.findAllIdByCategoryId(categoryId);
-
-        return ingredientsId.stream()
-                .map(ingredientId -> IngredientSimpleResponseDto.builder()
-                        .name(getIngredientNameById(ingredientId))
-                        .build()).toList();
-    }
-
-    private String getIngredientNameById(Integer ingredientId) {
-        return ingredientRepository.findIngredientNameById(ingredientId).orElseThrow(() -> new EntityNotFoundException(
-                String.format("Ingredient with id: %s not found", ingredientId)
-        ));
+        return updateToEntity(ingredient, ingredientUpdateRequestDto);
     }
 
     private Ingredient getIngredientById(Integer ingredientId) {
@@ -85,29 +52,42 @@ public class IngredientService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Ingredient with id: %s not found", ingredientId)));
     }
 
-    private Ingredient updateToEntity(Ingredient ingredient, IngredientUpdateDto ingredientUpdateDto) {
+    private Ingredient updateToEntity(Ingredient ingredient, IngredientUpdateRequestDto ingredientUpdateRequestDto) {
 
-        String nameDto = ingredientUpdateDto.getName();
-        List<Integer> categoriesIdDto = ingredientUpdateDto.getCategoriesId();
+        String nameDto = ingredientUpdateRequestDto.getName();
+
+        List<Integer> ingredientsId = ingredientUpdateRequestDto.getCategoriesId();
+
+        List<Category> categories = ingredientsId.stream()
+                .map(categoryService::getCategoryById)
+                .toList();
 
         ingredient.setName(nameDto == null
                 ? ingredient.getName()
                 : nameDto);
-        ingredient.setCategoriesId(categoriesIdDto == null
-                ? ingredient.getCategoriesId()
-                : categoriesIdDto);
+        ingredient.setCategories(ingredientsId.isEmpty()
+                ? ingredient.getCategories()
+                : categories);
 
         return ingredientRepository.save(ingredient);
     }
 
-    private Ingredient toEntity(IngredientDto ingredientDto) {
+    private Ingredient toEntity(IngredientCreateRequestDto ingredientCreateRequestDto) {
+
+        List<Integer> categoriesId = ingredientCreateRequestDto.getCategoriesId();
+
+        List<Category> categories = categoriesId.stream()
+                .map(categoryService::getCategoryById)
+                .toList();
+
         return Ingredient.builder()
-                .name(ingredientDto.getName())
-                .categoriesId(ingredientDto.getCategoriesId())
+                .name(ingredientCreateRequestDto.getName())
+                .imgUrl(ingredientCreateRequestDto.getImgUrl())
+                .categories(categories)
                 .build();
     }
 
-    public IngredientSimpleResponseDto getSimpleIngredientById(Integer ingredientId) {
+    public IngredientSimpleResponseDto getIngredientSimpleResponseDtoById(Integer ingredientId) {
 
         Ingredient ingredient = getIngredientById(ingredientId);
 
@@ -116,8 +96,26 @@ public class IngredientService {
 
     private IngredientSimpleResponseDto toIngredientSimpleResponseDto(Ingredient ingredient) {
         return IngredientSimpleResponseDto.builder()
+                .id(ingredient.getId())
                 .name(ingredient.getName())
                 .imgUrl(ingredient.getImgUrl())
                 .build();
+    }
+
+    public Page<IngredientSimpleResponseDto> getAllSimpleIngredients(Pageable pageable) {
+        Page<Ingredient> ingredients = ingredientRepository.findAllSimpleIngredients(pageable);
+        return ingredients.map(this::toIngredientSimpleResponseDto);
+    }
+
+    public Page<IngredientSimpleResponseDto> getAllSimpleIngredientsByCategoryId(Integer categoryId, Pageable pageable) {
+        Page<Ingredient> ingredients = ingredientRepository.findSimpleAllByCategoryId(categoryId, pageable);
+        return ingredients.map(this::toIngredientSimpleResponseDto);
+    }
+
+    public Page<IngredientSimpleResponseDto> getIngredientsSimpleResponseDtoByName(String ingredientName,
+                                                                                   Pageable pageable) {
+        Page<Ingredient> ingredients = ingredientRepository.findIngredientsSimpleResponseDtoByName(ingredientName,
+                pageable);
+        return ingredients.map(this::toIngredientSimpleResponseDto);
     }
 }

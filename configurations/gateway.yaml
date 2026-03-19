@@ -11,3 +11,8 @@ spring:
           uri: lb://ingredients-service
           predicates:
             - Path=/api/ingredients/**
+
+        - id: recipe-step-service
+          uri: lb://recipe-step-service
+          predicates:
+            - Path=/api/recipe-steps/**

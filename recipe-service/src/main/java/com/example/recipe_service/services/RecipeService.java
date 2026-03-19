@@ -51,9 +51,7 @@ public class RecipeService {
         String titleDto = recipeUpdateRequestDto.getTitle();
         String descriptionDto = recipeUpdateRequestDto.getDescription();
         String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
-        List<RecipeStep> recipeSteps = recipeStepService.updateRecipeSteps(recipe.getRecipeSteps(), recipeUpdateRequestDto.getRecipeSteps());
-        List<RecipeIngredient> recipeIngredients = recipeIngredientService.updateRecipeIngredients(recipe.getIngredients(), recipeUpdateRequestDto.getIngredients());
-        List<Category> categories = categoryService.updateCategories(recipe.getCategories(), recipeUpdateRequestDto.getCategoriesId());
+
 
         recipe.setTitle(titleDto == null
                 ? recipe.getTitle()
@@ -64,10 +62,6 @@ public class RecipeService {
         recipe.setImgUrl(imgUrlDto == null
                 ? recipe.getImgUrl()
                 : imgUrlDto);
-        recipe.setRecipeSteps(recipeSteps);
-        recipe.setIngredients(recipeUpdateRequestDto.getIngredients());
-        recipe.setCategories(recipeUpdateRequestDto.getCategoriesId())
-                .build();
     }
 
     public Recipe getRecipeById(Integer recipeId) {
