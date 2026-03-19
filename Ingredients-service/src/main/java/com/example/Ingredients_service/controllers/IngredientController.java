@@ -1,14 +1,10 @@
 package com.example.Ingredients_service.controllers;
 
-import com.example.Ingredients_service.dtos.category.CategoryCreateRequestDto;
-import com.example.Ingredients_service.dtos.category.CategoryResponseDto;
-import com.example.Ingredients_service.dtos.category.CategoryUpdateRequestDto;
 import com.example.Ingredients_service.dtos.ingredient.IngredientCreateRequestDto;
 import com.example.Ingredients_service.dtos.ingredient.IngredientResponseDto;
 import com.example.Ingredients_service.dtos.ingredient.IngredientSimpleResponseDto;
 import com.example.Ingredients_service.dtos.ingredient.IngredientUpdateRequestDto;
 import com.example.Ingredients_service.models.Ingredient;
-import com.example.Ingredients_service.services.CategoryService;
 import com.example.Ingredients_service.services.IngredientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,15 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/ingredients")
 @RequiredArgsConstructor
 public class IngredientController {
 
     private final IngredientService ingredientService;
-    private final CategoryService categoryService;
 
     //Ingredients
     @PostMapping
@@ -82,32 +75,5 @@ public class IngredientController {
             @RequestBody IngredientUpdateRequestDto ingredientUpdateRequestDto){
         Ingredient updatedIngredient = ingredientService.updateIngredient(ingredientId, ingredientUpdateRequestDto);
         return ResponseEntity.ok(updatedIngredient);
-    }
-
-    //Categories
-
-    @PostMapping("/create-category")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createCategory(@Valid @RequestBody CategoryCreateRequestDto categoryCreateRequestDto){
-        categoryService.createCategory(categoryCreateRequestDto);
-    }
-
-    @GetMapping("/categories")
-    public ResponseEntity<List<CategoryResponseDto>> getAllCategories(){
-        List<CategoryResponseDto> categoriesResponseDto = categoryService.getAllCategoryResponseDto();
-        return ResponseEntity.ok(categoriesResponseDto);
-    }
-
-    @PutMapping("/update-category/{categoryId}")
-    @ResponseStatus(HttpStatus.OK)
-    public void updateCategory(@PathVariable("categoryId") Integer categoryId,
-                               @RequestBody CategoryUpdateRequestDto categoryUpdateRequestDto){
-        categoryService.updateCategory(categoryId, categoryUpdateRequestDto);
-    }
-
-    @DeleteMapping("/categories/{categoryId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteCategoryById(@PathVariable("categoryId") Integer categoryId){
-        categoryService.deleteCategoryById(categoryId);
     }
 }

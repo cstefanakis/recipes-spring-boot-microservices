@@ -3,14 +3,20 @@ package com.example.Ingredients_service.controllers;
 import com.example.Ingredients_service.dtos.ingredient.*;
 import com.example.Ingredients_service.services.IngredientService;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -28,15 +34,28 @@ class IngredientControllerTest {
     @MockitoBean
     private IngredientService ingredientService;
 
+    private IngredientSimpleResponseDto tomato;
+
+    @BeforeEach
+    void setup(){
+        this.tomato = IngredientSimpleResponseDto.builder()
+                .id(1)
+                .name("Tomato")
+                .imgUrl("url")
+                .build();
+    }
+
     @Test
     void createIngredient() throws Exception {
-        //Mock Service
+        //Arrest
         String requestBody = """
                 {
-                    "name": "Tomato",
-                    "categories": [1]
+                    "name" : "Tomato",
+                    "imgUrl" : "url",
+                    "categories" : [1]
                 }
                 """;
+        //Mock
         doNothing().when(ingredientService).createIngredient(any(IngredientCreateRequestDto.class));
 
         //Perform Post
@@ -50,13 +69,13 @@ class IngredientControllerTest {
 
     @Test
     void createIngredient_nullArgument() throws Exception {
-        //Mock Service
+        //Arrest
         String requestBody = """
                 {
                     "categories": [1]
                 }
                 """;
-
+        //Mock
         doNothing().when(ingredientService).createIngredient(any(IngredientCreateRequestDto.class));
 
         //Perform Post
@@ -100,42 +119,57 @@ class IngredientControllerTest {
     }
 
     @Test
-    void getAllSimpleIngredients() {
+    void getAllSimpleIngredients() throws Exception {
+        //Arrest
+        Page<IngredientSimpleResponseDto> ingredients = new PageImpl<>(List.of(this.tomato));
+        //Mock
+        when(ingredientService.getAllSimpleIngredients(any(Pageable.class))).thenReturn(ingredients);
+        //Perform Get
+        mockMvc.perform(get("/api/ingredients")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
+        //Verify
+        verify(ingredientService, times(1)).getAllSimpleIngredients(any(Pageable.class));
     }
 
     @Test
-    void getAllIngredientsWithCategories() {
+    void getAllIngredientsWithCategories() throws Exception {
+        //Arrest
+        Integer categoryId = 1;
+        Page<IngredientSimpleResponseDto> ingredients = new PageImpl<>(List.of(this.tomato));
+        //Mock
+        when(ingredientService.getAllSimpleIngredientsByCategoryId(eq(categoryId), any(Pageable.class))).thenReturn(ingredients);
+        //Perform Get
+        mockMvc.perform(get("/api/ingredients/by-category/1")
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
+        //Verify
+        verify(ingredientService).getAllSimpleIngredientsByCategoryId(eq(categoryId), any(Pageable.class));
     }
 
     @Test
     void getSimpleIngredientById() {
+        //Arrest
+        //Mock
+        //Perform Get
+        //Verify
     }
 
     @Test
     void getIngredientsByName() {
-    }
-
-    @Test
-    void testDeleteIngredient() {
+        //Arrest
+        //Mock
+        //Perform Get
+        //Verify
     }
 
     @Test
     void updateIngredient() {
-    }
-
-    @Test
-    void createCategory() {
-    }
-
-    @Test
-    void getAllCategories() {
-    }
-
-    @Test
-    void updateCategory() {
-    }
-
-    @Test
-    void deleteCategoryById() {
+        //Arrest
+        //Mock
+        //Perform Get
+        //Verify
     }
 }
