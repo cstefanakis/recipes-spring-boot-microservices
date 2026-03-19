@@ -12,22 +12,17 @@ import org.springframework.stereotype.Repository;
 public interface IngredientRepository extends JpaRepository<Ingredient, Integer> {
 
     @Query("""
-            SELECT i.id, i.name, i.imgUrl FROM Ingredient i
-            """)
-    Page<Ingredient> findAllSimpleIngredients(Pageable pageable);
-
-    @Query("""
             SELECT i FROM Ingredient i
             JOIN i.categories c
             WHERE c.id = :categoryId
             """)
-    Page<Ingredient> findSimpleAllByCategoryId(@Param("categoryId") Integer categoryId,
+    Page<Ingredient> findAllByCategoryId(@Param("categoryId") Integer categoryId,
                                                                 Pageable page);
 
     @Query("""
-            SELECT i.id, i.name, i.imgUrl FROM Ingredient i
+            SELECT i FROM Ingredient i
             WHERE LOWER(i.name) LIKE LOWER(CONCAT('%', :ingredientName, '%'))
             """)
-    Page<Ingredient> findIngredientsSimpleResponseDtoByName(@Param("ingredientName") String ingredientName,
+    Page<Ingredient> findAllByName(@Param("ingredientName") String ingredientName,
                                                                                  Pageable page);
 }

@@ -169,7 +169,7 @@ class IngredientServiceTest {
         Page<Ingredient> ingredients = new PageImpl<>(List.of(this.savedTomato));
         Pageable pageable = PageRequest.of(0, 10, Sort.by("name").ascending());
         //Mock
-        when(ingredientRepository.findAllSimpleIngredients(pageable)).thenReturn(ingredients);
+        when(ingredientRepository.findAll(pageable)).thenReturn(ingredients);
         //Act
         Page<IngredientSimpleResponseDto> result = ingredientService.getAllSimpleIngredients(pageable);
         //Assert
@@ -177,7 +177,7 @@ class IngredientServiceTest {
         assertEquals(1, result.getSize());
         assertTrue(result.stream().anyMatch(i -> i.getName().equals(this.savedTomato.getName())));
         //Verify
-        verify(ingredientRepository, times(1)).findAllSimpleIngredients(pageable);
+        verify(ingredientRepository, times(1)).findAll(pageable);
     }
 
     @Test
@@ -187,7 +187,7 @@ class IngredientServiceTest {
         Pageable pageable = PageRequest.of(0, 10, Sort.by("name").ascending());
         Page<Ingredient> ingredients = new PageImpl<>(List.of(this.savedTomato));
         //Mock
-        when(ingredientRepository.findSimpleAllByCategoryId(categoryId, pageable)).thenReturn(ingredients);
+        when(ingredientRepository.findAllByCategoryId(categoryId, pageable)).thenReturn(ingredients);
         //Act
         Page<IngredientSimpleResponseDto> result = ingredientService.getAllSimpleIngredientsByCategoryId(categoryId, pageable);
         //Assert
@@ -197,7 +197,7 @@ class IngredientServiceTest {
         assertTrue(result.stream().anyMatch(i -> i.getImgUrl().equals(this.savedTomato.getImgUrl())));
         assertTrue(result.stream().anyMatch(i -> i.getId().equals(this.savedTomato.getId())));
         //Verify
-        verify(ingredientRepository, times(1)).findSimpleAllByCategoryId(
+        verify(ingredientRepository, times(1)).findAllByCategoryId(
                 categoryId, pageable);
     }
 
@@ -208,7 +208,7 @@ class IngredientServiceTest {
         String name = "tom";
         Page<Ingredient> ingredients = new PageImpl<>(List.of(this.savedTomato));
         //Mock
-        when(ingredientRepository.findIngredientsSimpleResponseDtoByName(name, pageable)).thenReturn(ingredients);
+        when(ingredientRepository.findAllByName(name, pageable)).thenReturn(ingredients);
         //Act
         Page<IngredientSimpleResponseDto> result = ingredientService.getIngredientsSimpleResponseDtoByName(name, pageable);
         //Assert
@@ -218,6 +218,6 @@ class IngredientServiceTest {
         assertTrue(result.stream().anyMatch(i -> i.getImgUrl().equals(this.savedTomato.getImgUrl())));
         assertTrue(result.stream().anyMatch(i -> i.getId().equals(this.savedTomato.getId())));
         //Verify
-        verify(ingredientRepository).findIngredientsSimpleResponseDtoByName(name,pageable);
+        verify(ingredientRepository).findAllByName(name,pageable);
     }
 }

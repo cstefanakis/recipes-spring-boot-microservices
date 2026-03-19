@@ -103,18 +103,18 @@ public class IngredientService {
     }
 
     public Page<IngredientSimpleResponseDto> getAllSimpleIngredients(Pageable pageable) {
-        Page<Ingredient> ingredients = ingredientRepository.findAllSimpleIngredients(pageable);
+        Page<Ingredient> ingredients = ingredientRepository.findAll(pageable);
         return ingredients.map(this::toIngredientSimpleResponseDto);
     }
 
     public Page<IngredientSimpleResponseDto> getAllSimpleIngredientsByCategoryId(Integer categoryId, Pageable pageable) {
-        Page<Ingredient> ingredients = ingredientRepository.findSimpleAllByCategoryId(categoryId, pageable);
+        Page<Ingredient> ingredients = ingredientRepository.findAllByCategoryId(categoryId, pageable);
         return ingredients.map(this::toIngredientSimpleResponseDto);
     }
 
     public Page<IngredientSimpleResponseDto> getIngredientsSimpleResponseDtoByName(String ingredientName,
                                                                                    Pageable pageable) {
-        Page<Ingredient> ingredients = ingredientRepository.findIngredientsSimpleResponseDtoByName(ingredientName,
+        Page<Ingredient> ingredients = ingredientRepository.findAllByName(ingredientName,
                 pageable);
         return ingredients.map(this::toIngredientSimpleResponseDto);
     }
