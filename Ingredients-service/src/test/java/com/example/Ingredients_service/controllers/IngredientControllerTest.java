@@ -1,6 +1,8 @@
 package com.example.Ingredients_service.controllers;
 
 import com.example.Ingredients_service.dtos.ingredient.*;
+import com.example.Ingredients_service.models.Category;
+import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.services.IngredientService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,11 +36,11 @@ class IngredientControllerTest {
     @MockitoBean
     private IngredientService ingredientService;
 
-    private IngredientSimpleResponseDto tomato;
+    private IngredientSimpleResponseDto tomatoDto;
 
     @BeforeEach
     void setup(){
-        this.tomato = IngredientSimpleResponseDto.builder()
+        this.tomatoDto = IngredientSimpleResponseDto.builder()
                 .id(1)
                 .name("Tomato")
                 .imgUrl("url")
@@ -121,7 +123,7 @@ class IngredientControllerTest {
     @Test
     void getAllSimpleIngredients() throws Exception {
         //Arrest
-        Page<IngredientSimpleResponseDto> ingredients = new PageImpl<>(List.of(this.tomato));
+        Page<IngredientSimpleResponseDto> ingredients = new PageImpl<>(List.of(this.tomatoDto));
         //Mock
         when(ingredientService.getAllSimpleIngredients(any(Pageable.class))).thenReturn(ingredients);
         //Perform Get
@@ -137,7 +139,7 @@ class IngredientControllerTest {
     void getAllIngredientsWithCategories() throws Exception {
         //Arrest
         Integer categoryId = 1;
-        Page<IngredientSimpleResponseDto> ingredients = new PageImpl<>(List.of(this.tomato));
+        Page<IngredientSimpleResponseDto> ingredients = new PageImpl<>(List.of(this.tomatoDto));
         //Mock
         when(ingredientService.getAllSimpleIngredientsByCategoryId(eq(categoryId), any(Pageable.class))).thenReturn(ingredients);
         //Perform Get
@@ -150,26 +152,60 @@ class IngredientControllerTest {
     }
 
     @Test
-    void getSimpleIngredientById() {
+    void getSimpleIngredientById() throws Exception {
         //Arrest
+        Integer ingredientId = 1;
         //Mock
+        when(ingredientService.getIngredientSimpleResponseDtoById(ingredientId)).thenReturn(this.tomatoDto);
         //Perform Get
+        mockMvc.perform(get("/api/ingredients/simple/1"))
+                .andExpect(status().isOk());
         //Verify
+        verify(ingredientService, times(1)).getIngredientSimpleResponseDtoById(ingredientId);
     }
 
     @Test
-    void getIngredientsByName() {
+    void getIngredientsByName() throws Exception {
         //Arrest
+        String ingredientName = "tom";
+        Page<IngredientSimpleResponseDto> ingredients = new PageImpl<>(List.of(this.tomatoDto));
         //Mock
+        when(ingredientService.getIngredientsSimpleResponseDtoByName(eq(ingredientName), any(Pageable.class)))
+                .thenReturn(ingredients);
         //Perform Get
+        mockMvc.perform(get("/api/ingredients/by-name/{ingredientName}", ingredientName)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk());
         //Verify
+        verify(ingredientService, times(1)).getIngredientsSimpleResponseDtoByName(eq(ingredientName), any(Pageable.class));
     }
 
     @Test
-    void updateIngredient() {
+    void updateIngredient() throws Exception {
         //Arrest
+        String requestBody = """
+                    {
+                        "name" : "new name",
+                        "imgUrl" : "new url"
+                    }
+                """;
+
+        Integer ingredientId = this.tomatoDto.getId();
+
+        Ingredient updatedIngredient = Ingredient.builder()
+                .name("new name")
+                .imgUrl("new url")
+                .categories(List.of(Category.builder().build()))
+                .build();
         //Mock
+        when(ingredientService.updateIngredient(eq(ingredientId), any(IngredientUpdateRequestDto.class))).thenReturn(updatedIngredient);
         //Perform Get
+        mockMvc.perform(put("/api/ingredients/{ingredientId}", ingredientId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk());
         //Verify
+        verify(ingredientService, times(1)).updateIngredient(eq(ingredientId), any(IngredientUpdateRequestDto.class));
     }
 }
