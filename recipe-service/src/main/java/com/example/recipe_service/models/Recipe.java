@@ -1,6 +1,5 @@
 package com.example.recipe_service.models;
 
-import com.example.recipe_service.dtos.ingredient.IngredientGlobalResponseDto;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -28,12 +27,6 @@ public class Recipe {
 
     @Column(name = "image", length = 500)
     private String imgUrl;
-
-    @Builder.Default
-    @OneToMany(mappedBy = "recipe",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true)
-    private List<RecipeStep> recipeSteps = new ArrayList<>();
 
     @Builder.Default
     @ManyToMany

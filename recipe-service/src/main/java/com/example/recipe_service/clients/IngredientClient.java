@@ -1,6 +1,6 @@
 package com.example.recipe_service.clients;
 
-import com.example.recipe_service.dtos.ingredient.IngredientGlobalResponseDto;
+import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,5 +9,5 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface IngredientClient {
 
     @GetMapping("/api/ingredients/simple/{ingredientId}")
-    IngredientGlobalResponseDto getGlobalIngredientById(@PathVariable("ingredientId") Integer ingredientId);
+    IngredientSimpleResponseDto getIngredientById(@PathVariable("ingredientId") Integer ingredientId);
 }

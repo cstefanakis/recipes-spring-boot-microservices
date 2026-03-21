@@ -1,8 +1,7 @@
 package com.example.recipe_service.controllers;
 
-import com.example.recipe_service.dtos.category.CategoryRequestDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
-import com.example.recipe_service.dtos.recipe.RecipeGlobalResponseDto;
+import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
 import com.example.recipe_service.models.Recipe;
@@ -10,11 +9,11 @@ import com.example.recipe_service.services.CategoryService;
 import com.example.recipe_service.services.RecipeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/recipes")
@@ -24,8 +23,6 @@ public class RecipeController {
     private final RecipeService recipeService;
     private final CategoryService categoryService;
 
-
-    //Recipes
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createRecipe(@Valid @RequestBody RecipeCreateRequestDto recipeRequestDto){
@@ -40,9 +37,16 @@ public class RecipeController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RecipeGlobalResponseDto>> getAllRecipes(){
-        List<RecipeGlobalResponseDto> categories = recipeService.getAllRecipesWithCategories();
+    public ResponseEntity<Page<RecipeSimpleResponseDto>> getAllRecipes(Pageable pageable){
+        Page<RecipeSimpleResponseDto> categories = recipeService.getAllSimpleRecipes(pageable);
         return ResponseEntity.ok(categories);
+    }
+
+    @GetMapping("/by-category/{categoryId}")
+    public ResponseEntity<Page<RecipeSimpleResponseDto>> getRecipesByCategoryId(@PathVariable("categoryId") Integer categoryId,
+                                                                                Pageable pageable){
+        Page<RecipeSimpleResponseDto> recipesSimpleResponseDto = recipeService.getRecipesByCategoryId(categoryId, pageable);
+        return ResponseEntity.ok(recipesSimpleResponseDto);
     }
 
     @PutMapping("/{recipeId}")
@@ -53,11 +57,9 @@ public class RecipeController {
         recipeService.updateRecipe(recipe, recipeUpdateRequestDto);
     }
 
-
-    //Categories
-    @PostMapping("/category")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createCategory(@Valid @RequestBody CategoryRequestDto categoryRequestDto){
-        categoryService.createCategory(categoryRequestDto);
+    @DeleteMapping("/{recipeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRecipeById(@PathVariable("recipeId") Integer recipeId){
+        recipeService.deleteRecipeById(recipeId);
     }
 }

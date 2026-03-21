@@ -1,6 +1,5 @@
 package com.example.recipe_service.dtos.recipe;
 
-import com.example.recipe_service.dtos.ingredient.IngredientRequestDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -21,11 +20,6 @@ public class RecipeCreateRequestDto {
     private String description;
 
     private String imgUrl;
-
-    private List<RecipeCreateRequestDto> recipeSteps;
-
-    @NotNull
-    private List<IngredientRequestDto> ingredients;
 
     @NotNull
     private List<Integer> categoriesId;

@@ -1,19 +1,19 @@
 package com.example.recipe_service.services;
 
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
-import com.example.recipe_service.dtos.ingredient.IngredientResponseDto;
-import com.example.recipe_service.dtos.ingredient.IngredientGlobalResponseDto;
+import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
-import com.example.recipe_service.dtos.recipe.RecipeGlobalResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeResponseDto;
+import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
+import com.example.recipe_service.dtos.recipeStep.RecipeStepResponseDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
-import com.example.recipe_service.models.RecipeIngredient;
-import com.example.recipe_service.models.RecipeStep;
 import com.example.recipe_service.repositories.RecipeRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,54 +69,51 @@ public class RecipeService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Recipe with id: %s doesn't found", recipeId)));
     }
 
-    public List<RecipeGlobalResponseDto> getAllRecipesWithCategories() {
-        List<Recipe> recipes = recipeRepository.findAll();
-        return recipes.stream()
-                .map(this::toRecipeGlobalResponseDto)
-                .toList();
-    }
-
-    private RecipeGlobalResponseDto toRecipeGlobalResponseDto(Recipe recipe) {
-
-        List<IngredientGlobalResponseDto> ingredientsDto = recipe.getIngredients().stream()
-                .map(recipeIngredientService::toIngredientGlobalResponseDto)
-                .toList();
-
-        List<Category> categories = recipe.getCategories();
-
-        List<CategoryResponseDto> categoriesDto = toCategoriesResponseDto(categories);
-
-        return RecipeGlobalResponseDto.builder()
-                .title(recipe.getTitle())
-                .description(recipe.getDescription())
-                .imgUrl(recipe.getImgUrl())
-                .ingredients(ingredientsDto)
-                .categories(categoriesDto)
-                .build();
-    }
-
     private List<CategoryResponseDto> toCategoriesResponseDto(List<Category> categories){
         return categories.stream()
                 .map(categoryService::toCategoryResponseDto)
                 .toList();
     }
 
+    public void deleteRecipeById(Integer recipeId) {
+        recipeRepository.deleteById(recipeId);
+    }
+
+    public Page<RecipeSimpleResponseDto> getAllSimpleRecipes(Pageable pageable) {
+        Page<Recipe> recipes = recipeRepository.findAll(pageable);
+        return recipes.map(this::toRecipeSimpleResponseDto);
+    }
+
+    private RecipeSimpleResponseDto toRecipeSimpleResponseDto(Recipe recipe) {
+        return RecipeSimpleResponseDto.builder()
+                .title(recipe.getTitle())
+                .imgUrl(recipe.getImgUrl())
+                .description(recipe.getDescription())
+                .build();
+    }
+
     public RecipeResponseDto toRecipeResponseDto(Recipe recipe) {
 
-        List <IngredientResponseDto> ingredients = recipe.getIngredients().stream()
-                .map(recipeIngredientService::toIngredientResponseDto)
+        List<RecipeIngredientResponseDto> ingredients = recipeIngredientService.getRecipeIngredientsByRecipeId(recipe.getId());
+
+        List<CategoryResponseDto> categories = recipe.getCategories().stream()
+                .map(categoryService::toCategoryResponseDto)
                 .toList();
 
-        List<Category> categories = recipe.getCategories();
-
-        List<CategoryResponseDto> categoriesDto = toCategoriesResponseDto(categories);
+        List<RecipeStepResponseDto> recipeSteps = recipeStepService.getRecipeStepsByRecipeId(recipe.getId());
 
         return RecipeResponseDto.builder()
                 .title(recipe.getTitle())
-                .description(recipe.getDescription())
                 .imgUrl(recipe.getImgUrl())
+                .description(recipe.getDescription())
                 .ingredients(ingredients)
-                .categories(categoriesDto)
+                .categories(categories)
+                .recipeSteps(recipeSteps)
                 .build();
+    }
+
+    public Page<RecipeSimpleResponseDto> getRecipesByCategoryId(Integer categoryId, Pageable pageable) {
+        Page<Recipe> recipes = recipeRepository.findRecipeByCategoryId(categoryId, pageable);
+        return recipes.map(this::toRecipeSimpleResponseDto);
     }
 }

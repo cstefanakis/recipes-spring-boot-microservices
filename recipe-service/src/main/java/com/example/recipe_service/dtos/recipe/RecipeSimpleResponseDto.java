@@ -1,4 +1,4 @@
-package com.example.recipe_service.dtos.recipeStep;
+package com.example.recipe_service.dtos.recipe;
 
 import lombok.*;
 
@@ -7,8 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RecipeStepUpdateRequestDto {
+public class RecipeSimpleResponseDto {
+    private String title;
     private String description;
-
     private String imgUrl;
 }

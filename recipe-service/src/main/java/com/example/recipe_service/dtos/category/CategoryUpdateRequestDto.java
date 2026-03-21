@@ -1,4 +1,4 @@
-package com.example.recipe_service.dtos.ingredient;
+package com.example.recipe_service.dtos.category;
 
 import lombok.*;
 
@@ -7,7 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class IngredientGlobalResponseDto {
+public class CategoryUpdateRequestDto {
     private String name;
+
     private String imgUrl;
 }

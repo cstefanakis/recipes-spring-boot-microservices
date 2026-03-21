@@ -1,6 +1,7 @@
 package com.example.recipe_service.services;
 
-import com.example.recipe_service.repositories.RecipeStepRepository;
+import com.example.recipe_service.clients.RecipeStepClient;
+import com.example.recipe_service.dtos.recipeStep.RecipeStepResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecipeStepService {
 
-    private final RecipeStepRepository recipeStepRepository;
+    private final RecipeStepClient recipeStepClient;
 
+    public List<RecipeStepResponseDto> getRecipeStepsByRecipeId(Integer recipeId) {
+        return recipeStepClient.getRecipeStepsByRecipeId(recipeId);
+    }
 }

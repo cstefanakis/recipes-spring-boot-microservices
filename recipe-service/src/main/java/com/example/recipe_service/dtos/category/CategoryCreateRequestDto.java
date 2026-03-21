@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class CategoryRequestDto {
+public class CategoryCreateRequestDto {
 
     @NotBlank
     private String name;
