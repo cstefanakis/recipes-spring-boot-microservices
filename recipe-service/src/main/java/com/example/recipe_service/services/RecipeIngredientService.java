@@ -19,22 +19,18 @@ public class RecipeIngredientService {
 
     private final IngredientClient ingredientClient;
     private final RecipeIngredientRepository recipeIngredientRepository;
-    private final RecipeService recipeService;
 
-    public void createRecipeIngredient(@Valid RecipeIngredientCreateRequestDto ingredientCreateRequestDto) {
+
+    public void createRecipeIngredient(RecipeIngredientCreateRequestDto ingredientCreateRequestDto) {
         RecipeIngredient recipeIngredient = toEntity(ingredientCreateRequestDto);
         recipeIngredientRepository.save(recipeIngredient);
     }
 
-    private RecipeIngredient toEntity(@Valid RecipeIngredientCreateRequestDto ingredientCreateRequestDto) {
-
-        Integer recipeId = ingredientCreateRequestDto.getRecipeId();
-
-        Recipe recipe = recipeService.getRecipeById(recipeId);
+    private RecipeIngredient toEntity(RecipeIngredientCreateRequestDto ingredientCreateRequestDto) {
 
         return RecipeIngredient.builder()
                 .ingredientId(ingredientCreateRequestDto.getIngredientId())
-                .recipe(recipe)
+                .recipe(ingredientCreateRequestDto.getRecipe())
                 .unit(ingredientCreateRequestDto.getUnit())
                 .quantity(ingredientCreateRequestDto.getQuantity())
                 .build();

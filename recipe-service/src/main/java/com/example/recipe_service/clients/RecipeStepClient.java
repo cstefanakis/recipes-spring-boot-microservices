@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient
+@FeignClient(name = "recipe-step-service")
 public interface RecipeStepClient {
 
     @GetMapping("/api/recipe-steps/recipe/{recipeId}")
