@@ -1,4 +1,4 @@
-package com.example.Ingredients_service.dtos;
+package com.example.Ingredients_service.dtos.ingredient;
 
 import lombok.*;
 
@@ -8,5 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class IngredientSimpleResponseDto {
+    private Integer id;
     private String name;
+    private String imgUrl;
 }

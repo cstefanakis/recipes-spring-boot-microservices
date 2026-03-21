@@ -1,4 +1,4 @@
-package com.example.Ingredients_service.dtos;
+package com.example.Ingredients_service.dtos.ingredient;
 
 import lombok.*;
 
@@ -9,7 +9,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class IngredientUpdateDto {
+public class IngredientUpdateRequestDto {
     private String name;
+    private String imgUrl;
     private List<Integer> categoriesId;
 }

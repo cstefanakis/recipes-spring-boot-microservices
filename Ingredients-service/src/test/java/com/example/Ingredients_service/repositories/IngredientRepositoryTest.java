@@ -1,14 +1,17 @@
 package com.example.Ingredients_service.repositories;
 
+import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.models.Ingredient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,58 +22,50 @@ class IngredientRepositoryTest {
     @Autowired
     private IngredientRepository ingredientRepository;
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     private Ingredient tomato;
 
     @BeforeEach()
     void setup(){
+        Category vegetables = categoryRepository.save(Category.builder()
+                        .name("Vegetables")
+                        .imgUrl("url")
+                .build());
+
         this.tomato = ingredientRepository.save(Ingredient.builder()
                         .name("Tomato")
-                        .categoriesId(List.of(1))
+                        .imgUrl("url")
+                        .categories(List.of(vegetables))
                 .build());
     }
 
     @Test
     void findAllByCategoryId() {
         //Arrest
-        Integer vegetablesId = 1;
+        Integer categoryId = this.tomato.getId();
+        Pageable pageable = PageRequest.of(0, 10);
         //Act
-        List<Ingredient> result = ingredientRepository.findAllByCategoryId(vegetablesId);
+        Page<Ingredient> result = ingredientRepository.findAllByCategoryId(categoryId, pageable);
         //Assert
         assertNotNull(result);
         assertTrue(result.stream().anyMatch(i -> i.getName().equals(this.tomato.getName())));
+        assertTrue(result.stream().anyMatch(i -> i.getImgUrl().equals(this.tomato.getImgUrl())));
+        assertTrue(result.stream().anyMatch(i -> i.getId().equals(this.tomato.getId())));
     }
 
     @Test
-    void findAllIds() {
-        //Act
-        List<Integer> result = ingredientRepository.findAllIds();
-        //Assert
-        assertNotNull(result);
-        assertTrue(result.contains(this.tomato.getId()));
-    }
-
-    @Test
-    void findIngredientNameById() {
+    void findAllByName() {
         //Arrest
-        Integer tomatoId = this.tomato.getId();
         String name = this.tomato.getName();
+        Pageable pageable = PageRequest.of(0, 10);
         //Act
-        Optional<String> result = ingredientRepository.findIngredientNameById(tomatoId);
+        Page<Ingredient> result = ingredientRepository.findAllByName(name, pageable);
         //Assert
         assertNotNull(result);
-        assertTrue(result.isPresent());
-        assertEquals(name, result.get());
-    }
-
-    @Test
-    void findAllIdByCategoryId() {
-        //Arrest
-        Integer vegetablesId = 1;
-        Integer tomatoId = this.tomato.getId();
-        //Act
-        List<Integer> result = ingredientRepository.findAllIdByCategoryId(vegetablesId);
-        //Assert
-        assertNotNull(result);
-        assertTrue(result.contains(tomatoId));
+        assertTrue(result.stream().anyMatch(i -> i.getName().equals(this.tomato.getName())));
+        assertTrue(result.stream().anyMatch(i -> i.getImgUrl().equals(this.tomato.getImgUrl())));
+        assertTrue(result.stream().anyMatch(i -> i.getId().equals(this.tomato.getId())));
     }
 }
