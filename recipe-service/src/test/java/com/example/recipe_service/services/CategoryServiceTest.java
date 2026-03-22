@@ -33,7 +33,7 @@ class CategoryServiceTest {
     @BeforeEach
     void setup(){
         this.category = Category.builder()
-                .Id(1)
+                .id(1)
                 .name("Category")
                 .imgUrl("url")
                 .build();
