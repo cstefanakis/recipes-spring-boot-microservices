@@ -43,6 +43,7 @@ public class RecipeService {
                 .title(recipeRequestDto.getTitle())
                 .description(recipeRequestDto.getDescription())
                 .categories(categories)
+                .imgUrl(recipeRequestDto.getImgUrl())
                 .build();
     }
 
@@ -51,6 +52,7 @@ public class RecipeService {
         String titleDto = recipeUpdateRequestDto.getTitle();
         String descriptionDto = recipeUpdateRequestDto.getDescription();
         String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
+        List<Category> categories = categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
 
 
         recipe.setTitle(titleDto == null
@@ -62,6 +64,9 @@ public class RecipeService {
         recipe.setImgUrl(imgUrlDto == null
                 ? recipe.getImgUrl()
                 : imgUrlDto);
+        recipe.setCategories(categories);
+
+        recipeRepository.save(recipe);
     }
 
     public Recipe getRecipeById(Integer recipeId) {
