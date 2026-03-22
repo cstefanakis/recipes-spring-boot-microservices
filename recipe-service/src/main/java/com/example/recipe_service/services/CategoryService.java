@@ -41,6 +41,7 @@ public class CategoryService {
 
     public CategoryResponseDto toCategoryResponseDto(Category category){
         return CategoryResponseDto.builder()
+                .id(category.getId())
                 .name(category.getName())
                 .imgUrl(category.getImgUrl())
                 .build();
