@@ -113,7 +113,7 @@ public class RecipeService {
     }
 
     public Page<RecipeSimpleResponseDto> getRecipesByCategoryId(Integer categoryId, Pageable pageable) {
-        Page<Recipe> recipes = recipeRepository.findRecipeByCategoryId(categoryId, pageable);
+        Page<Recipe> recipes = recipeRepository.findRecipesByCategoryId(categoryId, pageable);
         return recipes.map(this::toRecipeSimpleResponseDto);
     }
 }
