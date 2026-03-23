@@ -14,6 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class RecipeResponseDto {
+    private Integer id;
     private String title;
     private String description;
     private String imgUrl;

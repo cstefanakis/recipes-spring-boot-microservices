@@ -1,8 +1,13 @@
 package com.example.recipe_service.services;
 
+import com.example.recipe_service.dtos.category.CategoryResponseDto;
+import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
+import com.example.recipe_service.dtos.recipe.RecipeResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
+import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
+import com.example.recipe_service.dtos.recipeStep.RecipeStepResponseDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.models.RecipeIngredient;
@@ -41,9 +46,17 @@ class RecipeServiceTest {
     @Mock
     private CategoryService categoryService;
 
+    @Mock
+    private RecipeIngredientService recipeIngredientService;
+
+    @Mock
+    private RecipeStepService recipeStepService;
+
     private Recipe recipe;
     private RecipeIngredient recipeIngredient;
     private Category category;
+    private IngredientSimpleResponseDto ingredient;
+    private RecipeStepResponseDto recipeStep;
 
     @BeforeEach
     void setup(){
@@ -67,6 +80,20 @@ class RecipeServiceTest {
                 .unit(GRAM)
                 .quantity(500.0)
                 .recipe(this.recipe)
+                .build();
+
+        this.ingredient = IngredientSimpleResponseDto.builder()
+                .id(1)
+                .name("ingredient name")
+                .imgUrl("ingredient img url")
+                .build();
+
+        this.recipeStep = RecipeStepResponseDto.builder()
+                .id(1)
+                .recipeId(1)
+                .stepNumber(1)
+                .imgUrl("recipe step url")
+                .description("recipe step description")
                 .build();
     }
 
@@ -184,9 +211,96 @@ class RecipeServiceTest {
 
     @Test
     void toRecipeResponseDto() {
+        //Arrest
+        RecipeIngredientResponseDto recipeIngredientResponseDto = RecipeIngredientResponseDto.builder()
+                .id(this.recipeIngredient.getId())
+                .name(this.ingredient.getName())
+                .imgUrl(this.ingredient.getImgUrl())
+                .quantity(this.recipeIngredient.getQuantity())
+                .unit(this.recipeIngredient.getUnit())
+                .build();
+        List<RecipeIngredientResponseDto> ingredientsDto = List.of(recipeIngredientResponseDto);
+
+        CategoryResponseDto categoryResponseDto = CategoryResponseDto.builder()
+                .id(this.category.getId())
+                .name(this.category.getName())
+                .imgUrl(this.category.getImgUrl())
+                .build();
+
+        List<RecipeStepResponseDto> recipeStepsDto = List.of(this.recipeStep);
+        //Mock
+        when(recipeIngredientService.getRecipeIngredientsByRecipeId(this.recipe.getId()))
+                .thenReturn(ingredientsDto);
+
+        when(categoryService.toCategoryResponseDto(any(Category.class))).thenReturn(categoryResponseDto);
+
+        when(recipeStepService.getRecipeStepsByRecipeId(this.recipe.getId())).thenReturn(recipeStepsDto);
+        //Act
+        RecipeResponseDto result = recipeService.toRecipeResponseDto(this.recipe);
+        //Assert
+        assertNotNull(result);
+        assertEquals(this.recipe.getId(), result.getId());
+        assertEquals(this.recipe.getTitle(), result.getTitle());
+        assertEquals(this.recipe.getImgUrl(), result.getImgUrl());
+        assertEquals(this.recipe.getDescription(), result.getDescription());
+        assertNotNull(result.getIngredients());
+        assertTrue(result.getIngredients().stream()
+                .anyMatch(riDto-> riDto.getId().equals(this.ingredient.getId())));
+        assertTrue(result.getIngredients().stream()
+                .anyMatch(riDto-> riDto.getName().equals(this.ingredient.getName())));
+        assertTrue(result.getIngredients().stream()
+                .anyMatch(riDto-> riDto.getImgUrl().equals(this.ingredient.getImgUrl())));
+        assertTrue(result.getIngredients().stream()
+                .anyMatch(riDto-> riDto.getUnit().equals(this.recipeIngredient.getUnit())));
+        assertTrue(result.getIngredients().stream()
+                .anyMatch(riDto-> riDto.getQuantity().equals(this.recipeIngredient.getQuantity())));
+
+        assertNotNull(result.getCategories());
+        assertTrue(result.getCategories().stream()
+                .anyMatch(cDto -> cDto.getId().equals(this.category.getId())));
+        assertTrue(result.getCategories().stream()
+                .anyMatch(cDto -> cDto.getName().equals(this.category.getName())));
+        assertTrue(result.getCategories().stream()
+                .anyMatch(cDto -> cDto.getImgUrl().equals(this.category.getImgUrl())));
+
+        assertNotNull(result.getRecipeSteps());
+        assertTrue(result.getRecipeSteps().stream()
+                .anyMatch(rsDto -> rsDto.getId().equals(this.recipeStep.getId())));
+        assertTrue(result.getRecipeSteps().stream()
+                .anyMatch(rsDto -> rsDto.getRecipeId().equals(this.recipeStep.getRecipeId())));
+        assertTrue(result.getRecipeSteps().stream()
+                .anyMatch(rsDto -> rsDto.getImgUrl().equals(this.recipeStep.getImgUrl())));
+        assertTrue(result.getRecipeSteps().stream()
+                .anyMatch(rsDto -> rsDto.getDescription().equals(this.recipeStep.getDescription())));
+        //Verify
+        verify(recipeIngredientService).getRecipeIngredientsByRecipeId(this.recipe.getId());
+
+        verify(categoryService).toCategoryResponseDto(any(Category.class));
+
+        verify(recipeStepService).getRecipeStepsByRecipeId(this.recipe.getId());
     }
 
     @Test
     void getRecipesByCategoryId() {
+        //Arrest
+        Integer categoryId = this.category.getId();
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Recipe> recipes = new PageImpl<>(List.of(this.recipe));
+        //Mock
+        when(recipeRepository.findRecipesByCategoryId(categoryId, pageable)).thenReturn(recipes);
+        //Act
+        Page<RecipeSimpleResponseDto> result = recipeService.getRecipesByCategoryId(categoryId, pageable);
+        //Assert
+        assertNotNull(result);
+        assertTrue(result.stream()
+                .anyMatch(rDto -> rDto.getId().equals(this.recipe.getId())));
+        assertTrue(result.stream()
+                .anyMatch(rDto -> rDto.getTitle().equals(this.recipe.getTitle())));
+        assertTrue(result.stream()
+                .anyMatch(rDto -> rDto.getImgUrl().equals(this.recipe.getImgUrl())));
+        assertTrue(result.stream()
+                .anyMatch(rDto -> rDto.getDescription().equals(this.recipe.getDescription())));
+        //Verify
+        verify(recipeRepository).findRecipesByCategoryId(categoryId, pageable);
     }
 }

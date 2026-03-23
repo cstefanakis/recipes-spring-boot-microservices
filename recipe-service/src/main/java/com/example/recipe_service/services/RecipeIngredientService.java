@@ -4,10 +4,8 @@ import com.example.recipe_service.clients.IngredientClient;
 import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientCreateRequestDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
-import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.models.RecipeIngredient;
 import com.example.recipe_service.repositories.RecipeIngredientRepository;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +46,7 @@ public class RecipeIngredientService {
         IngredientSimpleResponseDto ingredientSimpleResponseDto = ingredientClient.getIngredientById(recipeIngredient.getId());
 
         return RecipeIngredientResponseDto.builder()
+                .id(recipeIngredient.getId())
                 .name(ingredientSimpleResponseDto.getName())
                 .imgUrl(ingredientSimpleResponseDto.getImgUrl())
                 .unit(recipeIngredient.getUnit())

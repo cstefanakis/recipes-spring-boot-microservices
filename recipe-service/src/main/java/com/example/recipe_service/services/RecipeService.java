@@ -109,6 +109,7 @@ public class RecipeService {
         List<RecipeStepResponseDto> recipeSteps = recipeStepService.getRecipeStepsByRecipeId(recipe.getId());
 
         return RecipeResponseDto.builder()
+                .id(recipe.getId())
                 .title(recipe.getTitle())
                 .imgUrl(recipe.getImgUrl())
                 .description(recipe.getDescription())
