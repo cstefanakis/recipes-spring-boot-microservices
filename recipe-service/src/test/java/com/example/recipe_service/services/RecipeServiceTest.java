@@ -2,6 +2,7 @@ package com.example.recipe_service.services;
 
 import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
+import com.example.recipe_service.dtos.recipe.RecipeResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.recipe_service.enums.Unit.GRAM;
 import static org.junit.jupiter.api.Assertions.*;
@@ -127,6 +129,19 @@ class RecipeServiceTest {
 
     @Test
     void getRecipeById() {
+        //Arrest
+        Integer recipeId = this.recipe.getId();
+        //Mock
+        when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(this.recipe));
+        //Act
+        Recipe result = recipeService.getRecipeById(recipeId);
+        //Assert
+        assertNotNull(result);
+        assertEquals(this.recipe.getTitle(), result.getTitle());
+        assertEquals(this.recipe.getImgUrl(), result.getImgUrl());
+        assertEquals(this.recipe.getId(), result.getId());
+        //Verify
+        verify(recipeRepository).findById(recipeId);
     }
 
     @Test
