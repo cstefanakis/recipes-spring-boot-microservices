@@ -1,8 +1,6 @@
 package com.example.recipe_service.services;
 
-import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
-import com.example.recipe_service.dtos.recipe.RecipeResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
@@ -146,6 +144,14 @@ class RecipeServiceTest {
 
     @Test
     void deleteRecipeById() {
+        //Arrest
+        Integer recipeId = this.recipe.getId();
+        //Mock
+        doNothing().when(recipeRepository).deleteById(recipeId);
+        //Act
+        recipeService.deleteRecipeById(recipeId);
+        //Verify
+        verify(recipeRepository).deleteById(recipeId);
     }
 
     @Test
