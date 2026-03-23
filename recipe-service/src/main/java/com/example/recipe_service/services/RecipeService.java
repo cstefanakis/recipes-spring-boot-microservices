@@ -91,6 +91,7 @@ public class RecipeService {
 
     private RecipeSimpleResponseDto toRecipeSimpleResponseDto(Recipe recipe) {
         return RecipeSimpleResponseDto.builder()
+                .id(recipe.getId())
                 .title(recipe.getTitle())
                 .imgUrl(recipe.getImgUrl())
                 .description(recipe.getDescription())

@@ -1,6 +1,7 @@
 package com.example.recipe_service.services;
 
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
+import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
@@ -13,6 +14,10 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -156,6 +161,25 @@ class RecipeServiceTest {
 
     @Test
     void getAllSimpleRecipes() {
+        //Arrest
+        Page<Recipe> recipes = new PageImpl<>(List.of(this.recipe));
+        Pageable pageable = PageRequest.of(0, 10);
+        //Mock
+        when(recipeRepository.findAll(any(Pageable.class))).thenReturn(recipes);
+        //Act
+        Page<RecipeSimpleResponseDto> result = recipeService.getAllSimpleRecipes(pageable);
+        //Assert
+        assertNotNull(result);
+        assertTrue(result.stream()
+                .anyMatch(dto -> dto.getTitle().equals(recipe.getTitle())));
+        assertTrue(result.stream()
+                .anyMatch(dto -> dto.getImgUrl().equals(recipe.getImgUrl())));
+        assertTrue(result.stream()
+                .anyMatch(dto -> dto.getDescription().equals(recipe.getDescription())));
+        assertTrue(result.stream()
+                .anyMatch(dto -> dto.getId().equals(recipe.getId())));
+        //Verify
+        verify(recipeRepository, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
