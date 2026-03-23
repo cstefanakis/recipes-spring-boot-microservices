@@ -2,6 +2,7 @@ package com.example.recipe_service.controllers;
 
 import com.example.recipe_service.dtos.category.CategoryCreateRequestDto;
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
+import com.example.recipe_service.dtos.category.CategoryUpdateRequestDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.services.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,6 +31,7 @@ class CategoryControllerTest {
 
     @MockitoBean
     private CategoryService categoryService;
+
     private Category category;
     private CategoryResponseDto categoryResponseDto;
 
@@ -141,10 +143,46 @@ class CategoryControllerTest {
     }
 
     @Test
-    void updateCategory() {
+    void updateCategory() throws Exception {
+        //Arrange
+        String requestBody = """
+                {
+                    "name" : "Sweets",
+                    "imgUrl" : "url"
+                }
+                """;
+        Integer categoryId = this.category.getId();
+        //Mock
+        doNothing().when(categoryService).updateCategory(eq(categoryId), any(CategoryUpdateRequestDto.class));
+        //Perform put
+        mockMvc.perform(put("/api/recipe-categories/{categoryId}", categoryId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestBody))
+                .andExpect(status().isOk());
+
+        ArgumentCaptor<CategoryUpdateRequestDto> captor = ArgumentCaptor
+                .forClass(CategoryUpdateRequestDto.class);
+        //Verify
+        verify(categoryService, times(1))
+                .updateCategory(eq(categoryId), captor.capture());
+
+        CategoryUpdateRequestDto categoryDto = captor.getValue();
+        //Assert
+        assertNotNull(categoryDto);
+        assertEquals("Sweets", categoryDto.getName());
+        assertEquals("url", categoryDto.getImgUrl());
     }
 
     @Test
-    void deleteCategoryById() {
+    void deleteCategoryById() throws Exception {
+        //Arrange
+        Integer categoryId = this.category.getId();
+        //Mock
+        doNothing().when(categoryService).deleteCategoryById(categoryId);
+        //Perform delete
+        mockMvc.perform(delete("/api/recipe-categories/{categoryId}", categoryId))
+                .andExpect(status().isNoContent());
+        //Verify
+        verify(categoryService).deleteCategoryById(categoryId);
     }
 }
