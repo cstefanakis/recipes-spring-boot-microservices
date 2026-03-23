@@ -41,6 +41,7 @@ public class CategoryService {
 
     public CategoryResponseDto toCategoryResponseDto(Category category){
         return CategoryResponseDto.builder()
+                .id(category.getId())
                 .name(category.getName())
                 .imgUrl(category.getImgUrl())
                 .build();
@@ -80,5 +81,9 @@ public class CategoryService {
 
     public void deleteCategoryById(Integer categoryId) {
         categoryRepository.deleteById(categoryId);
+    }
+
+    public List<Category> getCategoriesByIds(List<Integer> categoriesId) {
+        return categoryRepository.findAllById(categoriesId);
     }
 }

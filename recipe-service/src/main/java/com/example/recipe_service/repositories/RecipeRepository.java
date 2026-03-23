@@ -16,6 +16,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
             JOIN r.categories c
             WHERE c.id = :categoryId
             """)
-    Page<Recipe> findRecipeByCategoryId(@Param("categoryId") Integer categoryId,
+    Page<Recipe> findRecipesByCategoryId(@Param("categoryId") Integer categoryId,
                                         Pageable pageable);
 }

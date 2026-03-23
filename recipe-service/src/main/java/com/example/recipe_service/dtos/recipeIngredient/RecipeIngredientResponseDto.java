@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class RecipeIngredientResponseDto {
+    private Integer id;
     private String name;
     private Double quantity;
     private Unit unit;
