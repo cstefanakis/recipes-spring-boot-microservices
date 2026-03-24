@@ -8,6 +8,7 @@ import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.models.RecipeIngredient;
 import com.example.recipe_service.repositories.RecipeIngredientRepository;
+import com.example.recipe_service.repositories.RecipeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.recipe_service.enums.Unit.GRAM;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,6 +35,9 @@ class RecipeIngredientServiceTest {
 
     @Mock
     private RecipeIngredientRepository recipeIngredientRepository;
+
+    @Mock
+    private RecipeRepository recipeRepository;
 
     @Mock
     private IngredientClient ingredientClient;
@@ -75,17 +80,21 @@ class RecipeIngredientServiceTest {
 
     @Test
     void createRecipeIngredient() {
+        Integer recipeId = this.recipe.getId();
+
         RecipeIngredientCreateRequestDto recipeIngredientCreateRequestDto = RecipeIngredientCreateRequestDto.builder()
                 .ingredientId(1)
-                .recipe(this.recipe)
+                .recipeId(this.recipe.getId())
                 .quantity(this.recipeIngredient.getQuantity())
                 .unit(this.recipeIngredient.getUnit())
                 .build();
         //Mock
+        when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(this.recipe));
         when(recipeIngredientRepository.save(any(RecipeIngredient.class))).thenReturn(this.recipeIngredient);
         //Act
         recipeIngredientService.createRecipeIngredient(recipeIngredientCreateRequestDto);
         //Verify
+        verify(recipeRepository).findById(recipeId);
         verify(recipeIngredientRepository).save(any(RecipeIngredient.class));
     }
 
