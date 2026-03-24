@@ -5,6 +5,7 @@ import com.example.Ingredients_service.dtos.ingredient.*;
 import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.repositories.IngredientRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -81,10 +82,18 @@ public class IngredientService {
                 .toList();
 
         return Ingredient.builder()
-                .name(ingredientCreateRequestDto.getName())
+                .name(validatedIngredientName(ingredientCreateRequestDto.getName()))
                 .imgUrl(ingredientCreateRequestDto.getImgUrl())
                 .categories(categories)
                 .build();
+    }
+
+    private String validatedIngredientName(String name) {
+        boolean isNameExists = ingredientRepository.nameExists(name);
+        if(isNameExists) {
+            throw new EntityExistsException(String.format("Ingredient with name %s already exists", name));
+        }
+        return name;
     }
 
     public IngredientSimpleResponseDto getIngredientSimpleResponseDtoById(Integer ingredientId) {

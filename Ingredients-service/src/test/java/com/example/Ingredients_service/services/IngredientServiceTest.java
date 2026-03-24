@@ -74,6 +74,7 @@ class IngredientServiceTest {
         //Mock
         when(categoryService.getCategoryById(vegetablesId))
                 .thenReturn(this.vegetables);
+        when(ingredientRepository.nameExists(any(String.class))).thenReturn(Boolean.FALSE);
         when(ingredientRepository.save(any(Ingredient.class)))
                 .thenReturn(savedTomato);
 
