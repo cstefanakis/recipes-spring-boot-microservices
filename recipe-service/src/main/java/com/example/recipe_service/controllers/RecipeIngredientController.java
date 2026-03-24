@@ -14,9 +14,9 @@ public class RecipeIngredientController {
 
     private final RecipeIngredientService recipeIngredientService;
 
-    @PostMapping("/ingredient")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createRecipeIngredient(@Valid @RequestBody RecipeIngredientCreateRequestDto ingredientCreateRequestDto){
-        recipeIngredientService.createRecipeIngredient(ingredientCreateRequestDto);
+    public void createRecipeIngredient(@Valid @RequestBody RecipeIngredientCreateRequestDto recipeIngredientCreateRequestDto){
+        recipeIngredientService.createRecipeIngredient(recipeIngredientCreateRequestDto);
     }
 }

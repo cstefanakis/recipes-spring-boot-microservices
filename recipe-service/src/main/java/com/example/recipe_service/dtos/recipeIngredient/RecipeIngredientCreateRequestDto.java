@@ -1,7 +1,6 @@
 package com.example.recipe_service.dtos.recipeIngredient;
 
 import com.example.recipe_service.enums.Unit;
-import com.example.recipe_service.models.Recipe;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -22,5 +21,5 @@ public class RecipeIngredientCreateRequestDto {
     private Double quantity;
 
     @NotNull
-    private Recipe recipe;
+    private Integer recipeId;
 }
