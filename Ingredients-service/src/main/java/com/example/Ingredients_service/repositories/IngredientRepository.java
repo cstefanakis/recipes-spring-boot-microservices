@@ -25,4 +25,10 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Integer>
             """)
     Page<Ingredient> findAllByName(@Param("ingredientName") String ingredientName,
                                                                                  Pageable page);
+    @Query("""
+            SELECT CASE WHEN COUNT(i) > 0 THEN true ELSE false END
+            FROM Ingredient i
+            WHERE LOWER(i.name) = LOWER(:name)
+            """)
+    boolean nameExists(@Param("name") String name);
 }

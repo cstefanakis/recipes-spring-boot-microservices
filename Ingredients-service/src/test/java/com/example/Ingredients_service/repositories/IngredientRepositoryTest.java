@@ -68,4 +68,34 @@ class IngredientRepositoryTest {
         assertTrue(result.stream().anyMatch(i -> i.getImgUrl().equals(this.tomato.getImgUrl())));
         assertTrue(result.stream().anyMatch(i -> i.getId().equals(this.tomato.getId())));
     }
+
+    @Test
+    void nameExists_true() {
+        //Arrest
+        String name = "Tomato";
+        //Act
+        boolean result = ingredientRepository.nameExists(name);
+        //Assert
+        assertTrue(result);
+    }
+
+    @Test
+    void nameExists_trueWithLow() {
+        //Arrest
+        String name = "Tomato";
+        //Act
+        boolean result = ingredientRepository.nameExists(name);
+        //Assert
+        assertTrue(result);
+    }
+
+    @Test
+    void nameExists_false() {
+        //Arrest
+        String name = "beans";
+        //Act
+        boolean result = ingredientRepository.nameExists(name);
+        //Assert
+        assertFalse(result);
+    }
 }

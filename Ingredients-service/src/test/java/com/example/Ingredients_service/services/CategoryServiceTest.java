@@ -5,6 +5,7 @@ import com.example.Ingredients_service.dtos.category.CategoryResponseDto;
 import com.example.Ingredients_service.dtos.category.CategoryUpdateRequestDto;
 import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.repositories.CategoryRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,8 @@ class CategoryServiceTest {
     private Category vegetables;
     private Category savedVegetables;
     private Category savedMeals;
+    private CategoryUpdateRequestDto categoryUpdateRequestDto;
+    private CategoryCreateRequestDto categoryCreateRequestDto;
 
     @BeforeEach
     void setup(){
@@ -53,40 +56,77 @@ class CategoryServiceTest {
                 .name("Meals")
                 .imgUrl("url")
                 .build();
+
+        this.categoryUpdateRequestDto = CategoryUpdateRequestDto.builder()
+                .name("new name")
+                .imgUrl("new url")
+                .build();
+
+        this.categoryCreateRequestDto = CategoryCreateRequestDto.builder()
+                .name(this.vegetables.getName())
+                .imgUrl(this.vegetables.getImgUrl())
+                .build();
     }
 
     @Test
     void createCategory() {
-        //Arrest
-        CategoryCreateRequestDto categoryCreateRequestDto = CategoryCreateRequestDto.builder()
-                .name(this.vegetables.getName())
-                .imgUrl(this.vegetables.getImgUrl())
-                .build();
-
         //Mock
+        when(categoryRepository.nameExists(any(String.class))).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenReturn(this.savedVegetables);
         //Act
         categoryService.createCategory(categoryCreateRequestDto);
         //Verify
+        verify(categoryRepository).nameExists(any(String.class));
         verify(categoryRepository, times(1)).save(any(Category.class));
+    }
+
+    @Test
+    void createCategory_NameExists() {
+        //Mock
+        when(categoryRepository.nameExists(any(String.class))).thenReturn(true);
+        //Act
+        assertThrows(EntityExistsException.class, () -> {
+            categoryService.createCategory(categoryCreateRequestDto);
+        });
+        //Verify
+        verify(categoryRepository).nameExists(any(String.class));
     }
 
     @Test
     void updateCategory() {
         //Arrest
         Integer categoryId = this.savedVegetables.getId();
-        CategoryUpdateRequestDto categoryUpdateRequestDto = CategoryUpdateRequestDto.builder()
-                .name("new name")
-                .imgUrl("new url")
-                .build();
+
         this.vegetables.setName(categoryUpdateRequestDto.getName());
         this.vegetables.setImgUrl(categoryUpdateRequestDto.getImgUrl());
 
         //Mock
+        when(categoryRepository.nameExists(any(String.class))).thenReturn(false);
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(this.vegetables));
         //Act
         categoryService.updateCategory(categoryId, categoryUpdateRequestDto);
         //Verify
+        verify(categoryRepository).nameExists(any(String.class));
+        verify(categoryRepository, times(1)).findById(categoryId);
+    }
+
+    @Test
+    void updateCategory_NameExists() {
+        //Arrest
+        Integer categoryId = this.savedVegetables.getId();
+
+        this.vegetables.setName(categoryUpdateRequestDto.getName());
+        this.vegetables.setImgUrl(categoryUpdateRequestDto.getImgUrl());
+
+        //Mock
+        when(categoryRepository.nameExists(any(String.class))).thenReturn(true);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(this.vegetables));
+        //Act
+        assertThrows(EntityExistsException.class, () -> {
+            categoryService.updateCategory(categoryId, categoryUpdateRequestDto);
+        });
+        //Verify
+        verify(categoryRepository).nameExists(any(String.class));
         verify(categoryRepository, times(1)).findById(categoryId);
     }
 
@@ -158,5 +198,22 @@ class CategoryServiceTest {
         //Verify
         verify(categoryRepository, times(1))
                 .deleteById(categoryId);
+    }
+
+    @Test
+    void getCategoryResponseDtoById() {
+        //Arrest
+        Integer categoryId = 1;
+        //Mock
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(this.vegetables));
+        //Act
+        CategoryResponseDto result = categoryService.getCategoryResponseDtoById(categoryId);
+        //Assert
+        assertNotNull(result);
+        assertEquals(this.vegetables.getName(), result.getName());
+        assertEquals(this.vegetables.getImgUrl(), result.getImgUrl());
+        assertEquals(this.vegetables.getId(), result.getId());
+        //Verify
+        verify(categoryRepository).findById(categoryId);
     }
 }

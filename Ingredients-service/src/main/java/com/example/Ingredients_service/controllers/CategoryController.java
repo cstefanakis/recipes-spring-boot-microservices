@@ -15,7 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/ingredient-categories")
 @RequiredArgsConstructor
-public class IngredientCategoryController {
+public class CategoryController {
 
     private final CategoryService categoryService;
 
@@ -31,10 +31,16 @@ public class IngredientCategoryController {
         return ResponseEntity.ok(categoriesResponseDto);
     }
 
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponseDto> getCategoryById(@PathVariable("categoryId") Integer categoryId){
+        CategoryResponseDto categoryResponseDto = categoryService.getCategoryResponseDtoById(categoryId);
+        return ResponseEntity.ok(categoryResponseDto);
+    }
+
     @PutMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateCategory(@PathVariable("categoryId") Integer categoryId,
-                               @RequestBody CategoryUpdateRequestDto categoryUpdateRequestDto){
+                               @Valid @RequestBody CategoryUpdateRequestDto categoryUpdateRequestDto){
         categoryService.updateCategory(categoryId, categoryUpdateRequestDto);
     }
 

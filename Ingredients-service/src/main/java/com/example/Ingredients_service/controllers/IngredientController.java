@@ -44,13 +44,13 @@ public class IngredientController {
     }
 
     @GetMapping("/by-category/{categoryId}")
-    public ResponseEntity<Page<IngredientSimpleResponseDto>> getAllIngredientsWithCategories(@PathVariable ("categoryId") Integer categoryId,
+    public ResponseEntity<Page<IngredientSimpleResponseDto>> getAllSimpleIngredientsByCategoryId(@PathVariable ("categoryId") Integer categoryId,
                                                                                              Pageable page){
         Page<IngredientSimpleResponseDto> ingredients = ingredientService.getAllSimpleIngredientsByCategoryId(categoryId, page);
         return ResponseEntity.ok(ingredients);
     }
 
-    @GetMapping("/simple/{ingredientId}")
+    @GetMapping("/{ingredientId}")
     public ResponseEntity<IngredientSimpleResponseDto> getSimpleIngredientById(@PathVariable ("ingredientId") Integer ingredientId){
         IngredientSimpleResponseDto IngredientSimpleResponseDto = ingredientService.getIngredientSimpleResponseDtoById(ingredientId);
         return ResponseEntity.ok(IngredientSimpleResponseDto);
@@ -70,9 +70,8 @@ public class IngredientController {
     }
 
     @PutMapping("/{ingredientId}")
-    public ResponseEntity<Ingredient> updateIngredient(
-            @PathVariable ("ingredientId") Integer ingredientId,
-            @RequestBody IngredientUpdateRequestDto ingredientUpdateRequestDto){
+    public ResponseEntity<Ingredient> updateIngredient( @PathVariable ("ingredientId") Integer ingredientId,
+                                                        @Valid @RequestBody IngredientUpdateRequestDto ingredientUpdateRequestDto){
         Ingredient updatedIngredient = ingredientService.updateIngredient(ingredientId, ingredientUpdateRequestDto);
         return ResponseEntity.ok(updatedIngredient);
     }
