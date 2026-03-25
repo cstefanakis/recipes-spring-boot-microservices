@@ -5,6 +5,7 @@ import com.example.Ingredients_service.dtos.category.CategoryResponseDto;
 import com.example.Ingredients_service.dtos.category.CategoryUpdateRequestDto;
 import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.repositories.CategoryRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,9 +36,12 @@ public class CategoryService {
     }
 
     private Category toUpdateEntity(Category category, CategoryUpdateRequestDto categoryUpdateRequestDto) {
-        String name = categoryUpdateRequestDto.getName() == null
+
+        String nameDto = categoryUpdateRequestDto.getName();
+
+        String name = nameDto == null
                 ? category.getName()
-                : categoryUpdateRequestDto.getName();
+                : validatedCategoryName(nameDto);
 
         category.setName(name);
         return category;
@@ -51,9 +55,17 @@ public class CategoryService {
 
     private Category toEntity(CategoryCreateRequestDto categoryDto) {
         return Category.builder()
-                .name(categoryDto.getName())
+                .name(validatedCategoryName(categoryDto.getName()))
                 .imgUrl(categoryDto.getImgUrl())
                 .build();
+    }
+
+    private String validatedCategoryName(String name) {
+        boolean isNameExists = categoryRepository.nameExists(name);
+        if(isNameExists){
+            throw new EntityExistsException(String.format("Category with name %s already exists", name));
+        }
+        return name;
     }
 
     public List<CategoryResponseDto> toCategoriesResponseDto(List<Category> categories) {
@@ -64,6 +76,7 @@ public class CategoryService {
 
     private CategoryResponseDto toCategoryResponseDto(Category category) {
         return CategoryResponseDto.builder()
+                .id(category.getId())
                 .name(category.getName())
                 .imgUrl(category.getImgUrl())
                 .build();
@@ -71,5 +84,10 @@ public class CategoryService {
 
     public void deleteCategoryById(Integer categoryId) {
         categoryRepository.deleteById(categoryId);
+    }
+
+    public CategoryResponseDto getCategoryResponseDtoById(Integer categoryId) {
+        Category category = getCategoryById(categoryId);
+        return toCategoryResponseDto(category);
     }
 }

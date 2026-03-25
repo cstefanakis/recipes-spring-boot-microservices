@@ -34,6 +34,7 @@ public class IngredientService {
         List<CategoryResponseDto> categoryResponseDto = categoryService.toCategoriesResponseDto(categories);
 
         return IngredientResponseDto.builder()
+                .id(ingredient.getId())
                 .name(ingredient.getName())
                 .categories(categoryResponseDto)
                 .build();
@@ -65,7 +66,7 @@ public class IngredientService {
 
         ingredient.setName(nameDto == null
                 ? ingredient.getName()
-                : nameDto);
+                : validatedIngredientName(nameDto));
         ingredient.setCategories(ingredientsId.isEmpty()
                 ? ingredient.getCategories()
                 : categories);

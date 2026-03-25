@@ -1,5 +1,6 @@
 package com.example.Ingredients_service.controllers;
 
+import com.example.Ingredients_service.dtos.category.CategoryResponseDto;
 import com.example.Ingredients_service.dtos.ingredient.*;
 import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.models.Ingredient;
@@ -7,6 +8,7 @@ import com.example.Ingredients_service.services.IngredientService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.Page;
@@ -20,10 +22,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(IngredientController.class)
@@ -43,7 +48,7 @@ class IngredientControllerTest {
         this.tomatoDto = IngredientSimpleResponseDto.builder()
                 .id(1)
                 .name("Tomato")
-                .imgUrl("url")
+                .imgUrl("https://example.com/img.png")
                 .build();
     }
 
@@ -53,8 +58,8 @@ class IngredientControllerTest {
         String requestBody = """
                 {
                     "name" : "Tomato",
-                    "imgUrl" : "url",
-                    "categories" : [1]
+                    "imgUrl" : "https://example.com/img.png",
+                    "categoriesId" : [1]
                 }
                 """;
         //Mock
@@ -65,8 +70,18 @@ class IngredientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isCreated());
+
+        ArgumentCaptor<IngredientCreateRequestDto> captor = ArgumentCaptor.forClass(IngredientCreateRequestDto.class);
         //Verify
-        verify(ingredientService).createIngredient(any(IngredientCreateRequestDto.class));
+        verify(ingredientService).createIngredient(captor.capture());
+
+        IngredientCreateRequestDto ingredientDto = captor.getValue();
+
+        //Assert
+        assertNotNull(ingredientDto);
+        assertEquals("Tomato", ingredientDto.getName());
+        assertEquals("https://example.com/img.png", ingredientDto.getImgUrl());
+        assertEquals(1, ingredientDto.getCategoriesId().getFirst());
     }
 
     @Test
@@ -74,7 +89,7 @@ class IngredientControllerTest {
         //Arrest
         String requestBody = """
                 {
-                    "categories": [1]
+                    "categoriesId" : [1]
                 }
                 """;
         //Mock
@@ -89,11 +104,28 @@ class IngredientControllerTest {
 
     @Test
     void getIngredientWithCategoryById() throws Exception {
+        //Arrest
+        CategoryResponseDto category = CategoryResponseDto.builder()
+                .id(1)
+                .imgUrl("https://example.com/img.png")
+                .name("Vegetables")
+                .build();
+        IngredientResponseDto ingredientResponseDto = IngredientResponseDto.builder()
+                .id(1)
+                .name("Tomato")
+                .categories(List.of(category))
+                .build();
         //Mock Service
-        when(ingredientService.getIngredientWithCategoryById(eq(1))).thenReturn(any(IngredientResponseDto.class));
+        when(ingredientService.getIngredientWithCategoryById(eq(1)))
+                .thenReturn(ingredientResponseDto);
         //Perform get
         mockMvc.perform(get("/api/ingredients/with-categories/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(ingredientResponseDto.getId()))
+                .andExpect(jsonPath("$.name").value(ingredientResponseDto.getName()))
+                .andExpect(jsonPath("$.categories[0].name").value(ingredientResponseDto.getCategories().getFirst().getName()))
+                .andExpect(jsonPath("$.categories[0].id").value(ingredientResponseDto.getCategories().getFirst().getId()))
+                .andExpect(jsonPath("$.categories[0].imgUrl").value(ingredientResponseDto.getCategories().getFirst().getImgUrl()));
         //Verify
         verify(ingredientService).getIngredientWithCategoryById(1);
     }
@@ -130,13 +162,16 @@ class IngredientControllerTest {
         mockMvc.perform(get("/api/ingredients")
                         .param("page", "0")
                         .param("size", "10"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(this.tomatoDto.getId()))
+                .andExpect(jsonPath("$.content[0].name").value(this.tomatoDto.getName()))
+                .andExpect(jsonPath("$.content[0].imgUrl").value(this.tomatoDto.getImgUrl()));
         //Verify
         verify(ingredientService, times(1)).getAllSimpleIngredients(any(Pageable.class));
     }
 
     @Test
-    void getAllIngredientsWithCategories() throws Exception {
+    void getAllSimpleIngredientsByCategoryId() throws Exception {
         //Arrest
         Integer categoryId = 1;
         Page<IngredientSimpleResponseDto> ingredients = new PageImpl<>(List.of(this.tomatoDto));
@@ -146,7 +181,10 @@ class IngredientControllerTest {
         mockMvc.perform(get("/api/ingredients/by-category/1")
                         .param("page", "0")
                         .param("size", "10"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(this.tomatoDto.getId()))
+                .andExpect(jsonPath("$.content[0].name").value(this.tomatoDto.getName()))
+                .andExpect(jsonPath("$.content[0].imgUrl").value(this.tomatoDto.getImgUrl()));
         //Verify
         verify(ingredientService).getAllSimpleIngredientsByCategoryId(eq(categoryId), any(Pageable.class));
     }
@@ -158,8 +196,11 @@ class IngredientControllerTest {
         //Mock
         when(ingredientService.getIngredientSimpleResponseDtoById(ingredientId)).thenReturn(this.tomatoDto);
         //Perform Get
-        mockMvc.perform(get("/api/ingredients/simple/1"))
-                .andExpect(status().isOk());
+        mockMvc.perform(get("/api/ingredients/1"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(this.tomatoDto.getId()))
+                .andExpect(jsonPath("$.name").value(this.tomatoDto.getName()))
+                .andExpect(jsonPath("$.imgUrl").value(this.tomatoDto.getImgUrl()));
         //Verify
         verify(ingredientService, times(1)).getIngredientSimpleResponseDtoById(ingredientId);
     }
@@ -176,7 +217,10 @@ class IngredientControllerTest {
         mockMvc.perform(get("/api/ingredients/by-name/{ingredientName}", ingredientName)
                         .param("page", "0")
                         .param("size", "10"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(this.tomatoDto.getId()))
+                .andExpect(jsonPath("$.content[0].name").value(this.tomatoDto.getName()))
+                .andExpect(jsonPath("$.content[0].imgUrl").value(this.tomatoDto.getImgUrl()));
         //Verify
         verify(ingredientService, times(1)).getIngredientsSimpleResponseDtoByName(eq(ingredientName), any(Pageable.class));
     }
@@ -187,7 +231,7 @@ class IngredientControllerTest {
         String requestBody = """
                     {
                         "name" : "new name",
-                        "imgUrl" : "new url"
+                        "imgUrl" : "https://example.com/newimg.png"
                     }
                 """;
 
@@ -195,7 +239,7 @@ class IngredientControllerTest {
 
         Ingredient updatedIngredient = Ingredient.builder()
                 .name("new name")
-                .imgUrl("new url")
+                .imgUrl("https://example.com/newimg.png")
                 .categories(List.of(Category.builder().build()))
                 .build();
         //Mock
@@ -205,7 +249,36 @@ class IngredientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk());
+
+        ArgumentCaptor<IngredientUpdateRequestDto> captor = ArgumentCaptor.forClass(IngredientUpdateRequestDto.class);
+
         //Verify
-        verify(ingredientService, times(1)).updateIngredient(eq(ingredientId), any(IngredientUpdateRequestDto.class));
+        verify(ingredientService, times(1)).updateIngredient(eq(ingredientId), captor.capture());
+
+        IngredientUpdateRequestDto ingredientDto = captor.getValue();
+
+        //Assert
+        assertNotNull(ingredientDto);
+        assertEquals("new name", ingredientDto.getName());
+        assertEquals("https://example.com/newimg.png", ingredientDto.getImgUrl());
+    }
+
+    @Test
+    void updateIngredient_BudUrl() throws Exception {
+        //Arrest
+        String requestBody = """
+                    {
+                        "name" : "new name",
+                        "imgUrl" : "url"
+                    }
+                """;
+
+        Integer ingredientId = this.tomatoDto.getId();
+
+        //Perform Get
+        mockMvc.perform(put("/api/ingredients/{ingredientId}", ingredientId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
     }
 }

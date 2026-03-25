@@ -7,6 +7,7 @@ import com.example.Ingredients_service.dtos.ingredient.IngredientUpdateRequestDt
 import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.repositories.IngredientRepository;
+import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,6 +39,8 @@ class IngredientServiceTest {
 
     private Ingredient savedTomato;
     private Category vegetables;
+    private IngredientUpdateRequestDto tomatoUpdateDto;
+    private IngredientCreateRequestDto ingredientCreateRequestDto;
 
     @BeforeEach()
     void setup(){
@@ -59,22 +62,28 @@ class IngredientServiceTest {
                 .imgUrl("url")
                 .categories(List.of(this.vegetables))
                 .build();
+
+        this.tomatoUpdateDto = IngredientUpdateRequestDto.builder()
+                .name("chocolate")
+                .categoriesId(List.of(1))
+                .imgUrl("new Url")
+                .build();
+
+        this.ingredientCreateRequestDto = IngredientCreateRequestDto.builder()
+                .name("Tomato")
+                .imgUrl("Url")
+                .categoriesId(List.of(this.vegetables.getId()))
+                .build();
     }
 
     @Test
     void createIngredient() {
         //Arrest
         Integer vegetablesId = this.vegetables.getId();
-
-        IngredientCreateRequestDto ingredientCreateRequestDto = IngredientCreateRequestDto.builder()
-                .name("Tomato")
-                .imgUrl("Url")
-                .categoriesId(List.of(vegetablesId))
-                .build();
         //Mock
         when(categoryService.getCategoryById(vegetablesId))
                 .thenReturn(this.vegetables);
-        when(ingredientRepository.nameExists(any(String.class))).thenReturn(Boolean.FALSE);
+        when(ingredientRepository.nameExists(any(String.class))).thenReturn(false);
         when(ingredientRepository.save(any(Ingredient.class)))
                 .thenReturn(savedTomato);
 
@@ -88,6 +97,25 @@ class IngredientServiceTest {
         Ingredient result = captor.getValue();
         assertEquals(ingredientCreateRequestDto.getName(), result.getName());
         assertEquals(ingredientCreateRequestDto.getImgUrl(), result.getImgUrl());
+    }
+
+    @Test
+    void createIngredient_NameExists() {
+        //Arrest
+        Integer vegetablesId = this.vegetables.getId();
+        //Mock
+        when(categoryService.getCategoryById(vegetablesId))
+                .thenReturn(this.vegetables);
+        when(ingredientRepository.nameExists(any(String.class))).thenReturn(true);
+
+        ArgumentCaptor<Ingredient> captor = ArgumentCaptor.forClass(Ingredient.class);
+        //Act
+        assertThrows(EntityExistsException.class, () -> {
+            ingredientService.createIngredient(ingredientCreateRequestDto);
+        });
+        //Verify
+        verify(ingredientRepository, times(1)).nameExists(any(String.class));
+        verify(categoryService, times(1)).getCategoryById(vegetablesId);
     }
 
     @Test
@@ -118,11 +146,6 @@ class IngredientServiceTest {
     void updateIngredient() {
         //Arrest
         Integer tomatoId = this.savedTomato.getId();
-        IngredientUpdateRequestDto tomatoUpdateDto = IngredientUpdateRequestDto.builder()
-                .name("chocolate")
-                .categoriesId(List.of(1))
-                .imgUrl("new Url")
-                .build();
 
         Ingredient updatedIngredient = Ingredient.builder()
                 .id(this.savedTomato.getId())
@@ -131,6 +154,8 @@ class IngredientServiceTest {
                 .categories(List.of(this.vegetables))
                 .build();
         //Mock
+        when(ingredientRepository.nameExists(any(String.class))).thenReturn(false);
+
         when(ingredientRepository.findById(tomatoId)).thenReturn(Optional.of(this.savedTomato));
 
         when(ingredientRepository.save(any(Ingredient.class))).thenReturn(updatedIngredient);
@@ -142,8 +167,26 @@ class IngredientServiceTest {
         assertEquals(tomatoUpdateDto.getImgUrl(), result.getImgUrl());
         assertTrue(result.getCategories().stream().anyMatch(i -> i.getId() == 1));
         //Verify
+        verify(ingredientRepository, times(1)).nameExists(any(String.class));
         verify(ingredientRepository, times(1)).findById(tomatoId);
         verify(ingredientRepository, times(1)).save(any(Ingredient.class));
+    }
+
+    @Test
+    void updateIngredient_NameExists() {
+        //Arrest
+        Integer tomatoId = this.savedTomato.getId();
+        //Mock
+        when(ingredientRepository.nameExists(any(String.class))).thenReturn(true);
+
+        when(ingredientRepository.findById(tomatoId)).thenReturn(Optional.of(this.savedTomato));
+        //Act
+        assertThrows(EntityExistsException.class, () -> {
+            ingredientService.updateIngredient(tomatoId, tomatoUpdateDto);
+        });
+        //Verify
+        verify(ingredientRepository, times(1)).nameExists(any(String.class));
+        verify(ingredientRepository, times(1)).findById(tomatoId);
     }
 
     @Test

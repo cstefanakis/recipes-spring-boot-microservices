@@ -2,6 +2,7 @@ package com.example.Ingredients_service.dtos.category;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 @Getter
 @Setter
@@ -13,5 +14,6 @@ public class CategoryCreateRequestDto {
     @NotBlank
     private String name;
 
+    @URL(message = "Invalid image URL")
     private String imgUrl;
 }

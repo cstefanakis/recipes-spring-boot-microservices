@@ -70,12 +70,32 @@ class IngredientRepositoryTest {
     }
 
     @Test
-    void nameExists() {
+    void nameExists_true() {
         //Arrest
         String name = "Tomato";
         //Act
         boolean result = ingredientRepository.nameExists(name);
         //Assert
         assertTrue(result);
+    }
+
+    @Test
+    void nameExists_trueWithLow() {
+        //Arrest
+        String name = "Tomato";
+        //Act
+        boolean result = ingredientRepository.nameExists(name);
+        //Assert
+        assertTrue(result);
+    }
+
+    @Test
+    void nameExists_false() {
+        //Arrest
+        String name = "beans";
+        //Act
+        boolean result = ingredientRepository.nameExists(name);
+        //Assert
+        assertFalse(result);
     }
 }
