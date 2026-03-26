@@ -123,4 +123,8 @@ public class RecipeService {
         Page<Recipe> recipes = recipeRepository.findRecipesByCategoryId(categoryId, pageable);
         return recipes.map(this::toRecipeSimpleResponseDto);
     }
+
+    public boolean recipeExists(Integer recipeId) {
+        return recipeRepository.existsById(recipeId);
+    }
 }

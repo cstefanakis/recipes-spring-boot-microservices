@@ -129,7 +129,7 @@ class RecipeServiceTest {
 
     @Test
     void updateRecipe() {
-        //Arrest
+        //Arrange
         RecipeUpdateRequestDto recipeUpdateRequestDto = RecipeUpdateRequestDto.builder()
                 .title("pizza")
                 .description("pizza from Chris")
@@ -159,7 +159,7 @@ class RecipeServiceTest {
 
     @Test
     void getRecipeById() {
-        //Arrest
+        //Arrange
         Integer recipeId = this.recipe.getId();
         //Mock
         when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(this.recipe));
@@ -188,7 +188,7 @@ class RecipeServiceTest {
 
     @Test
     void getAllSimpleRecipes() {
-        //Arrest
+        //Arrange
         Page<Recipe> recipes = new PageImpl<>(List.of(this.recipe));
         Pageable pageable = PageRequest.of(0, 10);
         //Mock
@@ -211,7 +211,7 @@ class RecipeServiceTest {
 
     @Test
     void toRecipeResponseDto() {
-        //Arrest
+        //Arrange
         RecipeIngredientResponseDto recipeIngredientResponseDto = RecipeIngredientResponseDto.builder()
                 .id(this.recipeIngredient.getId())
                 .name(this.ingredient.getName())
@@ -282,7 +282,7 @@ class RecipeServiceTest {
 
     @Test
     void getRecipesByCategoryId() {
-        //Arrest
+        //Arrange
         Integer categoryId = this.category.getId();
         Pageable pageable = PageRequest.of(0, 10);
         Page<Recipe> recipes = new PageImpl<>(List.of(this.recipe));
@@ -302,5 +302,19 @@ class RecipeServiceTest {
                 .anyMatch(rDto -> rDto.getDescription().equals(this.recipe.getDescription())));
         //Verify
         verify(recipeRepository).findRecipesByCategoryId(categoryId, pageable);
+    }
+
+    @Test
+    void recipeExists() {
+        //Arrange
+        Integer recipeId = this.recipe.getId();
+        //Mock
+        when(recipeRepository.existsById(recipeId)).thenReturn(true);
+        //Act
+        boolean result = recipeService.recipeExists(recipeId);
+        //Assert
+        assertTrue(result);
+        //Verify
+        verify(recipeRepository, times(1)).existsById(recipeId);
     }
 }

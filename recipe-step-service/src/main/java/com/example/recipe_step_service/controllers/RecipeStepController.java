@@ -38,10 +38,16 @@ public class RecipeStepController {
         recipeStepService.deleteRecipeStepById(id);
     }
 
+    @DeleteMapping("/delete-all/{recipeId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteAllByRecipeId(@PathVariable("recipeId") Integer recipeId){
+        recipeStepService.deleteAllByRecipeId(recipeId);
+    }
+
     @PutMapping("{id}")
     @ResponseStatus(HttpStatus.OK)
     public void updateRecipeStepById(@PathVariable("id") Integer id,
-                                     @RequestBody RecipeStepUpdateRequestDto recipeStepUpdateRequestDto){
+                                     @Valid @RequestBody RecipeStepUpdateRequestDto recipeStepUpdateRequestDto){
         recipeStepService.updateRecipeStepById(id, recipeStepUpdateRequestDto);
     }
 }

@@ -29,7 +29,7 @@ class RecipeStepControllerTest {
 
     @Test
     void createRecipeStep() throws Exception {
-        //Arrest
+        //Arrange
         String requestBody = """
                 {
                     "stepNumber" : 1,
@@ -62,6 +62,7 @@ class RecipeStepControllerTest {
 
     @Test
     void createRecipeStep_descriptionNull() throws Exception {
+        //Arrange
         String requestBody = """
                 {
                     "stepNumber" : 1,
@@ -78,6 +79,7 @@ class RecipeStepControllerTest {
 
     @Test
     void createRecipeStep_recipeIdNull() throws Exception {
+        //Arrange
         String requestBody = """
                 {
                     "stepNumber" : 1,
@@ -94,6 +96,7 @@ class RecipeStepControllerTest {
 
     @Test
     void createRecipeStep_stepNumberNull() throws Exception {
+        //Arrange
         String requestBody = """
                 {
                     "description" : "description",
@@ -110,6 +113,7 @@ class RecipeStepControllerTest {
 
     @Test
     void createRecipeStep_imgUrlNull() throws Exception {
+        //Arrange
         String requestBody = """
                 {
                     "stepNumber" : 1,

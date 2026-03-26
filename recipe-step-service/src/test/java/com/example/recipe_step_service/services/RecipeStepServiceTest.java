@@ -1,5 +1,6 @@
 package com.example.recipe_step_service.services;
 
+import com.example.recipe_step_service.clients.RecipeClient;
 import com.example.recipe_step_service.dtos.RecipeStepCreateRequestDto;
 import com.example.recipe_step_service.dtos.RecipeStepResponseDto;
 import com.example.recipe_step_service.dtos.RecipeStepUpdateRequestDto;
@@ -30,6 +31,9 @@ class RecipeStepServiceTest {
 
     @Mock
     private RecipeStepRepository recipeStepRepository;
+
+    @Mock
+    private RecipeClient recipeClient;
 
     private RecipeStepCreateRequestDto recipeStepCreateRequestDto;
     private RecipeStep savedRecipeStep;
@@ -70,17 +74,33 @@ class RecipeStepServiceTest {
 
     @Test
     void createRecipeStep() {
-        //Arrest
+        //Arrange
+        Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        //Mock
+        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
         when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
         //Act
         recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
         //Verify
+        verify(recipeClient).recipeExists(any(Integer.class));
         verify(recipeStepRepository).save(any(RecipeStep.class));
     }
 
     @Test
+    void createRecipeStep_RecipeNotExists() {
+        //Arrange
+        when(recipeClient.recipeExists(any(Integer.class))).thenReturn(false);
+        //Act
+        assertThrows(EntityNotFoundException.class, ()-> {
+            recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
+        });
+        //Verify
+        verify(recipeClient).recipeExists(any(Integer.class));
+    }
+
+    @Test
     void getRecipeStepsByRecipeId() {
-        //Arrest
+        //Arrange
         Integer recipeId = 1;
         List<RecipeStep> recipeSteps = List.of(this.savedRecipeStep);
         when(recipeStepRepository.findRecipeStepsByRecipeId(recipeId)).thenReturn(recipeSteps);
@@ -89,7 +109,7 @@ class RecipeStepServiceTest {
         //Assert
         assertNotNull(result);
         assertTrue(result.stream()
-                .anyMatch(rs-> rs.getRecipeStepId() == 1));
+                .anyMatch(rs-> rs.getId() == 1));
         assertTrue(result.stream()
                 .anyMatch(rs-> rs.getRecipeId() == 1));
         assertTrue(result.stream()
@@ -104,7 +124,7 @@ class RecipeStepServiceTest {
 
     @Test
     void deleteRecipeStepById() {
-        //Arrest
+        //Arrange
         Integer recipeStepId = 1;
         //Act
         recipeStepService.deleteRecipeStepById(1);
@@ -114,7 +134,7 @@ class RecipeStepServiceTest {
 
     @Test
     void updateRecipeStepById() {
-        //Arrest
+        //Arrange
         Integer recipeStepId = 1;
         when(recipeStepRepository.findById(recipeStepId)).thenReturn(Optional.of(this.savedRecipeStep));
         when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.updatedRecipeStep);
@@ -127,7 +147,7 @@ class RecipeStepServiceTest {
 
     @Test
     void updateRecipeStepById_notFoundId() {
-        //Arrest
+        //Arrange
         Integer recipeStepId = 1;
         when(recipeStepRepository.findById(recipeStepId)).thenReturn(Optional.empty());
         //Act
@@ -136,5 +156,17 @@ class RecipeStepServiceTest {
         //verify
         verify(recipeStepRepository, times(1)).findById(recipeStepId);
         verify(recipeStepRepository, never()).save(any());
+    }
+
+    @Test
+    void deleteAllByRecipeId() {
+        //Arrange
+        Integer recipeId = 1;
+        //Mock
+        doNothing().when(recipeStepRepository).deleteAllByRecipeId(recipeId);
+        //Act
+        recipeStepService.deleteAllByRecipeId(recipeId);
+        //Verify
+        verify(recipeStepRepository).deleteAllByRecipeId(recipeId);
     }
 }

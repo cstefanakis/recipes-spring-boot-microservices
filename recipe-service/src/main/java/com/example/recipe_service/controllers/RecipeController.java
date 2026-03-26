@@ -60,4 +60,10 @@ public class RecipeController {
     public void deleteRecipeById(@PathVariable("recipeId") Integer recipeId){
         recipeService.deleteRecipeById(recipeId);
     }
+
+    @GetMapping("/exists/{recipeId}")
+    public ResponseEntity<Boolean> recipeExists(@PathVariable("recipeId") Integer recipeId){
+        boolean exist = recipeService.recipeExists(recipeId);
+        return ResponseEntity.ok(exist);
+    }
 }
