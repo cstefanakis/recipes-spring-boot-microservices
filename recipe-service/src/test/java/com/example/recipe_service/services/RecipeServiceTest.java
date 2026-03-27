@@ -1,5 +1,6 @@
 package com.example.recipe_service.services;
 
+import com.example.recipe_service.clients.RecipeStepClient;
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
 import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
@@ -12,6 +13,7 @@ import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.models.RecipeIngredient;
 import com.example.recipe_service.repositories.RecipeRepository;
+import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +53,9 @@ class RecipeServiceTest {
 
     @Mock
     private RecipeStepService recipeStepService;
+
+    @Mock
+    private RecipeStepClient recipeStepClient;
 
     private Recipe recipe;
     private RecipeIngredient recipeIngredient;
@@ -108,7 +113,7 @@ class RecipeServiceTest {
                 .build();
 
         //Mock
-        when(categoryService.existsCategoryById(this.category.getId())).thenReturn(true);
+        when(recipeRepository.titleExists(any(String.class))).thenReturn(false);
         when(recipeRepository.save(any(Recipe.class))).thenReturn(this.recipe);
 
         ArgumentCaptor<Recipe> captor = ArgumentCaptor.forClass(Recipe.class);
@@ -117,7 +122,7 @@ class RecipeServiceTest {
         recipeService.createRecipe(recipeCreateRequestDto);
 
         //Verify
-        verify(categoryService, times(1)).existsCategoryById(this.category.getId());
+        verify(recipeRepository).titleExists(any(String.class));
         verify(recipeRepository).save(captor.capture());
 
         Recipe result = captor.getValue();
@@ -125,6 +130,28 @@ class RecipeServiceTest {
         assertEquals(this.recipe.getTitle(), result.getTitle());
         assertEquals(this.recipe.getDescription(), result.getDescription());
         assertEquals(this.recipe.getImgUrl(), result.getImgUrl());
+    }
+
+    @Test
+    void createRecipe_TitleExist() {
+        // Arrange
+        RecipeCreateRequestDto recipeCreateRequestDto = RecipeCreateRequestDto.builder()
+                .title(this.recipe.getTitle())
+                .description(this.recipe.getDescription())
+                .imgUrl(this.recipe.getImgUrl())
+                .categoriesId(List.of(this.category.getId()))
+                .build();
+
+        //Mock
+        when(recipeRepository.titleExists(any(String.class))).thenReturn(true);
+
+        //Act
+        assertThrows(EntityExistsException.class, () -> {
+            recipeService.createRecipe(recipeCreateRequestDto);
+        });
+
+        //Verify
+        verify(recipeRepository).titleExists(any(String.class));
     }
 
     @Test
@@ -140,6 +167,7 @@ class RecipeServiceTest {
         List<Category> categories = List.of(this.category);
 
         //Mock
+        when(recipeRepository.titleExists(any(String.class))).thenReturn(false);
         when(categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId()))
                 .thenReturn(categories);
         when(recipeRepository.save(this.recipe))
@@ -152,9 +180,31 @@ class RecipeServiceTest {
         assertEquals("icon", this.recipe.getImgUrl());
         assertEquals(1, this.recipe.getCategories().size());
         //Verify
+        verify(recipeRepository, times(1)).titleExists(any(String.class));
         verify(categoryService).getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
         verify(recipeRepository).save(this.recipe);
+    }
 
+    @Test
+    void updateRecipe_TitleExists() {
+        //Arrange
+        RecipeUpdateRequestDto recipeUpdateRequestDto = RecipeUpdateRequestDto.builder()
+                .title("pizza")
+                .description("pizza from Chris")
+                .imgUrl("icon")
+                .categoriesId(List.of(1))
+                .build();
+
+        List<Category> categories = List.of(this.category);
+
+        //Mock
+        when(recipeRepository.titleExists(any(String.class))).thenReturn(true);
+        //Act
+        assertThrows(EntityExistsException.class, ()->{
+            recipeService.updateRecipe(this.recipe, recipeUpdateRequestDto);
+        });
+        //Verify
+        verify(recipeRepository, times(1)).titleExists(any(String.class));
     }
 
     @Test
@@ -179,10 +229,12 @@ class RecipeServiceTest {
         //Arrest
         Integer recipeId = this.recipe.getId();
         //Mock
+        doNothing().when(recipeStepClient).deleteAllByRecipeId(recipeId);
         doNothing().when(recipeRepository).deleteById(recipeId);
         //Act
         recipeService.deleteRecipeById(recipeId);
         //Verify
+        verify(recipeStepClient).deleteAllByRecipeId(recipeId);
         verify(recipeRepository).deleteById(recipeId);
     }
 

@@ -74,4 +74,14 @@ class RecipeRepositoryTest {
         assertTrue(result.stream()
                 .anyMatch(r -> r.getId().equals(this.recipe.getId())));
     }
+
+    @Test
+    void titleExists() {
+        //Arrange
+        String title = "Title";
+        //Act
+        boolean result = recipeRepository.titleExists(title);
+        //Assert
+        assertTrue(result);
+    }
 }

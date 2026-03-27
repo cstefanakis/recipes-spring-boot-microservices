@@ -75,4 +75,10 @@ public class IngredientController {
         Ingredient updatedIngredient = ingredientService.updateIngredient(ingredientId, ingredientUpdateRequestDto);
         return ResponseEntity.ok(updatedIngredient);
     }
+
+    @GetMapping("/exists/{ingredientId}")
+    public ResponseEntity<Integer> ingredientExistById(@PathVariable("ingredientId") Integer ingredientId){
+        Integer ingredientExists = ingredientService.ingredientId(ingredientId);
+        return ResponseEntity.ok(ingredientExists);
+    }
 }

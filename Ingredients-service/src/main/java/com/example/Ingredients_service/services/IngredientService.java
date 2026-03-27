@@ -128,4 +128,12 @@ public class IngredientService {
                 pageable);
         return ingredients.map(this::toIngredientSimpleResponseDto);
     }
+
+    public Integer ingredientId(Integer ingredientId) {
+        Integer id = ingredientRepository.ingredientId(ingredientId);
+        if(id == null){
+            throw new EntityNotFoundException(String.format("Ingredient with id %s not found"));
+        }
+        return id;
+    }
 }

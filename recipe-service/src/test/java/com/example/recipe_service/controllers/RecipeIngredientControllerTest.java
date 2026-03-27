@@ -14,7 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static com.example.recipe_service.enums.Unit.GRAM;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -132,5 +133,18 @@ class RecipeIngredientControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void deleteRecipeIngredientById() throws Exception {
+        //Arrange
+        Integer recipeIngredientId = 1;
+        //Mock
+        doNothing().when(recipeIngredientService).deleteRecipeIngredientById(recipeIngredientId);
+        //Perform delete
+        mockMvc.perform(delete("/api/recipe-ingredients/{recipeIngredientId}", recipeIngredientId))
+                .andExpect(status().isNoContent());
+        //Verify
+        verify(recipeIngredientService, times(1)).deleteRecipeIngredientById(recipeIngredientId);
     }
 }

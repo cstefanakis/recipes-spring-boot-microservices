@@ -18,4 +18,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
             """)
     Page<Recipe> findRecipesByCategoryId(@Param("categoryId") Integer categoryId,
                                         Pageable pageable);
+
+    @Query("""
+            SELECT COUNT(r) > 0 FROM Recipe r
+            WHERE LOWER(r.title) = LOWER(:title)
+            """)
+    boolean titleExists(@Param("title") String title);
 }

@@ -1,5 +1,6 @@
 package com.example.recipe_service.services;
 
+import com.example.recipe_service.clients.RecipeStepClient;
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
@@ -10,6 +11,7 @@ import com.example.recipe_service.dtos.recipeStep.RecipeStepResponseDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.repositories.RecipeRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +28,7 @@ public class RecipeService {
     private final CategoryService categoryService;
     private final RecipeIngredientService recipeIngredientService;
     private final RecipeStepService recipeStepService;
+    private final RecipeStepClient recipeStepClient;
 
     public void createRecipe(RecipeCreateRequestDto recipeRequestDto) {
         Recipe recipe = toEntity(recipeRequestDto);
@@ -35,16 +38,23 @@ public class RecipeService {
     private Recipe toEntity(RecipeCreateRequestDto recipeRequestDto) {
 
         List<Category> categories = recipeRequestDto.getCategoriesId().stream()
-                .filter(categoryService::existsCategoryById)
                 .map(categoryService::getCategoryById)
                 .toList();
 
         return Recipe.builder()
-                .title(recipeRequestDto.getTitle())
+                .title(validatedTitle(recipeRequestDto.getTitle()))
                 .description(recipeRequestDto.getDescription())
                 .categories(categories)
                 .imgUrl(recipeRequestDto.getImgUrl())
                 .build();
+    }
+
+    private String validatedTitle(String title) {
+        boolean titleExists = recipeRepository.titleExists(title);
+        if(titleExists){
+            throw new EntityExistsException(String.format("Recipe With title %s already exists", title));
+        }
+        return title;
     }
 
     public void updateRecipe(Recipe recipe, RecipeUpdateRequestDto recipeUpdateRequestDto){
@@ -54,10 +64,9 @@ public class RecipeService {
         String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
         List<Category> categories = categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
 
-
         recipe.setTitle(titleDto == null
                 ? recipe.getTitle()
-                : titleDto);
+                : validatedTitle(titleDto));
         recipe.setDescription(descriptionDto == null
                 ? recipe.getDescription()
                 : descriptionDto);
@@ -74,14 +83,9 @@ public class RecipeService {
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Recipe with id: %s doesn't found", recipeId)));
     }
 
-    private List<CategoryResponseDto> toCategoriesResponseDto(List<Category> categories){
-        return categories.stream()
-                .map(categoryService::toCategoryResponseDto)
-                .toList();
-    }
-
     public void deleteRecipeById(Integer recipeId) {
         recipeRepository.deleteById(recipeId);
+        recipeStepClient.deleteAllByRecipeId(recipeId);
     }
 
     public Page<RecipeSimpleResponseDto> getAllSimpleRecipes(Pageable pageable) {

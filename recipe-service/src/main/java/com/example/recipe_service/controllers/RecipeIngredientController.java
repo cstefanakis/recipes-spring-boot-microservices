@@ -1,6 +1,8 @@
 package com.example.recipe_service.controllers;
 
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientCreateRequestDto;
+import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientUpdateRequestDto;
+import com.example.recipe_service.models.RecipeIngredient;
 import com.example.recipe_service.services.RecipeIngredientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,5 +20,19 @@ public class RecipeIngredientController {
     @ResponseStatus(HttpStatus.CREATED)
     public void createRecipeIngredient(@Valid @RequestBody RecipeIngredientCreateRequestDto recipeIngredientCreateRequestDto){
         recipeIngredientService.createRecipeIngredient(recipeIngredientCreateRequestDto);
+    }
+
+    @DeleteMapping("/{recipeIngredientId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteRecipeIngredientById(@PathVariable("recipeIngredientId") Integer recipeIngredientId){
+        recipeIngredientService.deleteRecipeIngredientById(recipeIngredientId);
+    }
+
+    @PutMapping("/{recipeIngredientId}")
+    @ResponseStatus(HttpStatus.OK)
+    public void updateRecipeIngredientById(@PathVariable("recipeIngredientId") Integer recipeIngredientId,
+                                           @Valid @RequestBody RecipeIngredientUpdateRequestDto recipeIngredientUpdateRequestDto){
+        RecipeIngredient recipeIngredient = recipeIngredientService.getRecipeIngredientById(recipeIngredientId);
+        recipeIngredientService.updateRecipeIngredient(recipeIngredient, recipeIngredientUpdateRequestDto);
     }
 }

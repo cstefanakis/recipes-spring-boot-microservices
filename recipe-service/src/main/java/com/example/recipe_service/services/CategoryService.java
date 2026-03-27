@@ -5,8 +5,10 @@ import com.example.recipe_service.dtos.category.CategoryResponseDto;
 import com.example.recipe_service.dtos.category.CategoryUpdateRequestDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.repositories.CategoryRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,25 +20,33 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public boolean existsCategoryById(Integer categoryId) {
-        return categoryRepository.existsById(categoryId);
-    }
-
     public Category getCategoryById(Integer categoryId) {
         return categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new EntityNotFoundException(String.format("Category with id: %s not found", categoryId)));
     }
 
     public void createCategory(@Valid CategoryCreateRequestDto categoryRequestDto) {
+
         Category category = toEntity(categoryRequestDto);
         categoryRepository.save(category);
     }
 
     private Category toEntity(@Valid CategoryCreateRequestDto categoryRequestDto) {
+
+        String categoryName = validatedName(categoryRequestDto.getName());
+
         return Category.builder()
-                .name(categoryRequestDto.getName())
+                .name(categoryName)
                 .imgUrl(categoryRequestDto.getImgUrl())
                 .build();
+    }
+
+    private String validatedName(@NotBlank String name) {
+        boolean nameExists = categoryRepository.existsByName(name);
+        if (nameExists){
+            throw new EntityExistsException(String.format("Category with name %s already exists", name));
+        }
+        return name;
     }
 
     public CategoryResponseDto toCategoryResponseDto(Category category){
@@ -65,7 +75,8 @@ public class CategoryService {
     }
 
     private Category toUpdatedEntity(Category category, CategoryUpdateRequestDto categoryUpdateRequestDto) {
-        String nameDto = categoryUpdateRequestDto.getName();
+
+        String nameDto = validatedName(categoryUpdateRequestDto.getName());
         String imgUrlDto = categoryUpdateRequestDto.getImgUrl();
 
         category.setName(nameDto == null

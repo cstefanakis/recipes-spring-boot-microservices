@@ -43,7 +43,7 @@ class IngredientRepositoryTest {
 
     @Test
     void findAllByCategoryId() {
-        //Arrest
+        //Arrange
         Integer categoryId = this.tomato.getId();
         Pageable pageable = PageRequest.of(0, 10);
         //Act
@@ -57,7 +57,7 @@ class IngredientRepositoryTest {
 
     @Test
     void findAllByName() {
-        //Arrest
+        //Arrange
         String name = this.tomato.getName();
         Pageable pageable = PageRequest.of(0, 10);
         //Act
@@ -71,7 +71,7 @@ class IngredientRepositoryTest {
 
     @Test
     void nameExists_true() {
-        //Arrest
+        //Arrange
         String name = "Tomato";
         //Act
         boolean result = ingredientRepository.nameExists(name);
@@ -81,7 +81,7 @@ class IngredientRepositoryTest {
 
     @Test
     void nameExists_trueWithLow() {
-        //Arrest
+        //Arrange
         String name = "Tomato";
         //Act
         boolean result = ingredientRepository.nameExists(name);
@@ -91,11 +91,21 @@ class IngredientRepositoryTest {
 
     @Test
     void nameExists_false() {
-        //Arrest
+        //Arrange
         String name = "beans";
         //Act
         boolean result = ingredientRepository.nameExists(name);
         //Assert
         assertFalse(result);
+    }
+
+    @Test
+    void ingredientId() {
+        //Arrange
+        Integer ingredientId = this.tomato.getId();
+        //Act
+        Integer result = ingredientRepository.ingredientId(ingredientId);
+        //Assert
+        assertEquals(ingredientId, result);
     }
 }
