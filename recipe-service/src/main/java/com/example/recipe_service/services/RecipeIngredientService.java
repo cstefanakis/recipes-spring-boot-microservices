@@ -31,12 +31,12 @@ public class RecipeIngredientService {
 
     private RecipeIngredient toEntity(RecipeIngredientCreateRequestDto ingredientCreateRequestDto) {
 
-        Integer ingredientId = ingredientClient.ingredientExistById(ingredientCreateRequestDto.getIngredientId());
-
         Integer recipeId = ingredientCreateRequestDto.getRecipeId();
 
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(()-> new EntityNotFoundException(String.format("Recipe with id: %s not found", recipeId)));
+                .orElseThrow(()-> new EntityNotFoundException("Recipe with id: " + recipeId + " not found"));
+
+        Integer ingredientId = ingredientClient.ingredientExistById(ingredientCreateRequestDto.getIngredientId());
 
         return RecipeIngredient.builder()
                 .ingredientId(ingredientId)
@@ -94,5 +94,34 @@ public class RecipeIngredientService {
                 : quantityDto);
 
         recipeIngredientRepository.save(recipeIngredient);
+    }
+
+    public List<RecipeIngredient> getAllRecipeIngredients() {
+        return recipeIngredientRepository.findAll();
+    }
+
+    public RecipeIngredientResponseDto toRecipeIngredientResponseDto(RecipeIngredient recipeIngredient) {
+
+        Integer ingredientId;
+
+        try {
+            ingredientId = ingredientClient.ingredientExistById(recipeIngredient.getIngredientId());
+        }catch (Exception e){
+            ingredientId = null;
+        }
+
+        IngredientSimpleResponseDto ingredient = ingredientClient.getIngredientById(ingredientId);
+
+        return RecipeIngredientResponseDto.builder()
+                .id(recipeIngredient.getId())
+                .name(ingredientId == null
+                        ? "ingredient Not Exist"
+                        : ingredient.getName())
+                .imgUrl(ingredientId == null
+                        ? "ingredient Not Exist"
+                        : ingredient.getImgUrl())
+                .unit(recipeIngredient.getUnit())
+                .quantity(recipeIngredient.getQuantity())
+                .build();
     }
 }

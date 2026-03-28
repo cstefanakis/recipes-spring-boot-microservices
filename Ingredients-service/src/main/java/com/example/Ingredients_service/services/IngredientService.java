@@ -37,6 +37,7 @@ public class IngredientService {
                 .id(ingredient.getId())
                 .name(ingredient.getName())
                 .categories(categoryResponseDto)
+                .imgUrl(ingredient.getImgUrl())
                 .build();
     }
 
