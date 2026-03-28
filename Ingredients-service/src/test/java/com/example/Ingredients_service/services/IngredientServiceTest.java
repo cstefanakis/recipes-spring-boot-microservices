@@ -8,6 +8,7 @@ import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.repositories.IngredientRepository;
 import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -263,5 +264,29 @@ class IngredientServiceTest {
         assertTrue(result.stream().anyMatch(i -> i.getId().equals(this.savedTomato.getId())));
         //Verify
         verify(ingredientRepository).findAllByName(name,pageable);
+    }
+
+    @Test
+    void ingredientExists() {
+        //Arrange
+        Integer ingredientId = this.savedTomato.getId();
+        //Mock
+        when(ingredientRepository.ingredientId(ingredientId)).thenReturn(ingredientId);
+        //Act
+        Integer result = ingredientService.ingredientId(ingredientId);
+        //Assert
+        assertEquals(ingredientId, result);
+    }
+
+    @Test
+    void ingredientExists_NotFound() {
+        //Arrange
+        Integer ingredientId = this.savedTomato.getId();
+        //Mock
+        when(ingredientRepository.ingredientId(ingredientId)).thenReturn(null);
+        //Act
+        assertThrows(EntityNotFoundException.class, () -> {
+            ingredientService.ingredientId(ingredientId);
+        });
     }
 }

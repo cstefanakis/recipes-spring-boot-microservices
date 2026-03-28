@@ -40,7 +40,7 @@ public class CategoryController {
     @PutMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     public void updateCategory(@PathVariable("categoryId") Integer categoryId,
-                               @RequestBody CategoryUpdateRequestDto categoryUpdateRequestDto){
+                               @Valid @RequestBody CategoryUpdateRequestDto categoryUpdateRequestDto){
         categoryService.updateCategory(categoryId, categoryUpdateRequestDto);
     }
 

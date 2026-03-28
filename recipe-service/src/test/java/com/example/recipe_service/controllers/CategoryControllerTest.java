@@ -4,6 +4,7 @@ import com.example.recipe_service.dtos.category.CategoryCreateRequestDto;
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
 import com.example.recipe_service.dtos.category.CategoryUpdateRequestDto;
 import com.example.recipe_service.models.Category;
+import com.example.recipe_service.repositories.CategoryRepository;
 import com.example.recipe_service.services.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class CategoryControllerTest {
     @MockitoBean
     private CategoryService categoryService;
 
+    @MockitoBean
+    private CategoryRepository categoryRepository;
+
     private Category category;
     private CategoryResponseDto categoryResponseDto;
 
@@ -56,9 +60,10 @@ class CategoryControllerTest {
         String requestBody = """
                 {
                     "name" : "Sweets",
-                    "imgUrl" : "url"
+                    "imgUrl" : "http://img.png"
                 }
                 """;
+
         //Perform Post
         mockMvc.perform(post("/api/recipe-categories")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +78,24 @@ class CategoryControllerTest {
         //Assert
         assertNotNull(categoryDto);
         assertEquals("Sweets", categoryDto.getName());
-        assertEquals("url", categoryDto.getImgUrl());
+        assertEquals("http://img.png", categoryDto.getImgUrl());
+    }
+
+    @Test
+    void createCategory_BadUrl() throws Exception {
+        //Arrange
+        String requestBody = """
+                {
+                    "name" : "Sweets",
+                    "imgUrl" : "url"
+                }
+                """;
+
+        //Perform Post
+        mockMvc.perform(post("/api/recipe-categories")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -81,7 +103,7 @@ class CategoryControllerTest {
         //Arrange
         String requestBody = """
                 {
-                    "imgUrl" : "url"
+                    "imgUrl" : "http://img.png"
                 }
                 """;
         //Perform Post
@@ -148,7 +170,7 @@ class CategoryControllerTest {
         String requestBody = """
                 {
                     "name" : "Sweets",
-                    "imgUrl" : "url"
+                    "imgUrl" : "http://img.png"
                 }
                 """;
         Integer categoryId = this.category.getId();
@@ -170,7 +192,7 @@ class CategoryControllerTest {
         //Assert
         assertNotNull(categoryDto);
         assertEquals("Sweets", categoryDto.getName());
-        assertEquals("url", categoryDto.getImgUrl());
+        assertEquals("http://img.png", categoryDto.getImgUrl());
     }
 
     @Test

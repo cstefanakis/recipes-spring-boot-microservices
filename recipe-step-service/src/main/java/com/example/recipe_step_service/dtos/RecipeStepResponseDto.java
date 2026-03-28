@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class RecipeStepResponseDto {
-    private Integer recipeStepId;
+    private Integer id;
     private Integer stepNumber;
     private String description;
     private String imgUrl;

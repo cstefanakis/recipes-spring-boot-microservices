@@ -1,6 +1,7 @@
 package com.example.recipe_service.dtos.recipe;
 
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 
@@ -15,6 +16,7 @@ public class RecipeUpdateRequestDto {
 
     private String description;
 
+    @URL(message = "Invalid image URL")
     private String imgUrl;
 
     private List<Integer> categoriesId;

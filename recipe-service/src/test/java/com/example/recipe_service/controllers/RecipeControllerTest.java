@@ -24,8 +24,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RecipeController.class)
 @ActiveProfiles("test")
@@ -283,5 +282,19 @@ class RecipeControllerTest {
                 .andExpect(status().isNoContent());
         // Verify
         verify(recipeService).deleteRecipeById(recipeId);
+    }
+
+    @Test
+    void recipeExists() throws Exception {
+        //Arrange
+        Integer recipeId = this.recipe.getId();
+        //Mock
+        when(recipeService.recipeExists(recipeId)).thenReturn(true);
+        //Perform
+        mockMvc.perform(get("/api/recipes/exists/{recipeId}", recipeId))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+        //Verify
+        verify(recipeService).recipeExists(recipeId);
     }
 }

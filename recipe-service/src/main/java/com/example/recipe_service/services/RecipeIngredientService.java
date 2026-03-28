@@ -4,6 +4,8 @@ import com.example.recipe_service.clients.IngredientClient;
 import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientCreateRequestDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
+import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientUpdateRequestDto;
+import com.example.recipe_service.enums.Unit;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.models.RecipeIngredient;
 import com.example.recipe_service.repositories.RecipeIngredientRepository;
@@ -32,10 +34,12 @@ public class RecipeIngredientService {
         Integer recipeId = ingredientCreateRequestDto.getRecipeId();
 
         Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(()-> new EntityNotFoundException(String.format("Recipe with id: %s not found", recipeId)));
+                .orElseThrow(()-> new EntityNotFoundException("Recipe with id: " + recipeId + " not found"));
+
+        Integer ingredientId = ingredientClient.ingredientExistById(ingredientCreateRequestDto.getIngredientId());
 
         return RecipeIngredient.builder()
-                .ingredientId(ingredientCreateRequestDto.getIngredientId())
+                .ingredientId(ingredientId)
                 .recipe(recipe)
                 .unit(ingredientCreateRequestDto.getUnit())
                 .quantity(ingredientCreateRequestDto.getQuantity())
@@ -57,6 +61,65 @@ public class RecipeIngredientService {
                 .id(recipeIngredient.getId())
                 .name(ingredientSimpleResponseDto.getName())
                 .imgUrl(ingredientSimpleResponseDto.getImgUrl())
+                .unit(recipeIngredient.getUnit())
+                .quantity(recipeIngredient.getQuantity())
+                .build();
+    }
+
+    public void deleteRecipeIngredientById(Integer recipeIngredientId) {
+        recipeIngredientRepository.deleteById(recipeIngredientId);
+    }
+
+    public RecipeIngredient getRecipeIngredientById(Integer recipeIngredientId) {
+        return recipeIngredientRepository.findById(recipeIngredientId)
+                .orElseThrow(()-> new EntityNotFoundException(String.format("Recipe ingredient with id %s not exists", recipeIngredientId)));
+    }
+
+    public void updateRecipeIngredient(RecipeIngredient recipeIngredient, RecipeIngredientUpdateRequestDto recipeIngredientUpdateRequestDto) {
+
+        Integer ingredientIdDto = recipeIngredientUpdateRequestDto.getIngredientId();
+        Unit unitDto = recipeIngredientUpdateRequestDto.getUnit();
+        Double quantityDto = recipeIngredientUpdateRequestDto.getQuantity();
+
+        recipeIngredient.setIngredientId(ingredientIdDto == null
+                ? recipeIngredient.getIngredientId()
+                : ingredientClient.ingredientExistById(ingredientIdDto));
+
+        recipeIngredient.setUnit(unitDto == null
+                ? recipeIngredient.getUnit()
+                : unitDto);
+
+        recipeIngredient.setQuantity(quantityDto == null
+                ? recipeIngredient.getQuantity()
+                : quantityDto);
+
+        recipeIngredientRepository.save(recipeIngredient);
+    }
+
+    public List<RecipeIngredient> getAllRecipeIngredients() {
+        return recipeIngredientRepository.findAll();
+    }
+
+    public RecipeIngredientResponseDto toRecipeIngredientResponseDto(RecipeIngredient recipeIngredient) {
+
+        Integer ingredientId;
+
+        try {
+            ingredientId = ingredientClient.ingredientExistById(recipeIngredient.getIngredientId());
+        }catch (Exception e){
+            ingredientId = null;
+        }
+
+        IngredientSimpleResponseDto ingredient = ingredientClient.getIngredientById(ingredientId);
+
+        return RecipeIngredientResponseDto.builder()
+                .id(recipeIngredient.getId())
+                .name(ingredientId == null
+                        ? "ingredient Not Exist"
+                        : ingredient.getName())
+                .imgUrl(ingredientId == null
+                        ? "ingredient Not Exist"
+                        : ingredient.getImgUrl())
                 .unit(recipeIngredient.getUnit())
                 .quantity(recipeIngredient.getQuantity())
                 .build();

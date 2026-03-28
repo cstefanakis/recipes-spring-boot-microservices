@@ -37,6 +37,7 @@ public class IngredientService {
                 .id(ingredient.getId())
                 .name(ingredient.getName())
                 .categories(categoryResponseDto)
+                .imgUrl(ingredient.getImgUrl())
                 .build();
     }
 
@@ -127,5 +128,13 @@ public class IngredientService {
         Page<Ingredient> ingredients = ingredientRepository.findAllByName(ingredientName,
                 pageable);
         return ingredients.map(this::toIngredientSimpleResponseDto);
+    }
+
+    public Integer ingredientId(Integer ingredientId) {
+        Integer id = ingredientRepository.ingredientId(ingredientId);
+        if(id == null){
+            throw new EntityNotFoundException(String.format("Ingredient with id %s not found"));
+        }
+        return id;
     }
 }

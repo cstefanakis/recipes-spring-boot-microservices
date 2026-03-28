@@ -4,11 +4,13 @@ import com.example.recipe_service.clients.IngredientClient;
 import com.example.recipe_service.dtos.ingredient.IngredientSimpleResponseDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientCreateRequestDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
+import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientUpdateRequestDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.models.RecipeIngredient;
 import com.example.recipe_service.repositories.RecipeIngredientRepository;
 import com.example.recipe_service.repositories.RecipeRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,8 +25,7 @@ import java.util.Optional;
 import static com.example.recipe_service.enums.Unit.GRAM;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
@@ -44,12 +45,12 @@ class RecipeIngredientServiceTest {
 
     private Recipe recipe;
     private RecipeIngredient recipeIngredient;
-    private Category category;
     private IngredientSimpleResponseDto ingredient;
+    private RecipeIngredientUpdateRequestDto recipeIngredientUpdateRequestDto;
 
     @BeforeEach
     void setup(){
-        this.category = Category.builder()
+        Category category = Category.builder()
                 .id(1)
                 .name("Category")
                 .imgUrl("url")
@@ -76,11 +77,19 @@ class RecipeIngredientServiceTest {
                 .name("ingredient")
                 .imgUrl("url")
                 .build();
+
+        this.recipeIngredientUpdateRequestDto = RecipeIngredientUpdateRequestDto.builder()
+                .ingredientId(1)
+                .quantity(10.0)
+                .unit(GRAM)
+                .build();
     }
 
     @Test
     void createRecipeIngredient() {
+        //Arrange
         Integer recipeId = this.recipe.getId();
+        Integer ingredientId = this.ingredient.getId();
 
         RecipeIngredientCreateRequestDto recipeIngredientCreateRequestDto = RecipeIngredientCreateRequestDto.builder()
                 .ingredientId(1)
@@ -89,18 +98,20 @@ class RecipeIngredientServiceTest {
                 .unit(this.recipeIngredient.getUnit())
                 .build();
         //Mock
+        when(ingredientClient.ingredientExistById(ingredientId)).thenReturn(ingredientId);
         when(recipeRepository.findById(recipeId)).thenReturn(Optional.of(this.recipe));
         when(recipeIngredientRepository.save(any(RecipeIngredient.class))).thenReturn(this.recipeIngredient);
         //Act
         recipeIngredientService.createRecipeIngredient(recipeIngredientCreateRequestDto);
         //Verify
+        verify(ingredientClient).ingredientExistById(ingredientId);
         verify(recipeRepository).findById(recipeId);
         verify(recipeIngredientRepository).save(any(RecipeIngredient.class));
     }
 
     @Test
     void getRecipeIngredientsByRecipeId() {
-        //Arrest
+        //Arrange
         List<RecipeIngredient> recipeIngredients = List.of(this.recipeIngredient);
         Integer recipeId = this.recipe.getId();
         //Mock
@@ -122,5 +133,64 @@ class RecipeIngredientServiceTest {
                 .anyMatch(ri -> ri.getUnit().equals(this.recipeIngredient.getUnit())));
         //Verify
         verify(recipeIngredientRepository).findRecipeIngredientsByRecipeId(recipeId);
+    }
+
+    @Test
+    void deleteRecipeIngredientById() {
+        //Arrange
+        Integer recipeIngredientId = this.recipeIngredient.getId();
+        //Mock
+        doNothing().when(recipeIngredientRepository).deleteById(recipeIngredientId);
+        //Act
+        recipeIngredientService.deleteRecipeIngredientById(recipeIngredientId);
+        //Verify
+        verify(recipeIngredientRepository).deleteById(recipeIngredientId);
+    }
+
+    @Test
+    void getRecipeIngredientById() {
+        //Arrange
+        Integer recipeIngredientId = this.recipeIngredient.getId();
+        //Mock
+        when(recipeIngredientRepository.findById(recipeIngredientId)).thenReturn(Optional.of(this.recipeIngredient));
+        //Act
+        RecipeIngredient result = recipeIngredientService.getRecipeIngredientById(recipeIngredientId);
+        //Assert
+        assertNotNull(result);
+        assertEquals(this.recipeIngredient.getIngredientId(), result.getIngredientId());
+        assertEquals(this.recipeIngredient.getId(), result.getId());
+        assertEquals(this.recipeIngredient.getUnit(), result.getUnit());
+        assertEquals(this.recipeIngredient.getRecipe(), result.getRecipe());
+        assertEquals(this.recipeIngredient.getQuantity(), result.getQuantity());
+        //Verify
+        verify(recipeIngredientRepository).findById(recipeIngredientId);
+    }
+
+    @Test
+    void updateRecipeIngredient() {
+        //Mock
+        when(ingredientClient.ingredientExistById(any(Integer.class))).thenReturn(this.ingredient.getId());
+        when(recipeIngredientRepository.save(any(RecipeIngredient.class))).thenReturn(this.recipeIngredient);
+        //Act
+        recipeIngredientService.updateRecipeIngredient(this.recipeIngredient, recipeIngredientUpdateRequestDto);
+        //Assert
+        assertEquals(this.recipeIngredient.getQuantity(), recipeIngredientUpdateRequestDto.getQuantity());
+        assertEquals(this.recipeIngredient.getIngredientId(), recipeIngredientUpdateRequestDto.getIngredientId());
+        assertEquals(this.recipeIngredient.getUnit(), recipeIngredientUpdateRequestDto.getUnit());
+        //Verify
+        verify(ingredientClient).ingredientExistById(any(Integer.class));
+        verify(recipeIngredientRepository).save(any(RecipeIngredient.class));
+    }
+
+    @Test
+    void updateRecipeIngredient_IngredientNotExists() {
+        //Mock
+        when(ingredientClient.ingredientExistById(any(Integer.class))).thenThrow(EntityNotFoundException.class);
+        //Act
+        assertThrows(EntityNotFoundException.class, () ->{
+            recipeIngredientService.updateRecipeIngredient(this.recipeIngredient, recipeIngredientUpdateRequestDto);
+        });
+        //Verify
+        verify(ingredientClient).ingredientExistById(any(Integer.class));
     }
 }

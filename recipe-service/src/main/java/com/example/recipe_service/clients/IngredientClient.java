@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "ingredients-service")
 public interface IngredientClient {
 
-    @GetMapping("/api/ingredients/simple/{ingredientId}")
+    @GetMapping("/api/ingredients/{ingredientId}")
     IngredientSimpleResponseDto getIngredientById(@PathVariable("ingredientId") Integer ingredientId);
+
+    @GetMapping("/api/ingredients/exists/{ingredientId}")
+    Integer ingredientExistById(@PathVariable("ingredientId") Integer ingredientId);
 }

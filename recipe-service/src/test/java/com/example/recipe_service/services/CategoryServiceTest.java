@@ -5,6 +5,7 @@ import com.example.recipe_service.dtos.category.CategoryResponseDto;
 import com.example.recipe_service.dtos.category.CategoryUpdateRequestDto;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.repositories.CategoryRepository;
+import jakarta.persistence.EntityExistsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,21 +41,6 @@ class CategoryServiceTest {
     }
 
     @Test
-    void existsCategoryById() {
-        //Arrest
-        Integer categoryId = this.category.getId();
-        //Mock
-        when(categoryRepository.existsById(categoryId))
-                .thenReturn(true);
-        //Act
-        boolean result = categoryService.existsCategoryById(categoryId);
-        //Assert
-        assertTrue(result);
-        //Verify
-        verify(categoryRepository, times(1)).existsById(categoryId);
-    }
-
-    @Test
     void getCategoryById() {
         //Arrest
         Integer categoryId = this.category.getId();
@@ -80,12 +66,32 @@ class CategoryServiceTest {
                 .imgUrl(this.category.getImgUrl())
                 .build();
         //Mock
+        when(categoryRepository.existsByName(any(String.class))).thenReturn(false);
         when(categoryRepository.save(any(Category.class))).thenReturn(this.category);
         //Act
         categoryService.createCategory(categoryCreateRequestDto);
         //Verify
+        verify(categoryRepository, times(1)).existsByName(any(String.class));
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
+
+    @Test
+    void createCategory_NameExists() {
+        //Arrest
+        CategoryCreateRequestDto categoryCreateRequestDto = CategoryCreateRequestDto.builder()
+                .name(this.category.getName())
+                .imgUrl(this.category.getImgUrl())
+                .build();
+        //Mock
+        when(categoryRepository.existsByName(any(String.class))).thenReturn(true);
+        //Act
+        assertThrows(EntityExistsException.class, ()-> {
+            categoryService.createCategory(categoryCreateRequestDto);
+        });
+        //Verify
+        verify(categoryRepository).existsByName(any(String.class));
+    }
+
 
     @Test
     void toCategoryResponseDto() {
@@ -141,21 +147,44 @@ class CategoryServiceTest {
         Integer categoryId = this.category.getId();
         Category updatedCategory = Category.builder()
                 .name("new name")
-                .imgUrl("new url")
+                .imgUrl("http://newImg.png")
                 .build();
 
         CategoryUpdateRequestDto categoryUpdateRequestDto = CategoryUpdateRequestDto.builder()
                 .name("new name")
-                .imgUrl("new url")
+                .imgUrl("http://newImg.png")
                 .build();
         //Mock
+        when(categoryRepository.existsByName(any(String.class))).thenReturn(false);
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(this.category));
         when(categoryRepository.save(any(Category.class))).thenReturn(updatedCategory);
         //Act
         categoryService.updateCategory(categoryId, categoryUpdateRequestDto);
         //Verify
+        verify(categoryRepository, times(1)).existsByName(any(String.class));
         verify(categoryRepository, times(1)).findById(categoryId);
         verify(categoryRepository, times(1)).save(any(Category.class));
+    }
+
+    @Test
+    void updateCategory_NameExists() {
+        //Arrest
+        Integer categoryId = this.category.getId();
+
+        CategoryUpdateRequestDto categoryUpdateRequestDto = CategoryUpdateRequestDto.builder()
+                .name("new name")
+                .imgUrl("http://newImg.png")
+                .build();
+        //Mock
+        when(categoryRepository.existsByName(any(String.class))).thenReturn(true);
+        when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(this.category));
+        //Act
+        assertThrows(EntityExistsException.class, ()->{
+            categoryService.updateCategory(categoryId, categoryUpdateRequestDto);
+        });
+        //Verify
+        verify(categoryRepository, times(1)).existsByName(any(String.class));
+        verify(categoryRepository, times(1)).findById(categoryId);
     }
 
     @Test

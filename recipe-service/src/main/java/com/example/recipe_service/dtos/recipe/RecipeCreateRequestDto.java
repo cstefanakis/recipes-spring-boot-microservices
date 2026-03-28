@@ -3,6 +3,7 @@ package com.example.recipe_service.dtos.recipe;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.validator.constraints.URL;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class RecipeCreateRequestDto {
     @NotBlank
     private String description;
 
+    @URL(message = "Invalid image URL")
     private String imgUrl;
 
     @NotNull
