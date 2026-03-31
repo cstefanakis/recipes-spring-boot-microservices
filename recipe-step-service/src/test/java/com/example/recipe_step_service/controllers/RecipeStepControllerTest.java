@@ -1,7 +1,6 @@
 package com.example.recipe_step_service.controllers;
 
 import com.example.recipe_step_service.dtos.RecipeStepCreateRequestDto;
-import com.example.recipe_step_service.models.RecipeStep;
 import com.example.recipe_step_service.services.RecipeStepService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -34,7 +33,7 @@ class RecipeStepControllerTest {
                 {
                     "stepNumber" : 1,
                     "description" : "description",
-                    "imgUrl" : "url",
+                    "imgUrl" : "http://test.png",
                     "recipeId" : 1
                 }
                 """;
@@ -56,7 +55,7 @@ class RecipeStepControllerTest {
         //Assert
         assertEquals(1, dto.getStepNumber());
         assertEquals("description", dto.getDescription());
-        assertEquals("url", dto.getImgUrl());
+        assertEquals("http://test.png", dto.getImgUrl());
         assertEquals(1, dto.getRecipeId());
     }
 
@@ -148,21 +147,16 @@ class RecipeStepControllerTest {
 
     @Test
     void updateRecipeStepById() throws Exception {
-        //Mock Service
+        //Arrange
         String requestBody = """
                 {
                    "stepNumber" : 2,
                    "description" : "new description",
-                   "imgUrl" : "new url"
+                   "imgUrl" : "http://test.png"
                 }
                 """;
-        RecipeStep response = RecipeStep.builder()
-                .id(1)
-                .stepNumber(2)
-                .description("new description")
-                .imgUrl("new url")
-                .recipeId(1)
-                .build();
+        //Mock
+
         //Perform Put
         mockMvc.perform(put("/api/recipe-steps/1")
                 .contentType(MediaType.APPLICATION_JSON)

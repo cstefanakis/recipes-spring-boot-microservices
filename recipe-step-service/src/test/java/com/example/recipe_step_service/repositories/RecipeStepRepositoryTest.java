@@ -77,4 +77,89 @@ class RecipeStepRepositoryTest {
         assertFalse(recipeStep01.isPresent());
         assertFalse(recipeStep02.isPresent());
     }
+
+    @Test
+    void findBiggerRecipeNumberByRecipeId_NotRecipeSteps() {
+        //Arrange
+        Integer recipeId = 5;
+        //Act
+        Integer result = recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId);
+        //Assert
+        assertNull(result);
+    }
+
+    @Test
+    void findBiggerRecipeNumberByRecipeId() {
+        //Arrange
+        Integer recipeId = 1;
+        //Act
+        Integer result = recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId);
+        //Assert
+        assertNotNull(result);
+        assertEquals(2, result);
+    }
+
+    @Test
+    void findRecipeStepIdByRecipeIdAndStepNumber() {
+        //Arrange
+        Integer recipeId = this.recipeStep01.getRecipeId();
+        Integer stepNumber = this.recipeStep01.getStepNumber();
+        Integer recipeStepId = this.recipeStep01.getId();
+        //Act
+        Integer result = recipeStepRepository.findRecipeStepIdByRecipeIdAndStepNumber(recipeId, stepNumber);
+        //Assert
+        assertNotNull(result);
+        assertEquals(recipeStepId, result);
+    }
+
+    @Test
+    void updateRecipeStepStepNumber() {
+        //Arrange
+        Integer stepNumber = 5;
+        Integer recipeStepId = this.recipeStep01.getId();
+        //Act
+        recipeStepRepository.updateRecipeStepStepNumber(recipeStepId, stepNumber);
+        RecipeStep result = recipeStepRepository.findById(recipeStepId).orElse(null);
+        //Assert
+        assertNotNull(result);
+        assertEquals(5, result.getStepNumber());
+    }
+
+    @Test
+    void shiftStepsBackward() {
+        //Arrange
+        Integer recipeId = 1;
+        Integer stepNumber = 2;
+        //Act
+        recipeStepRepository.shiftStepsBackward(stepNumber, recipeId);
+        Optional<RecipeStep> recipeStep = recipeStepRepository.findById(this.recipeStep02.getId());
+        //Assert
+        assertTrue(recipeStep.isPresent());
+        assertEquals(1, recipeStep.get().getStepNumber());
+
+    }
+
+    @Test
+    void findRecipeStepByRecipeStepId() {
+        //Arrange
+        Integer recipeStepId = this.recipeStep01.getId();
+        Integer stepNumber = this.recipeStep01.getStepNumber();
+        //Act
+        Integer result = recipeStepRepository.findRecipeStepByRecipeStepId(recipeStepId);
+        //Assert
+        assertNotNull(result);
+        assertEquals(stepNumber, result);
+    }
+
+    @Test
+    void findRecipeIdByRecipeStepId() {
+        //Arrange
+        Integer recipeStepId = this.recipeStep01.getId();
+        Integer recipeId = this.recipeStep01.getRecipeId();
+        //Act
+        Integer result = recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId);
+        //Assert
+        assertNotNull(result);
+        assertEquals(recipeId, result);
+    }
 }

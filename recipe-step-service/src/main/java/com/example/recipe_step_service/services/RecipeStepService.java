@@ -25,16 +25,28 @@ public class RecipeStepService {
     public void createRecipeStep(@Valid RecipeStepCreateRequestDto recipeStepCreateRequestDto) {
 
         Integer recipeId = recipeStepCreateRequestDto.getRecipeId();
+        Integer stepNumber = recipeStepCreateRequestDto.getStepNumber();
         boolean recipeExist = recipeClient.recipeExists(recipeId);
 
         if(recipeExist) {
+            recipeStepCreateRequestDto.setStepNumber(validatedStepNumber(stepNumber, recipeId));
             RecipeStep recipeStep = toEntity(recipeStepCreateRequestDto);
             recipeStepRepository.shiftStepsForward(recipeStep.getStepNumber(), recipeStep.getRecipeId());
-
             recipeStepRepository.save(recipeStep);
         }else{
             throw new EntityNotFoundException(String.format("Recipe with id %s not exists", recipeId));
         }
+    }
+
+    private Integer validatedStepNumber(Integer stepNumber, Integer recipeId) {
+        Integer biggerRecipeStep = recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId);
+        if(biggerRecipeStep == null){
+            return 1;
+        }
+        if(stepNumber > biggerRecipeStep + 2){
+            return biggerRecipeStep + 1;
+        }
+        return stepNumber;
     }
 
     private RecipeStep toEntity(@Valid RecipeStepCreateRequestDto recipeStepCreateRequestDto) {
@@ -64,16 +76,40 @@ public class RecipeStepService {
                 .build();
     }
 
-    public void deleteRecipeStepById(Integer id) {
-        recipeStepRepository.deleteById(id);
+    public void deleteRecipeStepById(Integer recipeStepId) {
+        Integer stepNumber = recipeStepRepository.findRecipeStepByRecipeStepId(recipeStepId);
+        Integer recipeId = recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId);
+        recipeStepRepository.shiftStepsBackward(stepNumber, recipeId);
+        recipeStepRepository.deleteById(recipeStepId);
     }
 
     public void updateRecipeStepById(Integer id, RecipeStepUpdateRequestDto recipeStepUpdateRequestDto) {
 
         RecipeStep recipeStep = getRecipeStepById(id);
+        Integer recipeId = recipeStep.getRecipeId();
+        Integer stepNumber = recipeStep.getStepNumber();
+        Integer updatedStepNumber = recipeStepUpdateRequestDto.getStepNumber();
+
+        validateUpdateStepNumber(recipeId, updatedStepNumber);
+
+        exchangeStepNumber(recipeId, stepNumber, updatedStepNumber);
 
         recipeStepRepository.save(toUpdateEntity(recipeStep, recipeStepUpdateRequestDto));
 
+    }
+
+    private void validateUpdateStepNumber(Integer recipeId, Integer updatedStepNumber) {
+        Integer biggerStepNumber = recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId);
+        if(updatedStepNumber > biggerStepNumber){
+            throw new RuntimeException(String.format("Step number can't be bigger as %s", biggerStepNumber));
+        }
+    }
+
+    private void exchangeStepNumber(Integer recipeId, Integer stepNumber, Integer updatedStepNumber) {
+        if(!stepNumber.equals(updatedStepNumber)) {
+            Integer recipeStepId = recipeStepRepository.findRecipeStepIdByRecipeIdAndStepNumber(recipeId, updatedStepNumber);
+            recipeStepRepository.updateRecipeStepStepNumber(recipeStepId, stepNumber);
+        }
     }
 
     private RecipeStep toUpdateEntity(RecipeStep recipeStep, RecipeStepUpdateRequestDto recipeStepUpdateRequestDto) {

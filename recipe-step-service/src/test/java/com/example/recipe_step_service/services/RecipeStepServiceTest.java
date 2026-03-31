@@ -87,13 +87,89 @@ class RecipeStepServiceTest {
     }
 
     @Test
+    void createRecipeStep_withBiggerStepNumberNull() {
+        //Arrange
+        Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        //Mock
+        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId)).thenReturn(null);
+        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        this.recipeStepCreateRequestDto.setStepNumber(5);
+        //Act
+        recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
+
+        //Verify
+        verify(recipeStepRepository).findBiggerRecipeNumberByRecipeId(recipeId);
+        verify(recipeClient).recipeExists(any(Integer.class));
+        verify(recipeStepRepository).save(argThat(recipeStep ->
+                recipeStep.getStepNumber() == 1));
+    }
+
+    @Test
+    void createRecipeStep_withStepTooBig() {
+        //Arrange
+        Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        //Mock
+        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId)).thenReturn(1);
+        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        this.recipeStepCreateRequestDto.setStepNumber(5);
+        //Act
+        recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
+
+        //Verify
+        verify(recipeStepRepository).findBiggerRecipeNumberByRecipeId(recipeId);
+        verify(recipeClient).recipeExists(any(Integer.class));
+        verify(recipeStepRepository).save(argThat(recipeStep ->
+                recipeStep.getStepNumber() == 2));
+    }
+
+    @Test
+    void createRecipeStep_withNormalStepNumber() {
+        //Arrange
+        Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        //Mock
+        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId)).thenReturn(1);
+        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        this.recipeStepCreateRequestDto.setStepNumber(2);
+        //Act
+        recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
+
+        //Verify
+        verify(recipeStepRepository).findBiggerRecipeNumberByRecipeId(recipeId);
+        verify(recipeClient).recipeExists(any(Integer.class));
+        verify(recipeStepRepository).save(argThat(recipeStep ->
+                recipeStep.getStepNumber() == 2));
+    }
+
+    @Test
+    void createRecipeStep_withSameStepNumber() {
+        //Arrange
+        Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        //Mock
+        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId)).thenReturn(1);
+        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        this.recipeStepCreateRequestDto.setStepNumber(1);
+        //Act
+        recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
+
+        //Verify
+        verify(recipeStepRepository).findBiggerRecipeNumberByRecipeId(recipeId);
+        verify(recipeClient).recipeExists(any(Integer.class));
+        verify(recipeStepRepository).save(argThat(recipeStep ->
+                recipeStep.getStepNumber() == 1));
+    }
+
+    @Test
     void createRecipeStep_RecipeNotExists() {
         //Arrange
         when(recipeClient.recipeExists(any(Integer.class))).thenReturn(false);
         //Act
-        assertThrows(EntityNotFoundException.class, ()-> {
-            recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
-        });
+        assertThrows(EntityNotFoundException.class, ()->
+            recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto)
+        );
         //Verify
         verify(recipeClient).recipeExists(any(Integer.class));
     }
@@ -137,6 +213,9 @@ class RecipeStepServiceTest {
         //Arrange
         Integer recipeStepId = 1;
         when(recipeStepRepository.findById(recipeStepId)).thenReturn(Optional.of(this.savedRecipeStep));
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(any(Integer.class))).thenReturn(2);
+        when(recipeStepRepository.findRecipeStepIdByRecipeIdAndStepNumber(any(Integer.class), any(Integer.class))).thenReturn(2);
+        doNothing().when(recipeStepRepository).updateRecipeStepStepNumber(any(Integer.class), any(Integer.class));
         when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.updatedRecipeStep);
         //Act
         recipeStepService.updateRecipeStepById(recipeStepId, this.recipeStepUpdateRequestDto);
