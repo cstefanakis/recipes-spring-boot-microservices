@@ -124,4 +124,8 @@ public class RecipeIngredientService {
                 .quantity(recipeIngredient.getQuantity())
                 .build();
     }
+
+    public boolean recipeIngredientWithIngredientIdExists(Integer ingredientId) {
+        return recipeIngredientRepository.existsWithIngredientId(ingredientId);
+    }
 }

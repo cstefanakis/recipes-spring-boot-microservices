@@ -38,11 +38,10 @@ class RecipeControllerTest {
 
     private RecipeSimpleResponseDto recipeSimpleResponseDto;
     private Recipe recipe;
-    private Category category;
 
     @BeforeEach
     void setup(){
-        this.category = Category.builder()
+        Category category = Category.builder()
                 .name("category")
                 .imgUrl("url")
                 .build();
@@ -68,7 +67,7 @@ class RecipeControllerTest {
                 {
                     "title" : "pizza",
                     "description" : "chris pizza",
-                    "imgUrl" : "img url",
+                    "imgUrl" : "http://img.png",
                     "categoriesId" : [1]
                 }
                 """;
@@ -89,7 +88,7 @@ class RecipeControllerTest {
         assertNotNull(createDto);
         assertEquals("pizza", createDto.getTitle());
         assertEquals("chris pizza", createDto.getDescription());
-        assertEquals("img url", createDto.getImgUrl());
+        assertEquals("http://img.png", createDto.getImgUrl());
         assertTrue(createDto.getCategoriesId().contains(1));
     }
 
@@ -164,8 +163,6 @@ class RecipeControllerTest {
     @Test
     void getRecipeById() throws Exception {
         //Arrange
-        Integer recipeId = 1;
-
         Page<RecipeSimpleResponseDto> recipes = new PageImpl<>(List.of(this.recipeSimpleResponseDto));
 
         //Mock
@@ -183,7 +180,7 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.content[0].imgUrl")
                         .value(this.recipeSimpleResponseDto.getImgUrl()))
                 .andExpect(jsonPath("$.content[0].id")
-                        .value(this.recipeSimpleResponseDto.getId()));;
+                        .value(this.recipeSimpleResponseDto.getId()));
         //Verify
         verify(recipeService).getAllSimpleRecipes(any(Pageable.class));
     }
@@ -206,7 +203,7 @@ class RecipeControllerTest {
                 .andExpect(jsonPath("$.content[0].imgUrl")
                         .value(this.recipeSimpleResponseDto.getImgUrl()))
                 .andExpect(jsonPath("$.content[0].id")
-                        .value(this.recipeSimpleResponseDto.getId()));;
+                        .value(this.recipeSimpleResponseDto.getId()));
         //Verify
         verify(recipeService).getAllSimpleRecipes(any(Pageable.class));
     }
