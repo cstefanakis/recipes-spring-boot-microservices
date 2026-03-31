@@ -187,10 +187,22 @@ class RecipeIngredientServiceTest {
         //Mock
         when(ingredientClient.ingredientExistById(any(Integer.class))).thenThrow(EntityNotFoundException.class);
         //Act
-        assertThrows(EntityNotFoundException.class, () ->{
-            recipeIngredientService.updateRecipeIngredient(this.recipeIngredient, recipeIngredientUpdateRequestDto);
-        });
+        assertThrows(EntityNotFoundException.class, () ->
+            recipeIngredientService.updateRecipeIngredient(this.recipeIngredient, recipeIngredientUpdateRequestDto)
+        );
         //Verify
         verify(ingredientClient).ingredientExistById(any(Integer.class));
+    }
+
+    @Test
+    void recipeIngredientWithIngredientIdExists() {
+        //Arrange
+        Integer ingredientId = this.recipeIngredient.getIngredientId();
+        //Mock
+        when(recipeIngredientRepository.existsWithIngredientId(ingredientId)).thenReturn(true);
+        //Act
+        boolean result = recipeIngredientService.recipeIngredientWithIngredientIdExists(ingredientId);
+        //Assert
+        assertTrue(result);
     }
 }

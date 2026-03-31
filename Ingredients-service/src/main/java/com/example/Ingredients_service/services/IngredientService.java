@@ -1,5 +1,6 @@
 package com.example.Ingredients_service.services;
 
+import com.example.Ingredients_service.clients.RecipeClient;
 import com.example.Ingredients_service.dtos.category.CategoryResponseDto;
 import com.example.Ingredients_service.dtos.ingredient.*;
 import com.example.Ingredients_service.models.Category;
@@ -20,6 +21,7 @@ public class IngredientService {
 
     private final IngredientRepository ingredientRepository;
     private final CategoryService categoryService;
+    private final RecipeClient recipeClient;
 
     public void createIngredient(IngredientCreateRequestDto ingredientCreateRequestDto){
         Ingredient ingredient = toEntity(ingredientCreateRequestDto);
@@ -42,7 +44,10 @@ public class IngredientService {
     }
 
     public void deleteIngredient(Integer ingredientId){
-        ingredientRepository.deleteById(ingredientId);
+        boolean isUsed = recipeClient.ingredientIdExists(ingredientId);
+        if(!isUsed) {
+            ingredientRepository.deleteById(ingredientId);
+        }
     }
 
     public Ingredient updateIngredient(Integer ingredientId, IngredientUpdateRequestDto ingredientUpdateRequestDto){
@@ -133,7 +138,7 @@ public class IngredientService {
     public Integer ingredientId(Integer ingredientId) {
         Integer id = ingredientRepository.ingredientId(ingredientId);
         if(id == null){
-            throw new EntityNotFoundException(String.format("Ingredient with id %s not found"));
+            throw new EntityNotFoundException(String.format("Ingredient with id %s not found", ingredientId));
         }
         return id;
     }

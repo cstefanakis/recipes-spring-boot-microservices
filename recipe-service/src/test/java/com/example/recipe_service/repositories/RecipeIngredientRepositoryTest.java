@@ -69,4 +69,14 @@ class RecipeIngredientRepositoryTest {
         assertTrue(result.stream()
                 .anyMatch(ri -> this.recipeIngredient.getQuantity().equals(ri.getQuantity())));
     }
+
+    @Test
+    void existsWithIngredientId() {
+        //Arrange
+        Integer ingredientId = this.recipeIngredient.getIngredientId();
+        //Act
+        boolean result = recipeIngredientRepository.existsWithIngredientId(ingredientId);
+        //Assert
+        assertTrue(result);
+    }
 }

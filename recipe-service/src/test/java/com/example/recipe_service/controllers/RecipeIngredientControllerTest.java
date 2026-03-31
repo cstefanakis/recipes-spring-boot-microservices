@@ -19,6 +19,7 @@ import static com.example.recipe_service.enums.Unit.GRAM;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RecipeIngredientController.class)
@@ -190,5 +191,20 @@ class RecipeIngredientControllerTest {
         assertEquals(1, recipeIngredientDto.getIngredientId());
         assertEquals("GRAM", recipeIngredientDto.getUnit().toString());
         assertEquals(10.0, recipeIngredientDto.getQuantity());
+    }
+
+    @Test
+    void ingredientIdExists() throws Exception {
+        //Arrange
+        Integer ingredientId = 1;
+        //Mock
+        when(recipeIngredientService.recipeIngredientWithIngredientIdExists(ingredientId))
+                .thenReturn(true);
+        //Perform Get
+        mockMvc.perform(get("/api/recipe-ingredients/ingredient-id-exists/{ingredientId}", ingredientId))
+                .andExpect(status().isOk())
+                .andExpect(content().string("true"));
+        //Verify
+        verify(recipeIngredientService).recipeIngredientWithIngredientIdExists(ingredientId);
     }
 }

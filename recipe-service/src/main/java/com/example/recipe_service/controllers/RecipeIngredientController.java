@@ -48,4 +48,10 @@ public class RecipeIngredientController {
         RecipeIngredient recipeIngredient = recipeIngredientService.getRecipeIngredientById(recipeIngredientId);
         recipeIngredientService.updateRecipeIngredient(recipeIngredient, recipeIngredientUpdateRequestDto);
     }
+
+    @GetMapping("/ingredient-id-exists/{ingredientId}")
+    public ResponseEntity<Boolean> ingredientIdExists(@PathVariable("ingredientId") Integer ingredientId){
+        boolean ingredientIdExists = recipeIngredientService.recipeIngredientWithIngredientIdExists(ingredientId);
+        return ResponseEntity.ok(ingredientIdExists);
+    }
 }
