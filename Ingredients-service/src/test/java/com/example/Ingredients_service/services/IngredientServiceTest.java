@@ -1,5 +1,6 @@
 package com.example.Ingredients_service.services;
 
+import com.example.Ingredients_service.clients.RecipeClient;
 import com.example.Ingredients_service.dtos.ingredient.IngredientCreateRequestDto;
 import com.example.Ingredients_service.dtos.ingredient.IngredientResponseDto;
 import com.example.Ingredients_service.dtos.ingredient.IngredientSimpleResponseDto;
@@ -37,6 +38,9 @@ class IngredientServiceTest {
 
     @Mock
     private CategoryService categoryService;
+
+    @Mock
+    private RecipeClient recipeClient;
 
     private Ingredient savedTomato;
     private Category vegetables;
@@ -108,12 +112,10 @@ class IngredientServiceTest {
         when(categoryService.getCategoryById(vegetablesId))
                 .thenReturn(this.vegetables);
         when(ingredientRepository.nameExists(any(String.class))).thenReturn(true);
-
-        ArgumentCaptor<Ingredient> captor = ArgumentCaptor.forClass(Ingredient.class);
         //Act
-        assertThrows(EntityExistsException.class, () -> {
-            ingredientService.createIngredient(ingredientCreateRequestDto);
-        });
+        assertThrows(EntityExistsException.class, () ->
+            ingredientService.createIngredient(ingredientCreateRequestDto)
+        );
         //Verify
         verify(ingredientRepository, times(1)).nameExists(any(String.class));
         verify(categoryService, times(1)).getCategoryById(vegetablesId);
@@ -137,10 +139,26 @@ class IngredientServiceTest {
     void deleteIngredient() {
         //Arrest
         Integer tomatoId = this.savedTomato.getId();
+        //Mock
+        when(recipeClient.ingredientIdExists(any(Integer.class))).thenReturn(false);
         //Act
         ingredientService.deleteIngredient(tomatoId);
         //Assert
+        verify(recipeClient).ingredientIdExists(any(Integer.class));
         verify(ingredientRepository, times(1)).deleteById(tomatoId);
+    }
+
+    @Test
+    void deleteIngredient_UsedIngredientId() {
+        //Arrest
+        Integer tomatoId = this.savedTomato.getId();
+        //Mock
+        when(recipeClient.ingredientIdExists(any(Integer.class))).thenReturn(true);
+        //Act
+        ingredientService.deleteIngredient(tomatoId);
+        //Assert
+        verify(recipeClient).ingredientIdExists(any(Integer.class));
+        verify(ingredientRepository, never()).deleteById(any());
     }
 
     @Test
@@ -182,9 +200,9 @@ class IngredientServiceTest {
 
         when(ingredientRepository.findById(tomatoId)).thenReturn(Optional.of(this.savedTomato));
         //Act
-        assertThrows(EntityExistsException.class, () -> {
-            ingredientService.updateIngredient(tomatoId, tomatoUpdateDto);
-        });
+        assertThrows(EntityExistsException.class, () ->
+            ingredientService.updateIngredient(tomatoId, tomatoUpdateDto)
+        );
         //Verify
         verify(ingredientRepository, times(1)).nameExists(any(String.class));
         verify(ingredientRepository, times(1)).findById(tomatoId);
@@ -285,8 +303,8 @@ class IngredientServiceTest {
         //Mock
         when(ingredientRepository.ingredientId(ingredientId)).thenReturn(null);
         //Act
-        assertThrows(EntityNotFoundException.class, () -> {
-            ingredientService.ingredientId(ingredientId);
-        });
+        assertThrows(EntityNotFoundException.class, () ->
+            ingredientService.ingredientId(ingredientId)
+        );
     }
 }
