@@ -4,9 +4,10 @@ import lombok.*;
 
 @Getter
 @Setter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class UserResponseDto {
+public class ProfileResponse {
     private String username;
+    private long expiresIn;
 }

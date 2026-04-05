@@ -1,6 +1,5 @@
 package com.example.auth_service.dtos;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
@@ -8,11 +7,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRequestDto {
-
-    @NotBlank
-    private String username;
-
-    @NotBlank
+public class RegisterUserDto {
+    private String email;
     private String password;
+    private String fullName;
 }

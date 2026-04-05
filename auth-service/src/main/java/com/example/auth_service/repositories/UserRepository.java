@@ -3,6 +3,7 @@ package com.example.auth_service.repositories;
 import com.example.auth_service.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -12,7 +13,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("""
             SELECT u FROM User u
-            WHERE u.username = :username
+            WHERE u.email = :email
             """)
-    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(@Param("email") String email);
 }
