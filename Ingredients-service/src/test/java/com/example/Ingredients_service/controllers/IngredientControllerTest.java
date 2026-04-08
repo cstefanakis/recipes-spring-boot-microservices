@@ -2,6 +2,7 @@ package com.example.Ingredients_service.controllers;
 
 import com.example.Ingredients_service.dtos.category.CategoryResponseDto;
 import com.example.Ingredients_service.dtos.ingredient.*;
+import com.example.Ingredients_service.jwt.JwtFilter;
 import com.example.Ingredients_service.models.Category;
 import com.example.Ingredients_service.models.Ingredient;
 import com.example.Ingredients_service.services.IngredientService;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -32,6 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(IngredientController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class IngredientControllerTest {
 
@@ -40,6 +43,9 @@ class IngredientControllerTest {
 
     @MockitoBean
     private IngredientService ingredientService;
+
+    @MockitoBean
+    private JwtFilter jwtFilter;
 
     private IngredientSimpleResponseDto tomatoDto;
 
@@ -163,9 +169,9 @@ class IngredientControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(this.tomatoDto.getId()))
-                .andExpect(jsonPath("$.content[0].name").value(this.tomatoDto.getName()))
-                .andExpect(jsonPath("$.content[0].imgUrl").value(this.tomatoDto.getImgUrl()));
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].id").value(this.tomatoDto.getId()))
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].name").value(this.tomatoDto.getName()))
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].imgUrl").value(this.tomatoDto.getImgUrl()));
         //Verify
         verify(ingredientService, times(1)).getAllSimpleIngredients(any(Pageable.class));
     }
@@ -182,9 +188,9 @@ class IngredientControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(this.tomatoDto.getId()))
-                .andExpect(jsonPath("$.content[0].name").value(this.tomatoDto.getName()))
-                .andExpect(jsonPath("$.content[0].imgUrl").value(this.tomatoDto.getImgUrl()));
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].id").value(this.tomatoDto.getId()))
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].name").value(this.tomatoDto.getName()))
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].imgUrl").value(this.tomatoDto.getImgUrl()));
         //Verify
         verify(ingredientService).getAllSimpleIngredientsByCategoryId(eq(categoryId), any(Pageable.class));
     }
@@ -218,9 +224,9 @@ class IngredientControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].id").value(this.tomatoDto.getId()))
-                .andExpect(jsonPath("$.content[0].name").value(this.tomatoDto.getName()))
-                .andExpect(jsonPath("$.content[0].imgUrl").value(this.tomatoDto.getImgUrl()));
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].id").value(this.tomatoDto.getId()))
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].name").value(this.tomatoDto.getName()))
+                .andExpect(jsonPath("$._embedded.ingredientSimpleResponseDtoList[0].imgUrl").value(this.tomatoDto.getImgUrl()));
         //Verify
         verify(ingredientService, times(1)).getIngredientsSimpleResponseDtoByName(eq(ingredientName), any(Pageable.class));
     }
