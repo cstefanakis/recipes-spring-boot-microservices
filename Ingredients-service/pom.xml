@@ -112,6 +112,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope> <!-- Only used for testing -->
         </dependency>
+
         <!-- Optional JPA slice -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
