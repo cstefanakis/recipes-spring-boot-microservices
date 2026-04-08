@@ -179,13 +179,13 @@ class RecipeControllerTest {
                 .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].title")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].title")
                         .value(this.recipeSimpleResponseDto.getTitle()))
-                .andExpect(jsonPath("$.content[0].description")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].description")
                         .value(this.recipeSimpleResponseDto.getDescription()))
-                .andExpect(jsonPath("$.content[0].imgUrl")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].imgUrl")
                         .value(this.recipeSimpleResponseDto.getImgUrl()))
-                .andExpect(jsonPath("$.content[0].id")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].id")
                         .value(this.recipeSimpleResponseDto.getId()));
         //Verify
         verify(recipeService).getAllSimpleRecipes(any(Pageable.class));
@@ -202,13 +202,13 @@ class RecipeControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].title")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].title")
                         .value(this.recipeSimpleResponseDto.getTitle()))
-                .andExpect(jsonPath("$.content[0].description")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].description")
                         .value(this.recipeSimpleResponseDto.getDescription()))
-                .andExpect(jsonPath("$.content[0].imgUrl")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].imgUrl")
                         .value(this.recipeSimpleResponseDto.getImgUrl()))
-                .andExpect(jsonPath("$.content[0].id")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].id")
                         .value(this.recipeSimpleResponseDto.getId()));
         //Verify
         verify(recipeService).getAllSimpleRecipes(any(Pageable.class));
@@ -224,13 +224,13 @@ class RecipeControllerTest {
         //Perform
         mockMvc.perform(get("/api/recipes/by-category/{categoryId}", categoryId))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content[0].title")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].title")
                         .value(this.recipeSimpleResponseDto.getTitle()))
-                .andExpect(jsonPath("$.content[0].description")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].description")
                         .value(this.recipeSimpleResponseDto.getDescription()))
-                .andExpect(jsonPath("$.content[0].imgUrl")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].imgUrl")
                         .value(this.recipeSimpleResponseDto.getImgUrl()))
-                .andExpect(jsonPath("$.content[0].id")
+                .andExpect(jsonPath("$._embedded.recipeSimpleResponseDtoList[0].id")
                         .value(this.recipeSimpleResponseDto.getId()));
         //Verify
         verify(recipeService).getRecipesByCategoryId(eq(categoryId), any(Pageable.class));

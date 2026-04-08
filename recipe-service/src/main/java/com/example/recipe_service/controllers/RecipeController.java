@@ -10,6 +10,9 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -39,17 +42,25 @@ public class RecipeController {
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<RecipeSimpleResponseDto>> getAllRecipes(Pageable pageable){
-        Page<RecipeSimpleResponseDto> categories = recipeService.getAllSimpleRecipes(pageable);
-        return ResponseEntity.ok(categories);
+    public ResponseEntity<PagedModel<EntityModel<RecipeSimpleResponseDto>>> getAllRecipes(Pageable pageable,
+                                                                                          PagedResourcesAssembler<RecipeSimpleResponseDto> assembler){
+
+        Page<RecipeSimpleResponseDto> categories
+                = recipeService.getAllSimpleRecipes(pageable);
+
+        return ResponseEntity.ok(assembler.toModel(categories));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/by-category/{categoryId}")
-    public ResponseEntity<Page<RecipeSimpleResponseDto>> getRecipesByCategoryId(@PathVariable("categoryId") Integer categoryId,
-                                                                                Pageable pageable){
-        Page<RecipeSimpleResponseDto> recipesSimpleResponseDto = recipeService.getRecipesByCategoryId(categoryId, pageable);
-        return ResponseEntity.ok(recipesSimpleResponseDto);
+    public ResponseEntity<PagedModel<EntityModel<RecipeSimpleResponseDto>>> getRecipesByCategoryId(@PathVariable("categoryId") Integer categoryId,
+                                                                                                   Pageable pageable,
+                                                                                                   PagedResourcesAssembler<RecipeSimpleResponseDto> assembler){
+
+        Page<RecipeSimpleResponseDto> recipesSimpleResponseDto =
+                recipeService.getRecipesByCategoryId(categoryId, pageable);
+
+        return ResponseEntity.ok(assembler.toModel(recipesSimpleResponseDto));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
@@ -57,7 +68,10 @@ public class RecipeController {
     @ResponseStatus(HttpStatus.OK)
     public void updateRecipeById(@PathVariable("recipeId") Integer recipeId,
                                  @RequestBody RecipeUpdateRequestDto recipeUpdateRequestDto){
-        Recipe recipe = recipeService.getRecipeById(recipeId);
+
+        Recipe recipe =
+                recipeService.getRecipeById(recipeId);
+
         recipeService.updateRecipe(recipe, recipeUpdateRequestDto);
     }
 
@@ -65,13 +79,17 @@ public class RecipeController {
     @DeleteMapping("/{recipeId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRecipeById(@PathVariable("recipeId") Integer recipeId){
+
         recipeService.deleteRecipeById(recipeId);
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/exists/{recipeId}")
     public ResponseEntity<Boolean> recipeExists(@PathVariable("recipeId") Integer recipeId){
-        boolean exist = recipeService.recipeExists(recipeId);
+
+        boolean exist =
+                recipeService.recipeExists(recipeId);
+
         return ResponseEntity.ok(exist);
     }
 }

@@ -31,10 +31,15 @@ public class RecipeIngredientController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<RecipeIngredientResponseDto>> getRecipeIngredients(){
-        List<RecipeIngredient> recipeIngredients = recipeIngredientService.getAllRecipeIngredients();
-        List<RecipeIngredientResponseDto> recipeIngredientsDto = recipeIngredients.stream()
+
+        List<RecipeIngredient> recipeIngredients =
+                recipeIngredientService.getAllRecipeIngredients();
+
+        List<RecipeIngredientResponseDto> recipeIngredientsDto =
+                recipeIngredients.stream()
                 .map(recipeIngredientService::toRecipeIngredientResponseDto)
                 .toList();
+
         return ResponseEntity.ok(recipeIngredientsDto);
     }
 
@@ -42,6 +47,7 @@ public class RecipeIngredientController {
     @DeleteMapping("/{recipeIngredientId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteRecipeIngredientById(@PathVariable("recipeIngredientId") Integer recipeIngredientId){
+
         recipeIngredientService.deleteRecipeIngredientById(recipeIngredientId);
     }
 
@@ -50,14 +56,20 @@ public class RecipeIngredientController {
     @ResponseStatus(HttpStatus.OK)
     public void updateRecipeIngredientById(@PathVariable("recipeIngredientId") Integer recipeIngredientId,
                                            @Valid @RequestBody RecipeIngredientUpdateRequestDto recipeIngredientUpdateRequestDto){
-        RecipeIngredient recipeIngredient = recipeIngredientService.getRecipeIngredientById(recipeIngredientId);
+
+        RecipeIngredient recipeIngredient =
+                recipeIngredientService.getRecipeIngredientById(recipeIngredientId);
+
         recipeIngredientService.updateRecipeIngredient(recipeIngredient, recipeIngredientUpdateRequestDto);
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/ingredient-id-exists/{ingredientId}")
     public ResponseEntity<Boolean> ingredientIdExists(@PathVariable("ingredientId") Integer ingredientId){
-        boolean ingredientIdExists = recipeIngredientService.recipeIngredientWithIngredientIdExists(ingredientId);
+
+        boolean ingredientIdExists =
+                recipeIngredientService.recipeIngredientWithIngredientIdExists(ingredientId);
+
         return ResponseEntity.ok(ingredientIdExists);
     }
 }
