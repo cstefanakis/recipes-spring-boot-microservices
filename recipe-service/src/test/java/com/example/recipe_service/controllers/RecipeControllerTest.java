@@ -3,6 +3,7 @@ package com.example.recipe_service.controllers;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
 import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
+import com.example.recipe_service.jwt.JwtFilter;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.services.RecipeService;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -27,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RecipeController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class RecipeControllerTest {
 
@@ -35,6 +38,9 @@ class RecipeControllerTest {
 
     @MockitoBean
     private RecipeService recipeService;
+
+    @MockitoBean
+    private JwtFilter jwtFilter;
 
     private RecipeSimpleResponseDto recipeSimpleResponseDto;
     private Recipe recipe;

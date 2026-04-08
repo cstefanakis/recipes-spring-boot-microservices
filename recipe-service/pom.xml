@@ -29,6 +29,7 @@
     <properties>
         <java.version>21</java.version>
         <spring-cloud.version>2025.1.0</spring-cloud.version>
+        <jsonwebtoken.version>0.12.3</jsonwebtoken.version>
     </properties>
     <dependencies>
         <!-- Spring Boot Starter Web -->
@@ -59,6 +60,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
         </dependency>
 
         <!-- PostgreSQL JDBC driver: Required to connect to a PostgreSQL database -->
@@ -94,6 +100,19 @@
             <scope>test</scope> <!-- Only used for testing -->
         </dependency>
 
+        <!-- SPRING SECURITY DEPENDENCY -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- SPRING SECURITY DEPENDENCY -->
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- Spring Boot test starter: Provides testing support including JUnit, Mockito, and Spring TestContext framework -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -106,12 +125,34 @@
             <artifactId>spring-boot-starter-data-jpa-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <!-- H2 in-memory database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- H2 in-memory database -->
+
+        <!-- JWT DEPENDENCIES -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+        <!-- JWT DEPENDENCIES -->
     </dependencies>
 
     <dependencyManagement>

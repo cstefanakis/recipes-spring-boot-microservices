@@ -3,6 +3,7 @@ package com.example.recipe_service.controllers;
 import com.example.recipe_service.dtos.category.CategoryCreateRequestDto;
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
 import com.example.recipe_service.dtos.category.CategoryUpdateRequestDto;
+import com.example.recipe_service.jwt.JwtFilter;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.repositories.CategoryRepository;
 import com.example.recipe_service.services.CategoryService;
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,6 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CategoryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class CategoryControllerTest {
 
@@ -35,6 +38,9 @@ class CategoryControllerTest {
 
     @MockitoBean
     private CategoryRepository categoryRepository;
+
+    @MockitoBean
+    private JwtFilter jwtFilter;
 
     private Category category;
     private CategoryResponseDto categoryResponseDto;
