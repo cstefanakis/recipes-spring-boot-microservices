@@ -1,31 +1,25 @@
 package com.example.auth_service.controllers;
 
-import com.example.auth_service.dtos.LoginResponse;
-import com.example.auth_service.dtos.LoginUserDto;
-import com.example.auth_service.dtos.RegisterUserDto;
-import com.example.auth_service.dtos.UserDto;
+import com.example.auth_service.dtos.*;
 import com.example.auth_service.models.User;
 import com.example.auth_service.services.AuthenticationService;
-import com.example.auth_service.services.JwtService;
+import com.example.auth_service.services.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
+@RequiredArgsConstructor
 public class AuthenticationController {
-    private final JwtService jwtService;
 
     private final AuthenticationService authenticationService;
 
-    public AuthenticationController(JwtService jwtService, AuthenticationService authenticationService) {
-        this.jwtService = jwtService;
-        this.authenticationService = authenticationService;
-    }
+    private final UserService userService;
 
     @PostMapping("/signup")
     public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
+
         User registeredUser = authenticationService.signup(registerUserDto);
 
         return ResponseEntity.ok(registeredUser);
@@ -33,36 +27,28 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> authenticate(@RequestBody LoginUserDto loginUserDto) {
-        User authenticatedUser = authenticationService.authenticate(loginUserDto);
 
-        UserDto user = UserDto.builder()
-                .email(authenticatedUser.getEmail())
-                .fullName(authenticatedUser.getFullName())
-                .userName(authenticatedUser.getUsername())
-                .build();
-
-        String jwtToken = jwtService.generateToken(authenticatedUser);
-
-        LoginResponse loginResponse = LoginResponse.builder()
-                .token(jwtToken)
-                .user(user)
-                .role(authenticatedUser.getRole().name())
-                .expiresIn(jwtService.getExpirationTime())
-                .build();
+        LoginResponse loginResponse
+                = authenticationService.getAuthenticate(loginUserDto);
 
         return ResponseEntity.ok(loginResponse);
     }
 
     @GetMapping("/profile")
     public ResponseEntity<UserDto> authenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String username = authentication.getName();
+        UserDto userDto =
+                authenticationService.getLoginUser();
 
-        UserDto user = UserDto.builder()
-                .userName(username)
-                .build();
+        return ResponseEntity.ok(userDto);
+    }
 
-        return ResponseEntity.ok(user);
+    @GetMapping("/profile-id-role")
+    public ResponseEntity<UserRequestIdAndRoleDto> authenticatedUserIdAndRole() {
+
+        UserRequestIdAndRoleDto dto =
+                authenticationService.getUserIdAndRole();
+
+        return ResponseEntity.ok(dto);
     }
 }

@@ -1,5 +1,6 @@
 package com.example.auth_service.controllers;
 
+import com.example.auth_service.dtos.UserDto;
 import com.example.auth_service.models.User;
 import com.example.auth_service.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,12 @@ public class UserController {
         List <User> users = userService.allUsers();
 
         return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserDto> getUserById(@PathVariable("userId") Integer userId){
+        UserDto userDto = userService.toUserDto(userId);
+        return ResponseEntity.ok(userDto);
     }
 
     @DeleteMapping("/{userId}")
