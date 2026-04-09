@@ -1,6 +1,7 @@
 package com.example.recipe_service.services;
 
 import com.example.recipe_service.clients.RecipeStepClient;
+import com.example.recipe_service.clients.UserClient;
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
@@ -8,6 +9,7 @@ import com.example.recipe_service.dtos.recipe.RecipeResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
 import com.example.recipe_service.dtos.recipeStep.RecipeStepResponseDto;
+import com.example.recipe_service.dtos.user.UserResponseIdAndRole;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.repositories.RecipeRepository;
@@ -29,6 +31,7 @@ public class RecipeService {
     private final RecipeIngredientService recipeIngredientService;
     private final RecipeStepService recipeStepService;
     private final RecipeStepClient recipeStepClient;
+    private final UserClient userClient;
 
     public void createRecipe(RecipeCreateRequestDto recipeRequestDto) {
         Recipe recipe = toEntity(recipeRequestDto);
@@ -41,11 +44,14 @@ public class RecipeService {
                 .map(categoryService::getCategoryById)
                 .toList();
 
+        UserResponseIdAndRole authenticatedUser = userClient.authenticatedUserIdAndRole().getBody();
+
         return Recipe.builder()
                 .title(validatedTitle(recipeRequestDto.getTitle()))
                 .description(recipeRequestDto.getDescription())
                 .categories(categories)
                 .imgUrl(recipeRequestDto.getImgUrl())
+                .userId(authenticatedUser.getId())
                 .build();
     }
 
@@ -59,23 +65,36 @@ public class RecipeService {
 
     public void updateRecipe(Recipe recipe, RecipeUpdateRequestDto recipeUpdateRequestDto){
 
-        String titleDto = recipeUpdateRequestDto.getTitle();
-        String descriptionDto = recipeUpdateRequestDto.getDescription();
-        String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
-        List<Category> categories = categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
+        Integer recipeOwnerId = recipe.getUserId();
 
-        recipe.setTitle(titleDto == null
-                ? recipe.getTitle()
-                : validatedTitle(titleDto));
-        recipe.setDescription(descriptionDto == null
-                ? recipe.getDescription()
-                : descriptionDto);
-        recipe.setImgUrl(imgUrlDto == null
-                ? recipe.getImgUrl()
-                : imgUrlDto);
-        recipe.setCategories(categories);
+        if(isOwnerOrAdmin(recipeOwnerId)){
 
-        recipeRepository.save(recipe);
+            String titleDto = recipeUpdateRequestDto.getTitle();
+            String descriptionDto = recipeUpdateRequestDto.getDescription();
+            String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
+            List<Category> categories = categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
+
+            recipe.setTitle(titleDto == null
+                    ? recipe.getTitle()
+                    : validatedTitle(titleDto));
+            recipe.setDescription(descriptionDto == null
+                    ? recipe.getDescription()
+                    : descriptionDto);
+            recipe.setImgUrl(imgUrlDto == null
+                    ? recipe.getImgUrl()
+                    : imgUrlDto);
+            recipe.setCategories(categories);
+
+            recipeRepository.save(recipe);
+        }
+    }
+
+    private boolean isOwnerOrAdmin(Integer recipeOwnerId) {
+
+        UserResponseIdAndRole authenticatedUser = userClient.authenticatedUserIdAndRole().getBody();
+
+        return authenticatedUser.getId().equals(recipeOwnerId)
+                || authenticatedUser.getRole().equals("ADMIN");
     }
 
     public Recipe getRecipeById(Integer recipeId) {
@@ -84,8 +103,13 @@ public class RecipeService {
     }
 
     public void deleteRecipeById(Integer recipeId) {
-        recipeRepository.deleteById(recipeId);
-        recipeStepClient.deleteAllByRecipeId(recipeId);
+
+        Integer recipeOwnerId = recipeRepository.findRecipeOwnerIdByRecipeId(recipeId);
+
+        if(isOwnerOrAdmin(recipeOwnerId)) {
+            recipeRepository.deleteById(recipeId);
+            recipeStepClient.deleteAllByRecipeId(recipeId);
+        }
     }
 
     public Page<RecipeSimpleResponseDto> getAllSimpleRecipes(Pageable pageable) {

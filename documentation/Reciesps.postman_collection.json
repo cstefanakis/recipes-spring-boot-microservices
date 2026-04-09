@@ -15,6 +15,16 @@
             {
               "name": "Create Ingredient Category",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "POST",
                 "header": [],
                 "body": {
@@ -47,6 +57,16 @@
                 "disableBodyPruning": true
               },
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "GET",
                 "header": [],
                 "body": {
@@ -80,6 +100,16 @@
                 "disableBodyPruning": true
               },
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "GET",
                 "header": [],
                 "body": {
@@ -109,6 +139,16 @@
             {
               "name": "Update Category By Id",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "PUT",
                 "header": [],
                 "body": {
@@ -139,6 +179,16 @@
             {
               "name": "Delete Category By Id",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "DELETE",
                 "header": [],
                 "body": {
@@ -171,6 +221,16 @@
         {
           "name": "Create Ingredient",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
@@ -203,6 +263,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -240,6 +310,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2Mjk5NTAsImV4cCI6MTc3NTYzMzU1MH0.N6IFZYt1Gfs-MhQ-r06jfRW3xMoL4-3jSR-8eaIRGUY",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -279,6 +359,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2Mjk5NTAsImV4cCI6MTc3NTYzMzU1MH0.N6IFZYt1Gfs-MhQ-r06jfRW3xMoL4-3jSR-8eaIRGUY",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -318,6 +408,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -348,6 +448,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -374,6 +484,16 @@
         {
           "name": "Delete Ingredient By Id",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "body": {
@@ -399,6 +519,16 @@
         {
           "name": "Update Ingredient By Id",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
             "header": [],
             "body": {
@@ -434,19 +564,53 @@
         {
           "name": "Get Recipe Steps By Recipe Id",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8083/api/recipe-steps/recipe/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8083",
+              "path": [
+                "api",
+                "recipe-steps",
+                "recipe",
+                "2"
+              ]
+            }
           },
           "response": []
         },
         {
           "name": "Create Recipe Step",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2Mjk5NTAsImV4cCI6MTc3NTYzMzU1MH0.N6IFZYt1Gfs-MhQ-r06jfRW3xMoL4-3jSR-8eaIRGUY",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"stepNumber\" : 1,\r\n    \"description\" : \"description\",\r\n    \"imgUrl\" : \"https://img.png\",\r\n    \"recipeId\" : 1\r\n}",
+              "raw": "{\r\n    \"stepNumber\" : 7,\r\n    \"description\" : \"description\",\r\n    \"imgUrl\" : \"https://img.png\",\r\n    \"recipeId\" : 2\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -454,15 +618,15 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8083/recipe/",
+              "raw": "http://localhost:8083/api/recipe-steps",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8083",
               "path": [
-                "recipe",
-                ""
+                "api",
+                "recipe-steps"
               ]
             }
           },
@@ -471,17 +635,29 @@
         {
           "name": "Delete Recipe Step By Id",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8083/1",
+              "raw": "http://localhost:8083/api/recipe-steps/14",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8083",
               "path": [
-                "1"
+                "api",
+                "recipe-steps",
+                "14"
               ]
             }
           },
@@ -490,11 +666,21 @@
         {
           "name": "Update Recipe Step By Id",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"stepNumber\" : 1,\r\n    \"description\" : \"Listové těsto si vložíme na plech. Potřeme jej pyré, posypeme sýrem a petrželkou.\",\r\n    \"imgUrl\" : \"https://primainspirace.cz/wp-content/uploads/2022/05/1-21.png.webp\"\r\n}",
+              "raw": "{\r\n    \"stepNumber\" : 2,\r\n    \"description\" : \"Listové těsto si vložíme na plech. Potřeme jej pyré, posypeme sýrem a petrželkou.\",\r\n    \"imgUrl\" : \"https://primainspirace.cz/wp-content/uploads/2022/05/1-21.png.webp\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -502,7 +688,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8083/api/recipe-step/1",
+              "raw": "http://localhost:8083/api/recipe-steps/7",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -510,8 +696,8 @@
               "port": "8083",
               "path": [
                 "api",
-                "recipe-step",
-                "1"
+                "recipe-steps",
+                "7"
               ]
             }
           },
@@ -528,6 +714,16 @@
             {
               "name": "Create Category",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "POST",
                 "header": [],
                 "url": {
@@ -551,6 +747,16 @@
                 "disableBodyPruning": true
               },
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "GET",
                 "header": [],
                 "body": {
@@ -583,6 +789,16 @@
                 "disableBodyPruning": true
               },
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "GET",
                 "header": [],
                 "body": {
@@ -612,6 +828,16 @@
             {
               "name": "Update Category By Id",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "PUT",
                 "header": [],
                 "body": {
@@ -647,6 +873,16 @@
             {
               "name": "Create Recipe Ingredient",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "POST",
                 "header": [],
                 "body": {
@@ -674,11 +910,21 @@
               "response": []
             },
             {
-              "name": "Get All Recipes",
+              "name": "Get All Recipes Ingredients",
               "protocolProfileBehavior": {
                 "disableBodyPruning": true
               },
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "GET",
                 "header": [],
                 "body": {
@@ -703,6 +949,16 @@
             {
               "name": "Delete Recipe Ingredient By Id",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "DELETE",
                 "header": [],
                 "url": {
@@ -724,6 +980,16 @@
             {
               "name": "Update Recipe Ingredient By Id",
               "request": {
+                "auth": {
+                  "type": "bearer",
+                  "bearer": [
+                    {
+                      "key": "token",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "type": "string"
+                    }
+                  ]
+                },
                 "method": "PUT",
                 "header": [],
                 "body": {
@@ -756,11 +1022,26 @@
         {
           "name": "Create Recipe",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": ""
+              "raw": "{\r\n    \"title\" : \"Pizza\",\r\n    \"description\" : \"Best pizza of Christos\",\r\n    \"imgUrl\" : \"http://img.png\",\r\n    \"categoriesId\" : [1]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             },
             "url": {
               "raw": "http://localhost:8082/api/recipes",
@@ -783,6 +1064,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -790,7 +1081,7 @@
               "raw": ""
             },
             "url": {
-              "raw": "http://localhost:8082/api/recipes/3",
+              "raw": "http://localhost:8082/api/recipes/1",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -799,7 +1090,7 @@
               "path": [
                 "api",
                 "recipes",
-                "3"
+                "1"
               ]
             }
           },
@@ -811,6 +1102,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -838,6 +1139,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -864,6 +1175,16 @@
         {
           "name": "Update Recipe By Id",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "PUT",
             "header": [],
             "body": {
@@ -894,6 +1215,16 @@
         {
           "name": "Delete Recipe By Id",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "DELETE",
             "header": [],
             "body": {
@@ -927,6 +1258,16 @@
             "disableBodyPruning": true
           },
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "GET",
             "header": [],
             "body": {
@@ -950,6 +1291,209 @@
                 "recipes",
                 "exists",
                 "2"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Sing Up User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\" : \"test@test.com\",\r\n    \"password\" : \"strongPass\",\r\n    \"fullName\" : \"Name Surename\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8084/api/auth/signup",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "api",
+                "auth",
+                "signup"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\" : \"test@test.com\",\r\n    \"password\" : \"strongPass\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8084/api/auth/login",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Profile",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzc1Mzc3OTkxLCJleHAiOjE3NzUzODE1OTF9.c0BCHOnr-0bB_Ts9rzjB2Kbd1LRd8qbDa-laUg5eTqU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\" : \"test@test.com\",\r\n    \"password\" : \"strongPass\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8084/api/auth/profile",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "api",
+                "auth",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzc1Mzc3OTkxLCJleHAiOjE3NzUzODE1OTF9.c0BCHOnr-0bB_Ts9rzjB2Kbd1LRd8qbDa-laUg5eTqU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/users/me",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "users",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzc1NTU3NDAzLCJleHAiOjE3NzU1NjEwMDN9.mtqn2dh8J6TZZlObjUJ5lU99y2byZEPRMUjm6Of1yqg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/users/",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "users",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzc1NTQ2NTY1LCJleHAiOjE3NzU1NTAxNjV9.ViKIMqeyysJT_ZkSDQP33mtin6kvrqjIb_DdzdK9lKY",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8084/users/1",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "users",
+                "1"
               ]
             }
           },

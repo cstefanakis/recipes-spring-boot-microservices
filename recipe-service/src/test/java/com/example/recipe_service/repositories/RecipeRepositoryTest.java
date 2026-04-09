@@ -36,6 +36,7 @@ class RecipeRepositoryTest {
 
     @BeforeEach
     void setup(){
+
         this.category = categoryRepository.save(Category.builder()
                 .name("Category")
                 .imgUrl("url")
@@ -46,6 +47,7 @@ class RecipeRepositoryTest {
                 .description("description")
                 .imgUrl("url")
                 .categories(List.of(category))
+                .userId(1)
                 .build());
 
         this.recipeIngredient = recipeIngredientRepository.save(RecipeIngredient.builder()
@@ -83,5 +85,17 @@ class RecipeRepositoryTest {
         boolean result = recipeRepository.titleExists(title);
         //Assert
         assertTrue(result);
+    }
+
+    @Test
+    void findRecipeOwnerIdByRecipeId() {
+        //Arrange
+        Integer recipeId = this.recipe.getId();
+        Integer userId = this.recipe.getUserId();
+        //Act
+        Integer result = recipeRepository.findRecipeOwnerIdByRecipeId(recipeId);
+        //Assert
+        assertNotNull(result);
+        assertEquals(userId, result);
     }
 }
