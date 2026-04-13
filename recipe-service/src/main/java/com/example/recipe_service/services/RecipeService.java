@@ -155,4 +155,8 @@ public class RecipeService {
     public boolean recipeExists(Integer recipeId) {
         return recipeRepository.existsById(recipeId);
     }
+
+    public Integer getRecipeOwnerIdByRecipeId(Integer recipeId) {
+        return recipeRepository.findRecipeOwnerIdByRecipeId(recipeId);
+    }
 }

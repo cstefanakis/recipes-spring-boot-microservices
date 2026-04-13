@@ -483,4 +483,26 @@ class RecipeServiceTest {
         //Verify
         verify(recipeRepository, times(1)).existsById(recipeId);
     }
+
+    @Test
+    void getRecipeOwnerIdByRecipeId() {
+        //Arrange
+        Integer recipeId = this.recipe.getId();
+        Integer recipeUserId = this.recipe.getUserId();
+
+        //Mock
+        when(recipeRepository.findRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(recipeUserId);
+
+        //Act
+        Integer result = recipeService.getRecipeOwnerIdByRecipeId(recipeId);
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(recipeUserId, result);
+
+        //Verify
+        verify(recipeRepository, times(1))
+                .findRecipeOwnerIdByRecipeId(recipeId);
+    }
 }

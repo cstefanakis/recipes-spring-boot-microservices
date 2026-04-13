@@ -41,6 +41,13 @@ public class RecipeController {
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @GetMapping("/owner-id/{recipeId}")
+    public ResponseEntity<Integer> getRecipeOwnerId(@PathVariable("recipeId") Integer recipeId){
+        Integer ownerId = recipeService.getRecipeOwnerIdByRecipeId(recipeId);
+        return ResponseEntity.ok(ownerId);
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping
     public ResponseEntity<PagedModel<EntityModel<RecipeSimpleResponseDto>>> getAllRecipes(Pageable pageable,
                                                                                           PagedResourcesAssembler<RecipeSimpleResponseDto> assembler){
