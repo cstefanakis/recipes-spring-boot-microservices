@@ -1,8 +1,8 @@
 package com.example.recipe_step_service.controllers;
 
-import com.example.recipe_step_service.dtos.RecipeStepCreateRequestDto;
-import com.example.recipe_step_service.dtos.RecipeStepResponseDto;
-import com.example.recipe_step_service.dtos.RecipeStepUpdateRequestDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepCreateRequestDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepResponseDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepUpdateRequestDto;
 import com.example.recipe_step_service.services.RecipeStepService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

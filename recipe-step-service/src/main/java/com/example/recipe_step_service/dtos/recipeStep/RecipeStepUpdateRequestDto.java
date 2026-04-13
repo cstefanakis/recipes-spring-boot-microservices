@@ -1,4 +1,4 @@
-package com.example.recipe_step_service.dtos;
+package com.example.recipe_step_service.dtos.recipeStep;
 
 import lombok.*;
 import org.hibernate.validator.constraints.URL;

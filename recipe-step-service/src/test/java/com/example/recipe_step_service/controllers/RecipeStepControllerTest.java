@@ -1,6 +1,6 @@
 package com.example.recipe_step_service.controllers;
 
-import com.example.recipe_step_service.dtos.RecipeStepCreateRequestDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepCreateRequestDto;
 import com.example.recipe_step_service.jwt.JwtFilter;
 import com.example.recipe_step_service.services.RecipeStepService;
 import org.junit.jupiter.api.Test;

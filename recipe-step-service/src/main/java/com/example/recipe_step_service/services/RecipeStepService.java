@@ -1,9 +1,9 @@
 package com.example.recipe_step_service.services;
 
 import com.example.recipe_step_service.clients.RecipeClient;
-import com.example.recipe_step_service.dtos.RecipeStepCreateRequestDto;
-import com.example.recipe_step_service.dtos.RecipeStepResponseDto;
-import com.example.recipe_step_service.dtos.RecipeStepUpdateRequestDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepCreateRequestDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepResponseDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepUpdateRequestDto;
 import com.example.recipe_step_service.models.RecipeStep;
 import com.example.recipe_step_service.repositories.RecipeStepRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -20,21 +20,31 @@ public class RecipeStepService {
 
     private final RecipeStepRepository recipeStepRepository;
     private final RecipeClient recipeClient;
+    private final UserService userService;
 
     @Transactional
     public void createRecipeStep(@Valid RecipeStepCreateRequestDto recipeStepCreateRequestDto) {
 
         Integer recipeId = recipeStepCreateRequestDto.getRecipeId();
-        Integer stepNumber = recipeStepCreateRequestDto.getStepNumber();
-        boolean recipeExist = recipeClient.recipeExists(recipeId);
 
-        if(recipeExist) {
-            recipeStepCreateRequestDto.setStepNumber(validatedStepNumber(stepNumber, recipeId));
-            RecipeStep recipeStep = toEntity(recipeStepCreateRequestDto);
-            recipeStepRepository.shiftStepsForward(recipeStep.getStepNumber(), recipeStep.getRecipeId());
-            recipeStepRepository.save(recipeStep);
-        }else{
-            throw new EntityNotFoundException(String.format("Recipe with id %s not exists", recipeId));
+        Integer recipeOwnerId = recipeClient.getRecipeOwnerIdByRecipeId(recipeId).getBody();
+
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
+
+        if(isOwnerOrAdmin) {
+            Integer stepNumber = recipeStepCreateRequestDto.getStepNumber();
+            boolean recipeExist = recipeClient.recipeExists(recipeId);
+
+            if (recipeExist) {
+                recipeStepCreateRequestDto.setStepNumber(validatedStepNumber(stepNumber, recipeId));
+                RecipeStep recipeStep = toEntity(recipeStepCreateRequestDto);
+                recipeStepRepository.shiftStepsForward(recipeStep.getStepNumber(), recipeStep.getRecipeId());
+                recipeStepRepository.save(recipeStep);
+            } else {
+                throw new EntityNotFoundException(String.format("Recipe with id %s not exists", recipeId));
+            }
+        } else {
+            throw new RuntimeException("Not Permission");
         }
     }
 
@@ -77,24 +87,43 @@ public class RecipeStepService {
     }
 
     public void deleteRecipeStepById(Integer recipeStepId) {
-        Integer stepNumber = recipeStepRepository.findRecipeStepByRecipeStepId(recipeStepId);
+
         Integer recipeId = recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId);
-        recipeStepRepository.shiftStepsBackward(stepNumber, recipeId);
-        recipeStepRepository.deleteById(recipeStepId);
+
+        Integer recipeOwnerId = recipeClient.getRecipeOwnerIdByRecipeId(recipeId).getBody();
+
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
+
+        if(isOwnerOrAdmin) {
+            Integer stepNumber = recipeStepRepository.findRecipeStepByRecipeStepId(recipeStepId);
+            recipeStepRepository.shiftStepsBackward(stepNumber, recipeId);
+            recipeStepRepository.deleteById(recipeStepId);
+        } else {
+            throw new RuntimeException("No permission");
+        }
     }
 
-    public void updateRecipeStepById(Integer id, RecipeStepUpdateRequestDto recipeStepUpdateRequestDto) {
+    public void updateRecipeStepById(Integer recipeStepId, RecipeStepUpdateRequestDto recipeStepUpdateRequestDto) {
 
-        RecipeStep recipeStep = getRecipeStepById(id);
-        Integer recipeId = recipeStep.getRecipeId();
-        Integer stepNumber = recipeStep.getStepNumber();
-        Integer updatedStepNumber = recipeStepUpdateRequestDto.getStepNumber();
+        Integer recipeId = recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId);
 
-        validateUpdateStepNumber(recipeId, updatedStepNumber);
+        Integer recipeOwnerId = recipeClient.getRecipeOwnerIdByRecipeId(recipeId).getBody();
 
-        exchangeStepNumber(recipeId, stepNumber, updatedStepNumber);
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
 
-        recipeStepRepository.save(toUpdateEntity(recipeStep, recipeStepUpdateRequestDto));
+        if(isOwnerOrAdmin) {
+            RecipeStep recipeStep = getRecipeStepById(recipeStepId);
+            Integer stepNumber = recipeStep.getStepNumber();
+            Integer updatedStepNumber = recipeStepUpdateRequestDto.getStepNumber();
+
+            validateUpdateStepNumber(recipeId, updatedStepNumber);
+
+            exchangeStepNumber(recipeId, stepNumber, updatedStepNumber);
+
+            recipeStepRepository.save(toUpdateEntity(recipeStep, recipeStepUpdateRequestDto));
+        } else {
+            throw new RuntimeException("No permission");
+        }
 
     }
 
@@ -140,6 +169,15 @@ public class RecipeStepService {
 
     @Transactional
     public void deleteAllByRecipeId(Integer recipeId) {
-        recipeStepRepository.deleteAllByRecipeId(recipeId);
+
+        Integer recipeOwnerId = recipeClient.getRecipeOwnerIdByRecipeId(recipeId).getBody();
+
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
+
+        if(isOwnerOrAdmin) {
+            recipeStepRepository.deleteAllByRecipeId(recipeId);
+        } else {
+            throw new RuntimeException("No permission");
+        }
     }
 }
