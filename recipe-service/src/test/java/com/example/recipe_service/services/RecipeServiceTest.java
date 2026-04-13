@@ -9,6 +9,7 @@ import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
 import com.example.recipe_service.dtos.recipeStep.RecipeStepResponseDto;
+import com.example.recipe_service.dtos.user.UserResponseIdAndRole;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.models.RecipeIngredient;
@@ -57,6 +58,9 @@ class RecipeServiceTest {
     @Mock
     private RecipeStepClient recipeStepClient;
 
+    @Mock
+    private UserService userService;
+
     private Recipe recipe;
     private RecipeIngredient recipeIngredient;
     private Category category;
@@ -77,6 +81,7 @@ class RecipeServiceTest {
                 .description("description")
                 .imgUrl("url")
                 .categories(List.of(category))
+                .userId(2)
                 .build();
 
         this.recipeIngredient = RecipeIngredient.builder()
@@ -112,9 +117,18 @@ class RecipeServiceTest {
                 .categoriesId(List.of(this.category.getId()))
                 .build();
 
+        UserResponseIdAndRole authenticatedUser = UserResponseIdAndRole.builder()
+                .role("USER")
+                .id(1)
+                .build();
+
         //Mock
-        when(recipeRepository.titleExists(any(String.class))).thenReturn(false);
-        when(recipeRepository.save(any(Recipe.class))).thenReturn(this.recipe);
+        when(userService.getAuthenticatedUser())
+                .thenReturn(authenticatedUser);
+        when(recipeRepository.titleExists(any(String.class)))
+                .thenReturn(false);
+        when(recipeRepository.save(any(Recipe.class)))
+                .thenReturn(this.recipe);
 
         ArgumentCaptor<Recipe> captor = ArgumentCaptor.forClass(Recipe.class);
 
@@ -122,12 +136,18 @@ class RecipeServiceTest {
         recipeService.createRecipe(recipeCreateRequestDto);
 
         //Verify
-        verify(recipeRepository).titleExists(any(String.class));
-        verify(recipeRepository).save(captor.capture());
+        verify((userService), times(1))
+                .getAuthenticatedUser();
+        verify(recipeRepository)
+                .titleExists(any(String.class));
+        verify(recipeRepository)
+                .save(captor.capture());
 
         Recipe result = captor.getValue();
+
         //Assert
         assertEquals(this.recipe.getTitle(), result.getTitle());
+        assertEquals(1, result.getUserId());
         assertEquals(this.recipe.getDescription(), result.getDescription());
         assertEquals(this.recipe.getImgUrl(), result.getImgUrl());
     }
@@ -142,16 +162,26 @@ class RecipeServiceTest {
                 .categoriesId(List.of(this.category.getId()))
                 .build();
 
+        UserResponseIdAndRole authenticatedUser = UserResponseIdAndRole.builder()
+                .role("USER")
+                .id(1)
+                .build();
+
         //Mock
-        when(recipeRepository.titleExists(any(String.class))).thenReturn(true);
+        when(userService.getAuthenticatedUser())
+                .thenReturn(authenticatedUser);
+        when(recipeRepository.titleExists(any(String.class)))
+                .thenReturn(true);
 
         //Act
-        assertThrows(EntityExistsException.class, () -> {
-            recipeService.createRecipe(recipeCreateRequestDto);
-        });
+        assertThrows(EntityExistsException.class, () ->
+            recipeService.createRecipe(recipeCreateRequestDto));
 
         //Verify
-        verify(recipeRepository).titleExists(any(String.class));
+        verify((userService), times(1))
+                .getAuthenticatedUser();
+        verify(recipeRepository)
+                .titleExists(any(String.class));
     }
 
     @Test
@@ -166,23 +196,60 @@ class RecipeServiceTest {
 
         List<Category> categories = List.of(this.category);
 
+        Integer recipeOwnerId = this.recipe.getUserId();
+
         //Mock
-        when(recipeRepository.titleExists(any(String.class))).thenReturn(false);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeRepository.titleExists(any(String.class)))
+                .thenReturn(false);
         when(categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId()))
                 .thenReturn(categories);
         when(recipeRepository.save(this.recipe))
                 .thenReturn(this.recipe);
+
         //Act
         recipeService.updateRecipe(this.recipe, recipeUpdateRequestDto);
+
         //Assert
         assertEquals("pizza", this.recipe.getTitle());
         assertEquals("pizza from Chris", this.recipe.getDescription());
         assertEquals("icon", this.recipe.getImgUrl());
         assertEquals(1, this.recipe.getCategories().size());
+
         //Verify
-        verify(recipeRepository, times(1)).titleExists(any(String.class));
-        verify(categoryService).getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
-        verify(recipeRepository).save(this.recipe);
+        verify(userService , times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeRepository, times(1))
+                .titleExists(any(String.class));
+        verify(categoryService)
+                .getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
+        verify(recipeRepository)
+                .save(this.recipe);
+    }
+
+    @Test
+    void updateRecipe_noOwnerOrAdmin() {
+        //Arrange
+        RecipeUpdateRequestDto recipeUpdateRequestDto = RecipeUpdateRequestDto.builder()
+                .title("pizza")
+                .description("pizza from Chris")
+                .imgUrl("icon")
+                .categoriesId(List.of(1))
+                .build();
+
+        Integer recipeOwnerId = this.recipe.getUserId();
+
+        //Mock
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(false);
+        //Act and Assert
+        assertThrows(RuntimeException.class,
+                () -> recipeService.updateRecipe(this.recipe, recipeUpdateRequestDto));
+
+        //Verify
+        verify(userService , times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
     }
 
     @Test
@@ -195,16 +262,22 @@ class RecipeServiceTest {
                 .categoriesId(List.of(1))
                 .build();
 
-        List<Category> categories = List.of(this.category);
+        Integer recipeOwnerId = this.recipe.getUserId();
 
         //Mock
-        when(recipeRepository.titleExists(any(String.class))).thenReturn(true);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeRepository.titleExists(any(String.class)))
+                .thenReturn(true);
         //Act
-        assertThrows(EntityExistsException.class, ()->{
-            recipeService.updateRecipe(this.recipe, recipeUpdateRequestDto);
-        });
+        assertThrows(EntityExistsException.class, ()->
+            recipeService.updateRecipe(this.recipe, recipeUpdateRequestDto));
+
         //Verify
-        verify(recipeRepository, times(1)).titleExists(any(String.class));
+        verify(userService , times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeRepository, times(1))
+                .titleExists(any(String.class));
     }
 
     @Test
@@ -228,14 +301,55 @@ class RecipeServiceTest {
     void deleteRecipeById() {
         //Arrest
         Integer recipeId = this.recipe.getId();
+
+        Integer ownerId = this.recipe.getUserId();
+
         //Mock
-        doNothing().when(recipeStepClient).deleteAllByRecipeId(recipeId);
-        doNothing().when(recipeRepository).deleteById(recipeId);
+        when(recipeRepository.findRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(ownerId);
+        when(userService.isOwnerOrAdmin(ownerId))
+                .thenReturn(true);
+        doNothing().when(recipeStepClient)
+                .deleteAllByRecipeId(recipeId);
+        doNothing().when(recipeRepository)
+                .deleteById(recipeId);
+
         //Act
         recipeService.deleteRecipeById(recipeId);
+
         //Verify
-        verify(recipeStepClient).deleteAllByRecipeId(recipeId);
-        verify(recipeRepository).deleteById(recipeId);
+        verify(recipeRepository)
+                .findRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(ownerId);
+        verify(recipeStepClient)
+                .deleteAllByRecipeId(recipeId);
+        verify(recipeRepository)
+                .deleteById(recipeId);
+    }
+
+    @Test
+    void deleteRecipeById_noOwnerOrAdmin() {
+        //Arrest
+        Integer recipeId = this.recipe.getId();
+
+        Integer ownerId = this.recipe.getUserId();
+
+        //Mock
+        when(recipeRepository.findRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(ownerId);
+        when(userService.isOwnerOrAdmin(ownerId))
+                .thenReturn(false);
+
+        //Act and Assert
+        assertThrows(RuntimeException.class,
+                () -> recipeService.deleteRecipeById(recipeId));
+
+        //Verify
+        verify(recipeRepository, times(1))
+                .findRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(ownerId);
     }
 
     @Test

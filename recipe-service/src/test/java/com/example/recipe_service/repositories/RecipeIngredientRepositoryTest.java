@@ -42,6 +42,7 @@ class RecipeIngredientRepositoryTest {
                 .description("description")
                 .imgUrl("url")
                 .categories(List.of(category))
+                .userId(2)
                 .build());
 
         this.recipeIngredient = recipeIngredientRepository.save(RecipeIngredient.builder()
@@ -78,5 +79,17 @@ class RecipeIngredientRepositoryTest {
         boolean result = recipeIngredientRepository.existsWithIngredientId(ingredientId);
         //Assert
         assertTrue(result);
+    }
+
+    @Test
+    void getRecipeOwnerByRecipeIngredientId() {
+        //Arrange
+        Integer ingredientId = this.recipeIngredient.getId();
+        Integer recipeOwnerId  = this.recipe.getUserId();
+        //Act
+        Integer result = recipeIngredientRepository.getRecipeOwnerByRecipeIngredientId(ingredientId);
+        //Assert
+        assertNotNull(result);
+        assertEquals(recipeOwnerId, result);
     }
 }

@@ -46,6 +46,7 @@ class RecipeStepServiceTest {
                 .description("description")
                 .imgUrl("url")
                 .categories(List.of(category))
+                .userId(2)
                 .build();
 
         this.recipeStep = RecipeStepResponseDto.builder()

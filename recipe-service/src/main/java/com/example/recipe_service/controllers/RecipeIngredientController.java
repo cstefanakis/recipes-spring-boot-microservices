@@ -32,13 +32,7 @@ public class RecipeIngredientController {
     @GetMapping
     public ResponseEntity<List<RecipeIngredientResponseDto>> getRecipeIngredients(){
 
-        List<RecipeIngredient> recipeIngredients =
-                recipeIngredientService.getAllRecipeIngredients();
-
-        List<RecipeIngredientResponseDto> recipeIngredientsDto =
-                recipeIngredients.stream()
-                .map(recipeIngredientService::toRecipeIngredientResponseDto)
-                .toList();
+        List<RecipeIngredientResponseDto> recipeIngredientsDto = recipeIngredientService.getRecipeIngredients();
 
         return ResponseEntity.ok(recipeIngredientsDto);
     }

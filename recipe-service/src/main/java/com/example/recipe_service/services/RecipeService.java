@@ -1,7 +1,6 @@
 package com.example.recipe_service.services;
 
 import com.example.recipe_service.clients.RecipeStepClient;
-import com.example.recipe_service.clients.UserClient;
 import com.example.recipe_service.dtos.category.CategoryResponseDto;
 import com.example.recipe_service.dtos.recipeIngredient.RecipeIngredientResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeCreateRequestDto;
@@ -31,7 +30,7 @@ public class RecipeService {
     private final RecipeIngredientService recipeIngredientService;
     private final RecipeStepService recipeStepService;
     private final RecipeStepClient recipeStepClient;
-    private final UserClient userClient;
+    private final UserService userService;
 
     public void createRecipe(RecipeCreateRequestDto recipeRequestDto) {
         Recipe recipe = toEntity(recipeRequestDto);
@@ -44,7 +43,7 @@ public class RecipeService {
                 .map(categoryService::getCategoryById)
                 .toList();
 
-        UserResponseIdAndRole authenticatedUser = userClient.authenticatedUserIdAndRole().getBody();
+        UserResponseIdAndRole authenticatedUser = userService.getAuthenticatedUser();
 
         return Recipe.builder()
                 .title(validatedTitle(recipeRequestDto.getTitle()))
@@ -67,7 +66,9 @@ public class RecipeService {
 
         Integer recipeOwnerId = recipe.getUserId();
 
-        if(isOwnerOrAdmin(recipeOwnerId)){
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
+
+        if(isOwnerOrAdmin){
 
             String titleDto = recipeUpdateRequestDto.getTitle();
             String descriptionDto = recipeUpdateRequestDto.getDescription();
@@ -86,15 +87,10 @@ public class RecipeService {
             recipe.setCategories(categories);
 
             recipeRepository.save(recipe);
+
+        } else {
+            throw new RuntimeException("You don't have permission");
         }
-    }
-
-    private boolean isOwnerOrAdmin(Integer recipeOwnerId) {
-
-        UserResponseIdAndRole authenticatedUser = userClient.authenticatedUserIdAndRole().getBody();
-
-        return authenticatedUser.getId().equals(recipeOwnerId)
-                || authenticatedUser.getRole().equals("ADMIN");
     }
 
     public Recipe getRecipeById(Integer recipeId) {
@@ -106,9 +102,13 @@ public class RecipeService {
 
         Integer recipeOwnerId = recipeRepository.findRecipeOwnerIdByRecipeId(recipeId);
 
-        if(isOwnerOrAdmin(recipeOwnerId)) {
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
+
+        if(isOwnerOrAdmin) {
             recipeRepository.deleteById(recipeId);
             recipeStepClient.deleteAllByRecipeId(recipeId);
+        } else {
+            throw new RuntimeException("You don't have permission");
         }
     }
 
