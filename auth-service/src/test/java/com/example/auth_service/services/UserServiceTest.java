@@ -2,6 +2,7 @@ package com.example.auth_service.services;
 
 import com.example.auth_service.dtos.CurrentUserDto;
 import com.example.auth_service.dtos.UserDto;
+import com.example.auth_service.dtos.UserRequestIdAndRoleDto;
 import com.example.auth_service.models.Role;
 import com.example.auth_service.models.User;
 import com.example.auth_service.repositories.UserRepository;
@@ -89,8 +90,18 @@ class UserServiceTest {
     void deleteUserById() {
         //Arrange
         Integer userId = this.user01.getId();
+        String role = this.user01.getRole().name();
+        String username = this.user01.getUsername();
 
         //Mock
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(username, null);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(userRepository.findUserRoleByUserId(userId))
+                .thenReturn(role);
+        when(userRepository.findUserIdByEmailOrUsername(username))
+                .thenReturn(userId);
         doNothing().when(userRepository)
                 .deleteById(userId);
 
@@ -98,8 +109,41 @@ class UserServiceTest {
         userService.deleteUserById(userId);
 
         //Verify
+        verify(userRepository, times(1))
+                .findUserRoleByUserId(userId);
+        verify(userRepository, times(1))
+                .findUserIdByEmailOrUsername(any(String.class));
         verify(userRepository)
                 .deleteById(userId);
+    }
+
+    @Test
+    void deleteUserById_notPermission() {
+        //Arrange
+        Integer ownerUserId = this.user01.getId();
+        String ownerRole = this.user01.getRole().name();
+        String ownerUsername = this.user01.getUsername();
+        Integer otherUserId = 2;
+
+        //Mock
+        Authentication authentication =
+                new UsernamePasswordAuthenticationToken(ownerUsername, null);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        when(userRepository.findUserRoleByUserId(ownerUserId))
+                .thenReturn(ownerRole);
+        when(userRepository.findUserIdByEmailOrUsername(ownerUsername))
+                .thenReturn(otherUserId);
+
+        //Act
+        assertThrows(RuntimeException.class,
+                () -> userService.deleteUserById(ownerUserId));
+
+        //Verify
+        verify(userRepository, times(1))
+                .findUserRoleByUserId(ownerUserId);
+        verify(userRepository, times(1))
+                .findUserIdByEmailOrUsername(any(String.class));
     }
 
     @Test
@@ -228,5 +272,26 @@ class UserServiceTest {
         //verify
         verify(userRepository, times(1))
                 .findByEmailOrUsername(username);
+    }
+
+    @Test
+    void updatedUserRoleByUserId() {
+        //Arrange
+        Integer userId = this.user01.getId();
+        Role role = Role.ADMIN;
+        this.user01.setRole(role);
+
+        //Mock
+        doNothing().when(userRepository)
+                .updateUserRoleByUserId(userId, role);
+        when(userRepository.findById(userId))
+                .thenReturn(Optional.of(this.user01));
+
+        //Act
+        UserRequestIdAndRoleDto result = userService.updatedUserRoleByUserId(userId, role);
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(role.name(), result.getRole());
     }
 }

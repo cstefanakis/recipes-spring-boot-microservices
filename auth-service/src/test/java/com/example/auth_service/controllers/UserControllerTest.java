@@ -2,6 +2,7 @@ package com.example.auth_service.controllers;
 
 import com.example.auth_service.dtos.CurrentUserDto;
 import com.example.auth_service.dtos.UserDto;
+import com.example.auth_service.dtos.UserRequestIdAndRoleDto;
 import com.example.auth_service.models.Role;
 import com.example.auth_service.models.User;
 import com.example.auth_service.security.JwtAuthenticationFilter;
@@ -162,5 +163,32 @@ class UserControllerTest {
         //Verify
         verify(userService, times(1))
                 .deleteUserById(userId);
+    }
+
+    @Test
+    void updateRole() throws Exception {
+        //Arrange
+        Integer userId = this.user.getId();
+        Role role = Role.ADMIN;
+        UserRequestIdAndRoleDto userRequestIdAndRoleDto
+                = UserRequestIdAndRoleDto.builder()
+                .id(userId)
+                .role(role.name())
+                .build();
+
+        //Mock
+        when(userService.updatedUserRoleByUserId(userId, role))
+                .thenReturn(userRequestIdAndRoleDto);
+
+        //Perform put
+        mockMvc.perform(put("/users/role/{userId}", userId)
+                .param("role",role.name()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userId))
+                .andExpect(jsonPath("$.role").value(role.name()));
+
+        //Verify
+        verify(userService, times(1))
+                .updatedUserRoleByUserId(userId, role);
     }
 }

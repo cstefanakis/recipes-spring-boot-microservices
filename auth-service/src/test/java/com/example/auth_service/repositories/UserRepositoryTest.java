@@ -161,4 +161,33 @@ class UserRepositoryTest {
         //Assert
         assertFalse(result);
     }
+
+    @Test
+    void updateUserRoleByUserId() {
+        //Arrange
+        Integer userId = this.user01.getId();
+        Role role = Role.ADMIN;
+        //Act
+        userRepository.updateUserRoleByUserId(userId, role);
+        Optional<User> result = userRepository.findById(userId);
+
+        //Assert
+        assertTrue(result.isPresent());
+        User user = result.get();
+        assertEquals(user.getRole(), role);
+    }
+
+    @Test
+    void findUserRoleByUserId() {
+        //Arrange
+        Integer userId = this.user01.getId();
+        Role role = Role.USER;
+
+        //Act
+        String result = userRepository.findUserRoleByUserId(userId);
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(role.name(), result);
+    }
 }

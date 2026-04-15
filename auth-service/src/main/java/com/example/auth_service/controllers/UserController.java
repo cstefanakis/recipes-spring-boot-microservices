@@ -2,10 +2,13 @@ package com.example.auth_service.controllers;
 
 import com.example.auth_service.dtos.CurrentUserDto;
 import com.example.auth_service.dtos.UserDto;
+import com.example.auth_service.dtos.UserRequestIdAndRoleDto;
+import com.example.auth_service.models.Role;
 import com.example.auth_service.models.User;
 import com.example.auth_service.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +31,7 @@ public class UserController {
         return ResponseEntity.ok(currentUser);
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<UserDto>> allUsers() {
 
@@ -36,6 +40,7 @@ public class UserController {
         return ResponseEntity.ok(users);
     }
 
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("userId") Integer userId){
         User user = userService.getUserById(userId);
@@ -45,6 +50,16 @@ public class UserController {
         return ResponseEntity.ok(userDto);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @PutMapping("/role/{userId}")
+    public ResponseEntity<UserRequestIdAndRoleDto> updateRole(@PathVariable("userId") Integer userId,
+                                                       @RequestParam("role") Role role){
+        UserRequestIdAndRoleDto dto = userService.updatedUserRoleByUserId(userId, role);
+
+        return ResponseEntity.ok(dto);
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/{userId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteUser(@PathVariable("userId") Integer userId){

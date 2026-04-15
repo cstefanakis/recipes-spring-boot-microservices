@@ -101,26 +101,22 @@ public class AuthenticationService {
         return toUserDto(user);
     }
 
-    private UserDto toUserDto(User user) {
-
-        return UserDto.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .fullName(user.getFullName())
-                .build();
-    }
-
     public LoginResponse getAuthenticate(LoginUserDto loginUserDto) {
-        User authenticatedUser = authenticate(loginUserDto);
 
-        UserDto user = toUserDto(authenticatedUser);
+        User authenticatedUser = authenticate(loginUserDto);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
+        return toLoginResponse(jwtToken, authenticatedUser);
+    }
+
+    private LoginResponse toLoginResponse(String jwtToken, User authenticatedUser) {
+
+        UserDto userDto = toUserDto(authenticatedUser);
+
         return LoginResponse.builder()
                 .token(jwtToken)
-                .user(user)
+                .user(userDto)
                 .role(authenticatedUser.getRole().name())
                 .expiresIn(jwtService.getExpirationTime())
                 .build();
@@ -134,9 +130,17 @@ public class AuthenticationService {
         Integer userId = userService.getUserIdByEmailOrUsername(username);
         String userRole = userService.getUserRoleByEmailOrUsername(username);
 
-        return UserRequestIdAndRoleDto.builder()
-                .id(userId)
-                .role(userRole)
+        return new UserRequestIdAndRoleDto(userId, userRole);
+    }
+
+    private UserDto toUserDto(User user) {
+
+        return UserDto.builder()
+                .id(user.getId())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                .fullName(user.getFullName())
                 .build();
     }
+
 }
