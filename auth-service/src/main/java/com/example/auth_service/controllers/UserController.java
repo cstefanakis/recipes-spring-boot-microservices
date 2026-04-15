@@ -1,12 +1,11 @@
 package com.example.auth_service.controllers;
 
+import com.example.auth_service.dtos.CurrentUserDto;
 import com.example.auth_service.dtos.UserDto;
 import com.example.auth_service.models.User;
 import com.example.auth_service.services.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,24 +21,27 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<User> authenticatedUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    public ResponseEntity<CurrentUserDto> authenticatedUser() {
 
-        User currentUser = (User) authentication.getPrincipal();
+        CurrentUserDto currentUser = userService.getCurrentUser();
 
         return ResponseEntity.ok(currentUser);
     }
 
-    @GetMapping("/")
-    public ResponseEntity<List<User>> allUsers() {
-        List <User> users = userService.allUsers();
+    @GetMapping
+    public ResponseEntity<List<UserDto>> allUsers() {
+
+        List <UserDto> users = userService.allUsers();
 
         return ResponseEntity.ok(users);
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable("userId") Integer userId){
-        UserDto userDto = userService.toUserDto(userId);
+        User user = userService.getUserById(userId);
+
+        UserDto userDto = userService.toUserDto(user);
+
         return ResponseEntity.ok(userDto);
     }
 

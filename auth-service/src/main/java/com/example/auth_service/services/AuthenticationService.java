@@ -4,6 +4,8 @@ import com.example.auth_service.dtos.*;
 import com.example.auth_service.models.Role;
 import com.example.auth_service.models.User;
 import com.example.auth_service.repositories.UserRepository;
+import jakarta.persistence.EntityExistsException;
+import jakarta.transaction.Transactional;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,7 +41,12 @@ public class AuthenticationService {
         this.jwtService = jwtService;
     }
 
-    public User signup(RegisterUserDto input) {
+    @Transactional
+    public CurrentUserDto signup(RegisterUserDto input) {
+
+        validateEmailNotExists(input.getEmail());
+        validateUsernameNotExists(input.getUsername());
+
         User user = User.builder()
                 .fullName(input.getFullName())
                 .username(input.getUsername())
@@ -47,7 +54,24 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(input.getPassword()))
                 .role(Role.USER)
                 .build();
-        return userRepository.save(user);
+
+        User savedUser = userRepository.save(user);
+
+        return userService.toCurrentUserDto(savedUser);
+    }
+
+    private void validateEmailNotExists(String email) {
+        boolean isEmailExists = userRepository.isEmailExists(email);
+        if(isEmailExists){
+            throw new EntityExistsException(String.format("Email: %s already exists", email));
+        }
+    }
+
+    private void validateUsernameNotExists(String username) {
+        boolean isUsernameExists = userRepository.isUsernameExists(username);
+        if(isUsernameExists){
+            throw new EntityExistsException(String.format("Username: %s already exists", username));
+        }
     }
 
     public User authenticate(LoginUserDto input) {

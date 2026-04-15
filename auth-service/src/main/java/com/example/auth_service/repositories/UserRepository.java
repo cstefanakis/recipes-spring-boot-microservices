@@ -22,12 +22,24 @@ public interface UserRepository extends JpaRepository<User, Integer> {
             WHERE u.email = :emailOrUsername
             OR u.username = :emailOrUsername
             """)
-    Integer findUserIdByEmailOrUsername(String username);
+    Integer findUserIdByEmailOrUsername(@Param("emailOrUsername") String emailOrUsername);
 
     @Query("""
             SELECT u.role FROM User u
             WHERE u.email = :emailOrUsername
             OR u.username = :emailOrUsername
             """)
-    String findUserRoleByEmailOrUsername(String username);
+    String findUserRoleByEmailOrUsername(@Param("emailOrUsername") String emailOrUsername);
+
+    @Query("""
+            SELECT COUNT(u.email) > 0 FROM User u
+            WHERE u.email = :email
+            """)
+    boolean isEmailExists(@Param("email") String email);
+
+    @Query("""
+            SELECT COUNT(u.username) > 0 FROM User u
+            WHERE u.username = :username
+            """)
+    boolean isUsernameExists(@Param("username") String username);
 }
