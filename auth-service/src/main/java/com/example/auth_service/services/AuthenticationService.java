@@ -109,6 +109,7 @@ public class AuthenticationService {
         User authenticatedUser = authenticate(loginUserDto);
 
         UserDto user = UserDto.builder()
+                .id(authenticatedUser.getId())
                 .email(authenticatedUser.getEmail())
                 .fullName(authenticatedUser.getFullName())
                 .username(authenticatedUser.getUsername())
