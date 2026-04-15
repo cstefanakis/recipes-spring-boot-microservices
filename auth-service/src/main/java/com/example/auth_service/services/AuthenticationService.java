@@ -98,7 +98,13 @@ public class AuthenticationService {
 
         User user = userService.getUserByEmailOrUsername(username);
 
+        return toUserDto(user);
+    }
+
+    private UserDto toUserDto(User user) {
+
         return UserDto.builder()
+                .id(user.getId())
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .fullName(user.getFullName())
@@ -108,12 +114,7 @@ public class AuthenticationService {
     public LoginResponse getAuthenticate(LoginUserDto loginUserDto) {
         User authenticatedUser = authenticate(loginUserDto);
 
-        UserDto user = UserDto.builder()
-                .id(authenticatedUser.getId())
-                .email(authenticatedUser.getEmail())
-                .fullName(authenticatedUser.getFullName())
-                .username(authenticatedUser.getUsername())
-                .build();
+        UserDto user = toUserDto(authenticatedUser);
 
         String jwtToken = jwtService.generateToken(authenticatedUser);
 
