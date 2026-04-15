@@ -29,6 +29,7 @@
     <properties>
         <java.version>21</java.version>
         <spring-cloud.version>2025.1.0</spring-cloud.version>
+        <jsonwebtoken.version>0.12.3</jsonwebtoken.version>
     </properties>
     <dependencies>
         <!-- Spring Boot Starter Web -->
@@ -80,19 +81,38 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional> <!-- Optional to avoid affecting other modules if not present -->
         </dependency>
+        <!-- Lombok -->
 
         <!-- Spring Cloud Config Client: Enables externalized configuration management using Spring Cloud Config Server -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-config</artifactId>
         </dependency>
+        <!-- Spring Cloud Config Client -->
 
+       <!-- Spring Boot Hateoas: give you access to PagedModel, EntityModel, RepresentationModelAssembler, etc. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-hateoas</artifactId>
+        </dependency>
+        <!-- Spring Boot Hateoas -->
+
+        <!-- Test -->
         <!-- Spring Web MVC test starter: Provides utilities for testing Spring MVC controllers -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-webmvc-test</artifactId>
             <scope>test</scope> <!-- Only used for testing -->
         </dependency>
+        <!-- Spring Web MVC test starter -->
+
+        <!-- Optional JPA slice -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Optional JPA slice -->
 
         <!-- Spring Boot test starter: Provides testing support including JUnit, Mockito, and Spring TestContext framework -->
         <dependency>
@@ -100,18 +120,46 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope> <!-- Only used for testing -->
         </dependency>
-        <!-- Optional JPA slice -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+        <!-- Spring Boot test starter -->
+
         <!-- H2 in-memory database -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- H2 in-memory database -->
+        <!-- Test -->
+
+        <!-- Security -->
+        <!-- SPRING SECURITY DEPENDENCY -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- SPRING SECURITY DEPENDENCY -->
+        <!-- Security -->
+
+        <!-- JWT DEPENDENCIES -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jsonwebtoken.version}</version>
+        </dependency>
+        <!-- JWT DEPENDENCIES -->
+
     </dependencies>
 
     <dependencyManagement>

@@ -3,11 +3,13 @@ package com.example.Ingredients_service.controllers;
 import com.example.Ingredients_service.dtos.category.CategoryCreateRequestDto;
 import com.example.Ingredients_service.dtos.category.CategoryResponseDto;
 import com.example.Ingredients_service.dtos.category.CategoryUpdateRequestDto;
+import com.example.Ingredients_service.jwt.JwtFilter;
 import com.example.Ingredients_service.services.CategoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -24,14 +26,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(CategoryController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
-class IngredientCategoryControllerTest {
+class CategoryControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @MockitoBean
     private CategoryService categoryService;
+
+    @MockitoBean
+    private JwtFilter jwtFilter;
+
     private CategoryResponseDto vegetables;
 
     @BeforeEach
@@ -52,6 +59,7 @@ class IngredientCategoryControllerTest {
                     "imgUrl" : "https://example.com/img.png"
                 }
                 """;
+
         //Perform
         mockMvc.perform(post("/api/ingredient-categories")
                 .contentType(MediaType.APPLICATION_JSON)

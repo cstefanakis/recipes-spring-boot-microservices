@@ -1,10 +1,12 @@
 package com.example.recipe_step_service.controllers;
 
-import com.example.recipe_step_service.dtos.RecipeStepCreateRequestDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepCreateRequestDto;
+import com.example.recipe_step_service.jwt.JwtFilter;
 import com.example.recipe_step_service.services.RecipeStepService;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -17,6 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(RecipeStepController.class)
+@AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles("test")
 class RecipeStepControllerTest {
 
@@ -25,6 +28,9 @@ class RecipeStepControllerTest {
 
     @MockitoBean
     private RecipeStepService recipeStepService;
+
+    @MockitoBean
+    private JwtFilter jwtFilter;
 
     @Test
     void createRecipeStep() throws Exception {

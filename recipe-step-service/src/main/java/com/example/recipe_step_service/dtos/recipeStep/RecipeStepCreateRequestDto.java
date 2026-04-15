@@ -1,4 +1,4 @@
-package com.example.recipe_step_service.dtos;
+package com.example.recipe_step_service.dtos.recipeStep;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

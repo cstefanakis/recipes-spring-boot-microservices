@@ -23,10 +23,24 @@ public class RecipeIngredientService {
     private final IngredientClient ingredientClient;
     private final RecipeIngredientRepository recipeIngredientRepository;
     private final RecipeRepository recipeRepository;
+    private final UserService userService;
 
     public void createRecipeIngredient(RecipeIngredientCreateRequestDto ingredientCreateRequestDto) {
-        RecipeIngredient recipeIngredient = toEntity(ingredientCreateRequestDto);
-        recipeIngredientRepository.save(recipeIngredient);
+
+        Integer recipeId = ingredientCreateRequestDto.getRecipeId();
+
+        Integer recipeOwnerId = recipeRepository.findRecipeOwnerIdByRecipeId(recipeId);
+
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
+
+        if(isOwnerOrAdmin) {
+
+            RecipeIngredient recipeIngredient = toEntity(ingredientCreateRequestDto);
+
+            recipeIngredientRepository.save(recipeIngredient);
+        } else {
+            throw new RuntimeException("You don't have permission");
+        }
     }
 
     private RecipeIngredient toEntity(RecipeIngredientCreateRequestDto ingredientCreateRequestDto) {
@@ -67,33 +81,54 @@ public class RecipeIngredientService {
     }
 
     public void deleteRecipeIngredientById(Integer recipeIngredientId) {
-        recipeIngredientRepository.deleteById(recipeIngredientId);
+
+        Integer recipeOwnerId = recipeIngredientRepository.getRecipeOwnerByRecipeIngredientId(recipeIngredientId);
+
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
+
+        if(isOwnerOrAdmin) {
+            recipeIngredientRepository.deleteById(recipeIngredientId);
+        } else {
+            throw new RuntimeException("you don't have permission");
+        }
     }
 
     public RecipeIngredient getRecipeIngredientById(Integer recipeIngredientId) {
+
         return recipeIngredientRepository.findById(recipeIngredientId)
                 .orElseThrow(()-> new EntityNotFoundException(String.format("Recipe ingredient with id %s not exists", recipeIngredientId)));
+
     }
 
     public void updateRecipeIngredient(RecipeIngredient recipeIngredient, RecipeIngredientUpdateRequestDto recipeIngredientUpdateRequestDto) {
 
-        Integer ingredientIdDto = recipeIngredientUpdateRequestDto.getIngredientId();
-        Unit unitDto = recipeIngredientUpdateRequestDto.getUnit();
-        Double quantityDto = recipeIngredientUpdateRequestDto.getQuantity();
+        Integer recipeOwnerId = recipeIngredientRepository.getRecipeOwnerByRecipeIngredientId(recipeIngredient.getId());
 
-        recipeIngredient.setIngredientId(ingredientIdDto == null
-                ? recipeIngredient.getIngredientId()
-                : ingredientClient.ingredientExistById(ingredientIdDto));
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
 
-        recipeIngredient.setUnit(unitDto == null
-                ? recipeIngredient.getUnit()
-                : unitDto);
+        if(isOwnerOrAdmin) {
 
-        recipeIngredient.setQuantity(quantityDto == null
-                ? recipeIngredient.getQuantity()
-                : quantityDto);
+            Integer ingredientIdDto = recipeIngredientUpdateRequestDto.getIngredientId();
+            Unit unitDto = recipeIngredientUpdateRequestDto.getUnit();
+            Double quantityDto = recipeIngredientUpdateRequestDto.getQuantity();
 
-        recipeIngredientRepository.save(recipeIngredient);
+            recipeIngredient.setIngredientId(ingredientIdDto == null
+                    ? recipeIngredient.getIngredientId()
+                    : ingredientClient.ingredientExistById(ingredientIdDto));
+
+            recipeIngredient.setUnit(unitDto == null
+                    ? recipeIngredient.getUnit()
+                    : unitDto);
+
+            recipeIngredient.setQuantity(quantityDto == null
+                    ? recipeIngredient.getQuantity()
+                    : quantityDto);
+
+            recipeIngredientRepository.save(recipeIngredient);
+
+        } else {
+            throw new RuntimeException("You don't have permission");
+        }
     }
 
     public List<RecipeIngredient> getAllRecipeIngredients() {
@@ -127,5 +162,13 @@ public class RecipeIngredientService {
 
     public boolean recipeIngredientWithIngredientIdExists(Integer ingredientId) {
         return recipeIngredientRepository.existsWithIngredientId(ingredientId);
+    }
+
+    public List<RecipeIngredientResponseDto> getRecipeIngredients(){
+        List<RecipeIngredient> recipeIngredients = getAllRecipeIngredients();
+
+        return recipeIngredients.stream()
+                .map(this::toRecipeIngredientResponseDto)
+                .toList();
     }
 }

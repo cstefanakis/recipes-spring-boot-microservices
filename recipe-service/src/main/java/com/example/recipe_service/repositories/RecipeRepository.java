@@ -24,4 +24,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
             WHERE LOWER(r.title) = LOWER(:title)
             """)
     boolean titleExists(@Param("title") String title);
+
+    @Query("""
+            SELECT r.userId FROM Recipe r
+            WHERE r.id = :recipeId
+            """)
+    Integer findRecipeOwnerIdByRecipeId(@Param("recipeId") Integer recipeId);
 }

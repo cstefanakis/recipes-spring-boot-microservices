@@ -8,6 +8,7 @@ import com.example.recipe_service.dtos.recipe.RecipeResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeSimpleResponseDto;
 import com.example.recipe_service.dtos.recipe.RecipeUpdateRequestDto;
 import com.example.recipe_service.dtos.recipeStep.RecipeStepResponseDto;
+import com.example.recipe_service.dtos.user.UserResponseIdAndRole;
 import com.example.recipe_service.models.Category;
 import com.example.recipe_service.models.Recipe;
 import com.example.recipe_service.repositories.RecipeRepository;
@@ -29,6 +30,7 @@ public class RecipeService {
     private final RecipeIngredientService recipeIngredientService;
     private final RecipeStepService recipeStepService;
     private final RecipeStepClient recipeStepClient;
+    private final UserService userService;
 
     public void createRecipe(RecipeCreateRequestDto recipeRequestDto) {
         Recipe recipe = toEntity(recipeRequestDto);
@@ -41,11 +43,14 @@ public class RecipeService {
                 .map(categoryService::getCategoryById)
                 .toList();
 
+        UserResponseIdAndRole authenticatedUser = userService.getAuthenticatedUser();
+
         return Recipe.builder()
                 .title(validatedTitle(recipeRequestDto.getTitle()))
                 .description(recipeRequestDto.getDescription())
                 .categories(categories)
                 .imgUrl(recipeRequestDto.getImgUrl())
+                .userId(authenticatedUser.getId())
                 .build();
     }
 
@@ -59,23 +64,33 @@ public class RecipeService {
 
     public void updateRecipe(Recipe recipe, RecipeUpdateRequestDto recipeUpdateRequestDto){
 
-        String titleDto = recipeUpdateRequestDto.getTitle();
-        String descriptionDto = recipeUpdateRequestDto.getDescription();
-        String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
-        List<Category> categories = categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
+        Integer recipeOwnerId = recipe.getUserId();
 
-        recipe.setTitle(titleDto == null
-                ? recipe.getTitle()
-                : validatedTitle(titleDto));
-        recipe.setDescription(descriptionDto == null
-                ? recipe.getDescription()
-                : descriptionDto);
-        recipe.setImgUrl(imgUrlDto == null
-                ? recipe.getImgUrl()
-                : imgUrlDto);
-        recipe.setCategories(categories);
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
 
-        recipeRepository.save(recipe);
+        if(isOwnerOrAdmin){
+
+            String titleDto = recipeUpdateRequestDto.getTitle();
+            String descriptionDto = recipeUpdateRequestDto.getDescription();
+            String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
+            List<Category> categories = categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
+
+            recipe.setTitle(titleDto == null
+                    ? recipe.getTitle()
+                    : validatedTitle(titleDto));
+            recipe.setDescription(descriptionDto == null
+                    ? recipe.getDescription()
+                    : descriptionDto);
+            recipe.setImgUrl(imgUrlDto == null
+                    ? recipe.getImgUrl()
+                    : imgUrlDto);
+            recipe.setCategories(categories);
+
+            recipeRepository.save(recipe);
+
+        } else {
+            throw new RuntimeException("You don't have permission");
+        }
     }
 
     public Recipe getRecipeById(Integer recipeId) {
@@ -84,8 +99,17 @@ public class RecipeService {
     }
 
     public void deleteRecipeById(Integer recipeId) {
-        recipeRepository.deleteById(recipeId);
-        recipeStepClient.deleteAllByRecipeId(recipeId);
+
+        Integer recipeOwnerId = recipeRepository.findRecipeOwnerIdByRecipeId(recipeId);
+
+        boolean isOwnerOrAdmin = userService.isOwnerOrAdmin(recipeOwnerId);
+
+        if(isOwnerOrAdmin) {
+            recipeRepository.deleteById(recipeId);
+            recipeStepClient.deleteAllByRecipeId(recipeId);
+        } else {
+            throw new RuntimeException("You don't have permission");
+        }
     }
 
     public Page<RecipeSimpleResponseDto> getAllSimpleRecipes(Pageable pageable) {
@@ -130,5 +154,9 @@ public class RecipeService {
 
     public boolean recipeExists(Integer recipeId) {
         return recipeRepository.existsById(recipeId);
+    }
+
+    public Integer getRecipeOwnerIdByRecipeId(Integer recipeId) {
+        return recipeRepository.findRecipeOwnerIdByRecipeId(recipeId);
     }
 }

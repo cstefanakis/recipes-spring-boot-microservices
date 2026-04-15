@@ -28,6 +28,9 @@ public class Recipe {
     @Column(name = "image", length = 500)
     private String imgUrl;
 
+    @Column(name = "author")
+    private Integer userId;
+
     @Builder.Default
     @ManyToMany
     @JsonManagedReference

@@ -1,9 +1,9 @@
 package com.example.recipe_step_service.services;
 
 import com.example.recipe_step_service.clients.RecipeClient;
-import com.example.recipe_step_service.dtos.RecipeStepCreateRequestDto;
-import com.example.recipe_step_service.dtos.RecipeStepResponseDto;
-import com.example.recipe_step_service.dtos.RecipeStepUpdateRequestDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepCreateRequestDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepResponseDto;
+import com.example.recipe_step_service.dtos.recipeStep.RecipeStepUpdateRequestDto;
 import com.example.recipe_step_service.models.RecipeStep;
 import com.example.recipe_step_service.repositories.RecipeStepRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
@@ -34,6 +35,9 @@ class RecipeStepServiceTest {
 
     @Mock
     private RecipeClient recipeClient;
+
+    @Mock
+    private UserService userService;
 
     private RecipeStepCreateRequestDto recipeStepCreateRequestDto;
     private RecipeStep savedRecipeStep;
@@ -76,32 +80,92 @@ class RecipeStepServiceTest {
     void createRecipeStep() {
         //Arrange
         Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        Integer recipeOwnerId = 1;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
         //Mock
-        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
-        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeClient.recipeExists(recipeId))
+                .thenReturn(true);
+        when(recipeStepRepository.save(any(RecipeStep.class)))
+                .thenReturn(this.savedRecipeStep);
+
         //Act
         recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
+
         //Verify
-        verify(recipeClient).recipeExists(any(Integer.class));
-        verify(recipeStepRepository).save(any(RecipeStep.class));
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeClient)
+                .recipeExists(any(Integer.class));
+        verify(recipeStepRepository)
+                .save(any(RecipeStep.class));
+    }
+
+    @Test
+    void createRecipeStep_noOwnerOrAdmin() {
+        //Arrange
+        Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        Integer recipeOwnerId = 1;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
+        //Mock
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(false);
+
+        //Act and Assert
+        assertThrows(RuntimeException.class,
+                () -> recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto));
+
+        //Verify
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
     }
 
     @Test
     void createRecipeStep_withBiggerStepNumberNull() {
         //Arrange
         Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        Integer recipeOwnerId = 1;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
         //Mock
-        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
-        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId)).thenReturn(null);
-        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeClient.recipeExists(recipeId))
+                .thenReturn(true);
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId))
+                .thenReturn(null);
+        when(recipeStepRepository.save(any(RecipeStep.class)))
+                .thenReturn(this.savedRecipeStep);
+
         this.recipeStepCreateRequestDto.setStepNumber(5);
+
         //Act
         recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
 
         //Verify
-        verify(recipeStepRepository).findBiggerRecipeNumberByRecipeId(recipeId);
-        verify(recipeClient).recipeExists(any(Integer.class));
-        verify(recipeStepRepository).save(argThat(recipeStep ->
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeStepRepository)
+                .findBiggerRecipeNumberByRecipeId(recipeId);
+        verify(recipeClient)
+                .recipeExists(any(Integer.class));
+        verify(recipeStepRepository)
+                .save(argThat(recipeStep ->
                 recipeStep.getStepNumber() == 1));
     }
 
@@ -109,18 +173,36 @@ class RecipeStepServiceTest {
     void createRecipeStep_withStepTooBig() {
         //Arrange
         Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        Integer recipeOwnerId = 1;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
         //Mock
-        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
-        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId)).thenReturn(1);
-        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeClient.recipeExists(recipeId))
+                .thenReturn(true);
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId))
+                .thenReturn(1);
+        when(recipeStepRepository.save(any(RecipeStep.class)))
+                .thenReturn(this.savedRecipeStep);
         this.recipeStepCreateRequestDto.setStepNumber(5);
+
         //Act
         recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
 
         //Verify
-        verify(recipeStepRepository).findBiggerRecipeNumberByRecipeId(recipeId);
-        verify(recipeClient).recipeExists(any(Integer.class));
-        verify(recipeStepRepository).save(argThat(recipeStep ->
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeStepRepository)
+                .findBiggerRecipeNumberByRecipeId(recipeId);
+        verify(recipeClient)
+                .recipeExists(any(Integer.class));
+        verify(recipeStepRepository)
+                .save(argThat(recipeStep ->
                 recipeStep.getStepNumber() == 2));
     }
 
@@ -128,18 +210,37 @@ class RecipeStepServiceTest {
     void createRecipeStep_withNormalStepNumber() {
         //Arrange
         Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        Integer recipeOwnerId = 1;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
         //Mock
-        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
-        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId)).thenReturn(1);
-        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeClient.recipeExists(recipeId))
+                .thenReturn(true);
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId))
+                .thenReturn(1);
+        when(recipeStepRepository.save(any(RecipeStep.class)))
+                .thenReturn(this.savedRecipeStep);
+
         this.recipeStepCreateRequestDto.setStepNumber(2);
+
         //Act
         recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
 
         //Verify
-        verify(recipeStepRepository).findBiggerRecipeNumberByRecipeId(recipeId);
-        verify(recipeClient).recipeExists(any(Integer.class));
-        verify(recipeStepRepository).save(argThat(recipeStep ->
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeStepRepository)
+                .findBiggerRecipeNumberByRecipeId(recipeId);
+        verify(recipeClient)
+                .recipeExists(any(Integer.class));
+        verify(recipeStepRepository)
+                .save(argThat(recipeStep ->
                 recipeStep.getStepNumber() == 2));
     }
 
@@ -147,30 +248,65 @@ class RecipeStepServiceTest {
     void createRecipeStep_withSameStepNumber() {
         //Arrange
         Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        Integer recipeOwnerId = 1;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
         //Mock
-        when(recipeClient.recipeExists(recipeId)).thenReturn(true);
-        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId)).thenReturn(1);
-        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.savedRecipeStep);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeClient.recipeExists(recipeId))
+                .thenReturn(true);
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(recipeId))
+                .thenReturn(1);
+        when(recipeStepRepository.save(any(RecipeStep.class)))
+                .thenReturn(this.savedRecipeStep);
+
         this.recipeStepCreateRequestDto.setStepNumber(1);
+
         //Act
         recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto);
 
         //Verify
-        verify(recipeStepRepository).findBiggerRecipeNumberByRecipeId(recipeId);
-        verify(recipeClient).recipeExists(any(Integer.class));
-        verify(recipeStepRepository).save(argThat(recipeStep ->
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeStepRepository)
+                .findBiggerRecipeNumberByRecipeId(recipeId);
+        verify(recipeClient)
+                .recipeExists(any(Integer.class));
+        verify(recipeStepRepository)
+                .save(argThat(recipeStep ->
                 recipeStep.getStepNumber() == 1));
     }
 
     @Test
     void createRecipeStep_RecipeNotExists() {
         //Arrange
-        when(recipeClient.recipeExists(any(Integer.class))).thenReturn(false);
+        Integer recipeId = this.recipeStepCreateRequestDto.getRecipeId();
+        Integer recipeOwnerId = 1;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
+        //Mock
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeClient.recipeExists(any(Integer.class)))
+                .thenReturn(false);
+
         //Act
         assertThrows(EntityNotFoundException.class, ()->
             recipeStepService.createRecipeStep(this.recipeStepCreateRequestDto)
         );
+
         //Verify
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
         verify(recipeClient).recipeExists(any(Integer.class));
     }
 
@@ -202,50 +338,215 @@ class RecipeStepServiceTest {
     void deleteRecipeStepById() {
         //Arrange
         Integer recipeStepId = 1;
+        Integer recipeId = 2;
+        Integer recipeOwnerId = 3;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
+        //Mock
+        when(recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId))
+                .thenReturn(recipeId);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+
         //Act
-        recipeStepService.deleteRecipeStepById(1);
+        recipeStepService.deleteRecipeStepById(recipeStepId);
+
         //Verify
-        verify(recipeStepRepository, times(1)).deleteById(recipeStepId);
+        verify(recipeStepRepository, times(1))
+                .findRecipeIdByRecipeStepId(recipeStepId);
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeStepRepository, times(1))
+                .deleteById(recipeStepId);
+    }
+
+    @Test
+    void deleteRecipeStepById_notOwnerOrAdmin() {
+        //Arrange
+        Integer recipeStepId = 1;
+        Integer recipeId = 2;
+        Integer recipeOwnerId = 3;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
+        //Mock
+        when(recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId))
+                .thenReturn(recipeId);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(false);
+
+        //Act and Assert
+        assertThrows(RuntimeException.class,
+                () -> recipeStepService.deleteRecipeStepById(recipeStepId));
+
+        //Verify
+        verify(recipeStepRepository, times(1))
+                .findRecipeIdByRecipeStepId(recipeStepId);
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
     }
 
     @Test
     void updateRecipeStepById() {
         //Arrange
         Integer recipeStepId = 1;
-        when(recipeStepRepository.findById(recipeStepId)).thenReturn(Optional.of(this.savedRecipeStep));
-        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(any(Integer.class))).thenReturn(2);
-        when(recipeStepRepository.findRecipeStepIdByRecipeIdAndStepNumber(any(Integer.class), any(Integer.class))).thenReturn(2);
-        doNothing().when(recipeStepRepository).updateRecipeStepStepNumber(any(Integer.class), any(Integer.class));
-        when(recipeStepRepository.save(any(RecipeStep.class))).thenReturn(this.updatedRecipeStep);
+        Integer recipeId = 2;
+        Integer recipeOwnerId = 3;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
+        //Mock
+        when(recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId))
+                .thenReturn(recipeId);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeStepRepository.findById(recipeStepId))
+                .thenReturn(Optional.of(this.savedRecipeStep));
+        when(recipeStepRepository.findBiggerRecipeNumberByRecipeId(any(Integer.class)))
+                .thenReturn(2);
+        when(recipeStepRepository.findRecipeStepIdByRecipeIdAndStepNumber(any(Integer.class), any(Integer.class)))
+                .thenReturn(2);
+        doNothing().when(recipeStepRepository)
+                .updateRecipeStepStepNumber(any(Integer.class), any(Integer.class));
+        when(recipeStepRepository.save(any(RecipeStep.class)))
+                .thenReturn(this.updatedRecipeStep);
+
         //Act
         recipeStepService.updateRecipeStepById(recipeStepId, this.recipeStepUpdateRequestDto);
+
         //verify
-        verify(recipeStepRepository, times(1)).findById(recipeStepId);
-        verify(recipeStepRepository, times(1)).save(any(RecipeStep.class));
+        verify(recipeStepRepository, times(1))
+                .findRecipeIdByRecipeStepId(recipeStepId);
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeStepRepository, times(1))
+                .findById(recipeStepId);
+        verify(recipeStepRepository, times(1))
+                .save(any(RecipeStep.class));
+    }
+
+    @Test
+    void updateRecipeStepById_notOwnerOrAdmin() {
+        //Arrange
+        Integer recipeStepId = 1;
+        Integer recipeId = 2;
+        Integer recipeOwnerId = 3;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
+        //Mock
+        when(recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId))
+                .thenReturn(recipeId);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(false);
+
+        //Act and Assert
+        assertThrows(RuntimeException.class,
+                () -> recipeStepService.updateRecipeStepById(recipeStepId, this.recipeStepUpdateRequestDto));
+
+        //verify
+        verify(recipeStepRepository, times(1))
+                .findRecipeIdByRecipeStepId(recipeStepId);
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
     }
 
     @Test
     void updateRecipeStepById_notFoundId() {
         //Arrange
         Integer recipeStepId = 1;
-        when(recipeStepRepository.findById(recipeStepId)).thenReturn(Optional.empty());
+        Integer recipeId = 2;
+        Integer recipeOwnerId = 3;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
+        //Mock
+        when(recipeStepRepository.findRecipeIdByRecipeStepId(recipeStepId))
+                .thenReturn(recipeId);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        when(recipeStepRepository.findById(recipeStepId))
+                .thenReturn(Optional.empty());
+
         //Act
         assertThrows(EntityNotFoundException.class, () ->
                 recipeStepService.updateRecipeStepById(recipeStepId, this.recipeStepUpdateRequestDto));
+
         //verify
-        verify(recipeStepRepository, times(1)).findById(recipeStepId);
-        verify(recipeStepRepository, never()).save(any());
+        verify(recipeStepRepository, times(1))
+                .findRecipeIdByRecipeStepId(recipeStepId);
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeStepRepository, times(1))
+                .findById(recipeStepId);
+        verify(recipeStepRepository, never())
+                .save(any());
     }
 
     @Test
     void deleteAllByRecipeId() {
         //Arrange
-        Integer recipeId = 1;
+        Integer recipeId = 2;
+        Integer recipeOwnerId = 3;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
         //Mock
-        doNothing().when(recipeStepRepository).deleteAllByRecipeId(recipeId);
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(true);
+        doNothing().when(recipeStepRepository)
+                .deleteAllByRecipeId(recipeId);
+
         //Act
         recipeStepService.deleteAllByRecipeId(recipeId);
+
         //Verify
-        verify(recipeStepRepository).deleteAllByRecipeId(recipeId);
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
+        verify(recipeStepRepository)
+                .deleteAllByRecipeId(recipeId);
+    }
+
+    @Test
+    void deleteAllByRecipeId_NoOwnerOrAdmin() {
+        //Arrange
+        Integer recipeId = 2;
+        Integer recipeOwnerId = 3;
+        ResponseEntity<Integer> response = ResponseEntity.ok(recipeOwnerId);
+
+        //Mock
+        when(recipeClient.getRecipeOwnerIdByRecipeId(recipeId))
+                .thenReturn(response);
+        when(userService.isOwnerOrAdmin(recipeOwnerId))
+                .thenReturn(false);
+
+        //Act
+        assertThrows(RuntimeException.class,
+                () -> recipeStepService.deleteAllByRecipeId(recipeId));
+
+        //Verify
+        verify(recipeClient, times(1))
+                .getRecipeOwnerIdByRecipeId(recipeId);
+        verify(userService, times(1))
+                .isOwnerOrAdmin(recipeOwnerId);
     }
 }
