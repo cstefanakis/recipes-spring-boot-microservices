@@ -1,0 +1,16 @@
+package com.recipe.recipestep.clients;
+
+import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+@FeignClient(name = "recipe-service")
+public interface RecipeClient {
+
+    @GetMapping("/api/recipes/owner-id/{recipeId}")
+    ResponseEntity<Integer> getRecipeOwnerIdByRecipeId(@PathVariable ("recipeId") Integer recipeId);
+
+    @GetMapping("/api/recipes/exists/{recipeId}")
+    boolean recipeExists(@PathVariable("recipeId") Integer recipeId);
+}
