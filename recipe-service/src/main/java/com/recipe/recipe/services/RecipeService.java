@@ -9,6 +9,7 @@ import com.recipe.recipe.dtos.recipe.RecipeSimpleResponseDto;
 import com.recipe.recipe.dtos.recipe.RecipeUpdateRequestDto;
 import com.recipe.recipe.dtos.recipeStep.RecipeStepResponseDto;
 import com.recipe.recipe.dtos.user.UserResponseIdAndRole;
+import com.recipe.recipe.dtos.user.UserResponseIdAndUsernameDto;
 import com.recipe.recipe.models.Category;
 import com.recipe.recipe.models.Recipe;
 import com.recipe.recipe.repositories.RecipeRepository;
@@ -73,6 +74,7 @@ public class RecipeService {
             String titleDto = recipeUpdateRequestDto.getTitle();
             String descriptionDto = recipeUpdateRequestDto.getDescription();
             String imgUrlDto = recipeUpdateRequestDto.getImgUrl();
+            Integer authorId = recipeUpdateRequestDto.getAuthorId();
             List<Category> categories = categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
 
             recipe.setTitle(titleDto == null
@@ -84,6 +86,9 @@ public class RecipeService {
             recipe.setImgUrl(imgUrlDto == null
                     ? recipe.getImgUrl()
                     : imgUrlDto);
+            recipe.setUserId(authorId == null
+                    ? recipe.getUserId()
+                    : authorId);
             recipe.setCategories(categories);
 
             recipeRepository.save(recipe);
@@ -118,34 +123,49 @@ public class RecipeService {
     }
 
     private RecipeSimpleResponseDto toRecipeSimpleResponseDto(Recipe recipe) {
+
+        Integer authorId = recipe.getUserId();
+
+        UserResponseIdAndUsernameDto userDto =
+                userService.getUserIdAndUsernameByUserId(authorId);
+
         return RecipeSimpleResponseDto.builder()
                 .id(recipe.getId())
                 .title(recipe.getTitle())
                 .imgUrl(recipe.getImgUrl())
                 .description(recipe.getDescription())
+                .author(userDto)
                 .build();
     }
 
     public RecipeResponseDto toRecipeResponseDto(Recipe recipe) {
 
-        List<RecipeIngredientResponseDto> ingredients = recipeIngredientService.getRecipeIngredientsByRecipeId(recipe.getId());
+        List<RecipeIngredientResponseDto> ingredients =
+                recipeIngredientService.getRecipeIngredientsByRecipeId(recipe.getId());
 
         List<CategoryResponseDto> categories = recipe.getCategories().stream()
                 .map(categoryService::toCategoryResponseDto)
                 .toList();
 
-        List<RecipeStepResponseDto> recipeSteps = recipeStepService.getRecipeStepsByRecipeId(recipe.getId());
+        List<RecipeStepResponseDto> recipeSteps =
+                recipeStepService.getRecipeStepsByRecipeId(recipe.getId());
+
+        UserResponseIdAndUsernameDto author =
+                userService.getUserIdAndUsernameByUserId(recipe.getUserId());
 
         return RecipeResponseDto.builder()
                 .id(recipe.getId())
                 .title(recipe.getTitle())
                 .imgUrl(recipe.getImgUrl())
+                .author(author)
                 .description(recipe.getDescription())
                 .ingredients(ingredients)
                 .categories(categories)
                 .recipeSteps(recipeSteps)
                 .build();
     }
+
+
 
     public Page<RecipeSimpleResponseDto> getRecipesByCategoryId(Integer categoryId, Pageable pageable) {
         Page<Recipe> recipes = recipeRepository.findRecipesByCategoryId(categoryId, pageable);

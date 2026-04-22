@@ -1,5 +1,6 @@
 package com.recipe.recipe.dtos.recipe;
 
+import com.recipe.recipe.dtos.user.UserResponseIdAndUsernameDto;
 import lombok.*;
 
 @Getter
@@ -12,4 +13,5 @@ public class RecipeSimpleResponseDto {
     private String title;
     private String description;
     private String imgUrl;
+    private UserResponseIdAndUsernameDto author;
 }

@@ -20,4 +20,6 @@ public class RecipeUpdateRequestDto {
     private String imgUrl;
 
     private List<Integer> categoriesId;
+
+    private Integer authorId;
 }

@@ -1,11 +1,15 @@
 package com.recipe.recipe.clients;
 
+import com.recipe.recipe.config.FeignConfig;
 import com.recipe.recipe.dtos.ingredient.IngredientSimpleResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "ingredients-service")
+@FeignClient(
+        name = "ingredients-service",
+        configuration = FeignConfig.class)
+
 public interface IngredientClient {
 
     @GetMapping("/api/ingredients/{ingredientId}")

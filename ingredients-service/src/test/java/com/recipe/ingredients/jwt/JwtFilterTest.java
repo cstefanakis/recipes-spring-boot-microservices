@@ -1,4 +1,4 @@
-package com.recipe.recipe.jwt;
+package com.recipe.ingredients.jwt;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;

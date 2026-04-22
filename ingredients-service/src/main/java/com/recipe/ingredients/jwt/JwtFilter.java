@@ -41,7 +41,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 //Convert role
                 List<SimpleGrantedAuthority> authorities =
-                        List.of(new SimpleGrantedAuthority("ROLE_" + role));
+                        List.of(new SimpleGrantedAuthority(role));
 
                 //Create authentication object
                 UsernamePasswordAuthenticationToken auth =

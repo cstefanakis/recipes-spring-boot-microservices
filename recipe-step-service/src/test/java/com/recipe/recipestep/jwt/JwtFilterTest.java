@@ -36,6 +36,11 @@ class JwtFilterTest {
     @Mock
     private FilterChain filterChain;
 
+    @AfterEach
+    void clearContext() {
+        SecurityContextHolder.clearContext();
+    }
+
     @Test
     void shouldSetAuthentication_tokenValid() throws Exception {
         // Arrange
@@ -60,7 +65,7 @@ class JwtFilterTest {
         assertNotNull(auth);
         assertEquals("user1", auth.getPrincipal());
         assertTrue(auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
+                .anyMatch(a -> a.getAuthority().equals("USER")));
 
         //Verify
         verify(filterChain)
@@ -106,10 +111,5 @@ class JwtFilterTest {
 
         //Verify
         verify(filterChain).doFilter(request, response);
-    }
-
-    @AfterEach
-    void clearContext() {
-        SecurityContextHolder.clearContext();
     }
 }
