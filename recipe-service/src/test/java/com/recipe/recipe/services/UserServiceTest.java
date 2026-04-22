@@ -2,6 +2,7 @@ package com.recipe.recipe.services;
 
 import com.recipe.recipe.clients.UserClient;
 import com.recipe.recipe.dtos.user.UserResponseIdAndRole;
+import com.recipe.recipe.dtos.user.UserResponseIdAndUsernameDto;
 import com.recipe.recipe.models.Category;
 import com.recipe.recipe.models.Recipe;
 import org.junit.jupiter.api.BeforeEach;
@@ -146,5 +147,35 @@ class UserServiceTest {
         verify(userClient, times(1))
                 .authenticatedUserIdAndRole();
 
+    }
+
+    @Test
+    void getUserIdAndUsernameByUserId() {
+        //Arrange
+        Integer userId = this.user.getId();
+
+        UserResponseIdAndUsernameDto dto = UserResponseIdAndUsernameDto.builder()
+                .id(userId)
+                .username("username")
+                .build();
+
+        ResponseEntity<UserResponseIdAndUsernameDto> response = ResponseEntity.ok(dto);
+
+        //Mock
+        when(userClient.getUserIdAndUsernameByUserId(userId))
+                .thenReturn(response);
+
+        //Act
+        UserResponseIdAndUsernameDto result =
+                userService.getUserIdAndUsernameByUserId(userId);
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(dto.getId(), result.getId());
+        assertEquals(dto.getUsername(), result.getUsername());
+
+        //Verify
+        verify(userClient, times(1))
+                .getUserIdAndUsernameByUserId(userId);
     }
 }

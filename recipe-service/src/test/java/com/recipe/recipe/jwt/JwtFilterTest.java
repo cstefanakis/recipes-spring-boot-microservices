@@ -60,7 +60,7 @@ class JwtFilterTest {
         assertNotNull(auth);
         assertEquals("user1", auth.getPrincipal());
         assertTrue(auth.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ROLE_USER")));
+                .anyMatch(a -> a.getAuthority().equals("USER")));
 
         //Verify
         verify(filterChain)

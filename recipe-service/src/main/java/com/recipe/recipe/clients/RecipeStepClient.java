@@ -1,5 +1,6 @@
 package com.recipe.recipe.clients;
 
+import com.recipe.recipe.config.FeignConfig;
 import com.recipe.recipe.dtos.recipeStep.RecipeStepResponseDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -8,7 +9,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
-@FeignClient(name = "recipe-step-service")
+@FeignClient(
+        name = "recipe-step-service",
+        configuration = FeignConfig.class)
+
 public interface RecipeStepClient {
 
     @GetMapping("/api/recipe-steps/recipe/{recipeId}")
