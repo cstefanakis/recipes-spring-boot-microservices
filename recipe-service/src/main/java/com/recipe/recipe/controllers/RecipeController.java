@@ -51,11 +51,21 @@ public class RecipeController {
     @GetMapping
     public ResponseEntity<PagedModel<EntityModel<RecipeSimpleResponseDto>>> getAllRecipes(Pageable pageable,
                                                                                           PagedResourcesAssembler<RecipeSimpleResponseDto> assembler){
-
-        Page<RecipeSimpleResponseDto> categories
+        Page<RecipeSimpleResponseDto> recipes
                 = recipeService.getAllSimpleRecipes(pageable);
 
-        return ResponseEntity.ok(assembler.toModel(categories));
+        return ResponseEntity.ok(assembler.toModel(recipes));
+    }
+
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @GetMapping("/author-recipes/{userId}")
+    public ResponseEntity<PagedModel<EntityModel<RecipeSimpleResponseDto>>> getAllRecipesByUserId(@PathVariable("userId") Integer userId,
+                                                                                                  Pageable pageable,
+                                                                                                  PagedResourcesAssembler<RecipeSimpleResponseDto> assembler){
+        Page<RecipeSimpleResponseDto> recipes
+                = recipeService.getAllAuthorSimpleRecipes(userId, pageable);
+
+        return ResponseEntity.ok(assembler.toModel(recipes));
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

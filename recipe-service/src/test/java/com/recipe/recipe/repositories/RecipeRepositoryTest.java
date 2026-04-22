@@ -63,8 +63,10 @@ class RecipeRepositoryTest {
         //Arrest
         Integer categoryId = this.category.getId();
         Pageable pageable = PageRequest.of(0, 10);
+
         //Act
         Page<Recipe> result = recipeRepository.findRecipesByCategoryId(categoryId, pageable);
+
         //Assert
         assertNotNull(result);
         assertTrue(result.stream()
@@ -97,5 +99,21 @@ class RecipeRepositoryTest {
         //Assert
         assertNotNull(result);
         assertEquals(userId, result);
+    }
+
+    @Test
+    void findAllAuthorSimpleRecipes() {
+        //Arrange
+        Integer userId = this.recipe.getUserId();
+        Pageable pageable = PageRequest.of(0, 10);
+
+        //Act
+        Page<Recipe> result = recipeRepository.findAllAuthorSimpleRecipes(userId, pageable);
+
+        //Assert
+        assertNotNull(result);
+        assertEquals(1, result.getContent().size());
+        assertEquals(this.recipe.getId(), result.getContent().getFirst().getId());
+        assertEquals(this.recipe.getTitle(), result.getContent().getFirst().getTitle());
     }
 }

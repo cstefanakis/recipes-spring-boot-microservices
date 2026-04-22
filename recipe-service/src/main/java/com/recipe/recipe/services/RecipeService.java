@@ -124,10 +124,7 @@ public class RecipeService {
 
     private RecipeSimpleResponseDto toRecipeSimpleResponseDto(Recipe recipe) {
 
-        Integer authorId = recipe.getUserId();
-
-        UserResponseIdAndUsernameDto userDto =
-                userService.getUserIdAndUsernameByUserId(authorId);
+        UserResponseIdAndUsernameDto userDto = getUserResponseIdAndUsernameDtoByUserId(recipe.getUserId());
 
         return RecipeSimpleResponseDto.builder()
                 .id(recipe.getId())
@@ -136,6 +133,16 @@ public class RecipeService {
                 .description(recipe.getDescription())
                 .author(userDto)
                 .build();
+    }
+
+    private UserResponseIdAndUsernameDto getUserResponseIdAndUsernameDtoByUserId(Integer userId) {
+        try {
+            return userService.getUserIdAndUsernameByUserId(userId);
+        }catch (Exception e){
+            return UserResponseIdAndUsernameDto.builder()
+                    .username("Unknown author")
+                    .build();
+        }
     }
 
     public RecipeResponseDto toRecipeResponseDto(Recipe recipe) {
@@ -150,8 +157,7 @@ public class RecipeService {
         List<RecipeStepResponseDto> recipeSteps =
                 recipeStepService.getRecipeStepsByRecipeId(recipe.getId());
 
-        UserResponseIdAndUsernameDto author =
-                userService.getUserIdAndUsernameByUserId(recipe.getUserId());
+        UserResponseIdAndUsernameDto author = getUserResponseIdAndUsernameDtoByUserId(recipe.getUserId());
 
         return RecipeResponseDto.builder()
                 .id(recipe.getId())
@@ -178,5 +184,12 @@ public class RecipeService {
 
     public Integer getRecipeOwnerIdByRecipeId(Integer recipeId) {
         return recipeRepository.findRecipeOwnerIdByRecipeId(recipeId);
+    }
+
+    public Page<RecipeSimpleResponseDto> getAllAuthorSimpleRecipes(Integer userId, Pageable pageable) {
+
+        Page<Recipe> recipes = recipeRepository.findAllAuthorSimpleRecipes(userId, pageable);
+
+        return recipes.map(this::toRecipeSimpleResponseDto);
     }
 }
