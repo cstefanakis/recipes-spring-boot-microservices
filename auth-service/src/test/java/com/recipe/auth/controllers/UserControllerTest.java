@@ -19,9 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -169,8 +168,8 @@ class UserControllerTest {
         //Arrange
         Integer userId = this.user.getId();
         Role role = Role.ADMIN;
-        UserRequestIdAndRoleDto userRequestIdAndRoleDto
-                = UserRequestIdAndRoleDto.builder()
+        UserResponseIdAndRoleDto userRequestIdAndRoleDto
+                = UserResponseIdAndRoleDto.builder()
                 .id(userId)
                 .role(role.name())
                 .build();
@@ -207,7 +206,7 @@ class UserControllerTest {
                     "fullName" : "updatedFullName",
                     "username" : "updatedUsername",
                     "email" : "updateUser@test.com",
-                    "password" : "newPassword"
+                    "password" : "superSecretPassword1"
                 }
                 """;
 
@@ -230,5 +229,72 @@ class UserControllerTest {
         //Verify
         verify(userService, times(1))
                 .getUpdatedUserByUserId(any(Integer.class), any(UpdateUserRequestDto.class));
+    }
+
+    @Test
+    void updatedUser_WithIncorrectPassword() throws Exception {
+        //Arrange
+        Integer userId = this.user.getId();
+
+        String requestBody = """
+                {
+                    "fullName" : "updatedFullName",
+                    "username" : "updatedUsername",
+                    "email" : "updateUser@test.com",
+                    "password" : "superSecretPassword"
+                }
+                """;
+
+        //Perform Put
+        mockMvc.perform(put("/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+    }
+    @Test
+    void updatedUser_WithIncorrectEmail() throws Exception {
+        //Arrange
+        Integer userId = this.user.getId();
+
+        String requestBody = """
+                {
+                    "fullName" : "updatedFullName",
+                    "username" : "updatedUsername",
+                    "email" : "updateUsertest.com",
+                    "password" : "superSecretPassword1"
+                }
+                """;
+
+        //Perform Put
+        mockMvc.perform(put("/users/{userId}", userId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getUserIdAndUsernameByUserId() throws Exception {
+        //Arrange
+        Integer userId = this.user.getId();
+
+        UserResponseIdAndUsernameDto dto =
+                UserResponseIdAndUsernameDto.builder()
+                        .id(userId)
+                        .username(this.user.getUsername())
+                        .build();
+
+        //Mock
+        when(userService.getUserIdAndUsernameByUserId(userId))
+                .thenReturn(dto);
+
+        //Perform get
+        mockMvc.perform(get("/users/username/{userId}", userId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(userId))
+                .andExpect(jsonPath("$.username").value(dto.getUsername()));
+
+        //Verify
+        verify(userService, times(1))
+                .getUserIdAndUsernameByUserId(userId);
     }
 }

@@ -66,7 +66,7 @@ class AuthenticationControllerTest {
                 {
                     "email" : "test@test.com",
                     "username" : "test",
-                    "password" : "superSecretPassword",
+                    "password" : "superSecretPassword1",
                     "fullName" : "test name"
                 }
                 """;
@@ -107,6 +107,44 @@ class AuthenticationControllerTest {
         //Verify
         verify(authenticationService, times(1))
                 .signup(any(RegisterUserDto.class));
+    }
+
+    @Test
+    void register_WithIncorrectPassword() throws Exception {
+        //Arrange
+        String request = """
+                {
+                    "email" : "test@test.com",
+                    "username" : "test",
+                    "password" : "1234",
+                    "fullName" : "test name"
+                }
+                """;
+
+        //Perform Post
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void register_WithIncorrectEmail() throws Exception {
+        //Arrange
+        String request = """
+                {
+                    "email" : "testTest.com",
+                    "username" : "test",
+                    "password" : "superSecretPassword1",
+                    "fullName" : "test name"
+                }
+                """;
+
+        //Perform Post
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(request))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -276,8 +314,8 @@ class AuthenticationControllerTest {
     @Test
     void authenticatedUserIdAndRole() throws Exception {
         //Arrange
-        UserRequestIdAndRoleDto userRequestIdAndRoleDto =
-                UserRequestIdAndRoleDto.builder()
+        UserResponseIdAndRoleDto userRequestIdAndRoleDto =
+                UserResponseIdAndRoleDto.builder()
                         .id(this.user.getId())
                         .role(this.user.getRole().name())
                         .build();
