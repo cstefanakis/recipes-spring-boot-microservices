@@ -30,4 +30,10 @@ public interface RecipeRepository extends JpaRepository<Recipe, Integer> {
             WHERE r.id = :recipeId
             """)
     Integer findRecipeOwnerIdByRecipeId(@Param("recipeId") Integer recipeId);
+
+    @Query("""
+            SELECT r FROM Recipe r
+            WHERE r.userId = :userId
+            """)
+    Page<Recipe> findAllAuthorSimpleRecipes(Integer userId, Pageable pageable);
 }

@@ -505,4 +505,34 @@ class RecipeServiceTest {
         verify(recipeRepository, times(1))
                 .findRecipeOwnerIdByRecipeId(recipeId);
     }
+
+    @Test
+    void getAllAuthorSimpleRecipes() {
+        //Arrange
+        Integer userId = this.recipe.getUserId();
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Recipe> recipes = new PageImpl<>(List.of(this.recipe));
+
+        //Mock
+        when(recipeRepository.findAllAuthorSimpleRecipes(userId, pageable))
+                .thenReturn(recipes);
+
+        //Act
+        Page<RecipeSimpleResponseDto> result =
+                recipeService.getAllAuthorSimpleRecipes(userId, pageable);
+
+        //Assert
+        assertNotNull(result);
+        assertTrue(result.stream()
+                .anyMatch(rDto -> rDto.getId().equals(this.recipe.getId())));
+        assertTrue(result.stream()
+                .anyMatch(rDto -> rDto.getTitle().equals(this.recipe.getTitle())));
+        assertTrue(result.stream()
+                .anyMatch(rDto -> rDto.getImgUrl().equals(this.recipe.getImgUrl())));
+        assertTrue(result.stream()
+                .anyMatch(rDto -> rDto.getDescription().equals(this.recipe.getDescription())));
+        //Verify
+        verify(recipeRepository, times(1))
+                .findAllAuthorSimpleRecipes(userId, pageable);
+    }
 }
