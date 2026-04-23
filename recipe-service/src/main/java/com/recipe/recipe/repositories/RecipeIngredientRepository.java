@@ -30,4 +30,12 @@ public interface RecipeIngredientRepository extends JpaRepository<RecipeIngredie
             WHERE ri.id = :recipeIngredientId
             """)
     Integer getRecipeOwnerByRecipeIngredientId(@Param("recipeIngredientId") Integer recipeIngredientId);
+
+    @Query("""
+            SELECT COUNT(ri) > 0 FROM RecipeIngredient ri
+            WHERE ri.ingredientId = :ingredientId
+            AND ri.recipe.id = :recipeId
+            """)
+    boolean existsByIngredientIdAndRecipeId(@Param("ingredientId") Integer ingredientId,
+                                         @Param("recipeId") Integer recipeId);
 }

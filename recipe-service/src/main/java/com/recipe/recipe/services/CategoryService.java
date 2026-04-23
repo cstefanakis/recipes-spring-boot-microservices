@@ -70,8 +70,12 @@ public class CategoryService {
     }
 
     public void updateCategory(Integer categoryId, CategoryUpdateRequestDto categoryUpdateRequestDto) {
+
         Category category = getCategoryById(categoryId);
-        categoryRepository.save(toUpdatedEntity(category, categoryUpdateRequestDto));
+
+        Category updatedCategory = toUpdatedEntity(category, categoryUpdateRequestDto);
+
+        categoryRepository.save(updatedCategory);
     }
 
     private Category toUpdatedEntity(Category category, CategoryUpdateRequestDto categoryUpdateRequestDto) {
@@ -79,15 +83,29 @@ public class CategoryService {
         String nameDto = validatedName(categoryUpdateRequestDto.getName());
         String imgUrlDto = categoryUpdateRequestDto.getImgUrl();
 
-        category.setName(nameDto == null
-                ? category.getName()
-                : nameDto);
+        category.setName(updatedName(category.getName(), nameDto));
 
         category.setImgUrl(imgUrlDto == null
                 ? category.getImgUrl()
                 : imgUrlDto);
 
         return category;
+    }
+
+    private String updatedName(String name, String nameDto) {
+
+        if(nameDto == null){
+            return name;
+        }
+
+        if(name.equals(nameDto)){
+            return name;
+        }
+
+        validatedName(nameDto);
+
+        return nameDto;
+
     }
 
     public void deleteCategoryById(Integer categoryId) {

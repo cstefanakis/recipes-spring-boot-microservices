@@ -10,6 +10,7 @@ import com.recipe.recipe.models.Recipe;
 import com.recipe.recipe.models.RecipeIngredient;
 import com.recipe.recipe.repositories.RecipeIngredientRepository;
 import com.recipe.recipe.repositories.RecipeRepository;
+import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class RecipeIngredientService {
             RecipeIngredient recipeIngredient = toEntity(ingredientCreateRequestDto);
 
             recipeIngredientRepository.save(recipeIngredient);
+
         } else {
             throw new RuntimeException("You don't have permission");
         }
@@ -53,11 +55,22 @@ public class RecipeIngredientService {
         Integer ingredientId = ingredientClient.ingredientExistById(ingredientCreateRequestDto.getIngredientId());
 
         return RecipeIngredient.builder()
-                .ingredientId(ingredientId)
+                .ingredientId(validatedIngredientId(ingredientId, recipeId))
                 .recipe(recipe)
                 .unit(ingredientCreateRequestDto.getUnit())
                 .quantity(ingredientCreateRequestDto.getQuantity())
                 .build();
+    }
+
+    private Integer validatedIngredientId(Integer ingredientId, Integer recipeId) {
+
+        boolean isExists =  recipeIngredientRepository.existsByIngredientIdAndRecipeId(ingredientId, recipeId);
+
+        if(isExists){
+            throw new EntityExistsException(String.format("Ingredient with id %s is already exists in recipe", ingredientId));
+        }
+
+        return ingredientId;
     }
 
     public List<RecipeIngredientResponseDto> getRecipeIngredientsByRecipeId(Integer recipeId) {
@@ -112,9 +125,13 @@ public class RecipeIngredientService {
             Unit unitDto = recipeIngredientUpdateRequestDto.getUnit();
             Double quantityDto = recipeIngredientUpdateRequestDto.getQuantity();
 
-            recipeIngredient.setIngredientId(ingredientIdDto == null
-                    ? recipeIngredient.getIngredientId()
-                    : ingredientClient.ingredientExistById(ingredientIdDto));
+            recipeIngredient.setIngredientId(
+                    updatedIngredientId(
+                            recipeIngredient.getId(),
+                            ingredientIdDto,
+                            recipeIngredient.getRecipe().getId()
+                    )
+            );
 
             recipeIngredient.setUnit(unitDto == null
                     ? recipeIngredient.getUnit()
@@ -129,6 +146,21 @@ public class RecipeIngredientService {
         } else {
             throw new RuntimeException("You don't have permission");
         }
+    }
+
+    private Integer updatedIngredientId(Integer ingredientId, Integer ingredientIdDto, Integer recipeId) {
+
+        if(ingredientIdDto == null){
+            return ingredientId;
+        }
+
+        if(ingredientId.equals(ingredientIdDto)){
+            return ingredientId;
+        }
+
+        validatedIngredientId(ingredientIdDto, recipeId);
+
+        return ingredientIdDto;
     }
 
     public List<RecipeIngredient> getAllRecipeIngredients() {
