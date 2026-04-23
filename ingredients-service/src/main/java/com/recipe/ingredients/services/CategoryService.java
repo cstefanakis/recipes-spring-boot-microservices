@@ -19,13 +19,19 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     public void createCategory(CategoryCreateRequestDto categoryCreateRequestDto){
+
         Category category = toEntity(categoryCreateRequestDto);
+
         categoryRepository.save(category);
     }
 
     public void updateCategory(Integer categoryId, CategoryUpdateRequestDto updateCategoryDto){
+
         Category category = getCategoryById(categoryId);
-        categoryRepository.save(toUpdateEntity(category, updateCategoryDto));
+
+        Category updatedCategory = toUpdateEntity(category, updateCategoryDto);
+
+        categoryRepository.save(updatedCategory);
     }
 
     public List<CategoryResponseDto> getAllCategoryResponseDto(){
@@ -39,12 +45,28 @@ public class CategoryService {
 
         String nameDto = categoryUpdateRequestDto.getName();
 
-        String name = nameDto == null
-                ? category.getName()
-                : validatedCategoryName(nameDto);
+        String name = category.getName();
 
-        category.setName(name);
+        String updatedName = updatedName(name, nameDto);
+
+        category.setName(updatedName);
+
         return category;
+    }
+
+    private String updatedName(String name, String nameDto) {
+
+        if(nameDto == null){
+            return name;
+        }
+
+        if(name.equals(nameDto)){
+            return name;
+        }
+
+        validatedCategoryName(nameDto);
+
+        return nameDto;
     }
 
     public Category getCategoryById(Integer categoryId) {
@@ -54,6 +76,7 @@ public class CategoryService {
     }
 
     private Category toEntity(CategoryCreateRequestDto categoryDto) {
+
         return Category.builder()
                 .name(validatedCategoryName(categoryDto.getName()))
                 .imgUrl(categoryDto.getImgUrl())
@@ -61,17 +84,22 @@ public class CategoryService {
     }
 
     private String validatedCategoryName(String name) {
+
         boolean isNameExists = categoryRepository.nameExists(name);
+
         if(isNameExists){
             throw new EntityExistsException(String.format("Category with name %s already exists", name));
         }
+
         return name;
     }
 
     public List<CategoryResponseDto> toCategoriesResponseDto(List<Category> categories) {
+
         return categories.stream()
                 .map(this::toCategoryResponseDto)
                 .toList();
+
     }
 
     private CategoryResponseDto toCategoryResponseDto(Category category) {

@@ -152,6 +152,7 @@ class CategoryControllerTest {
                 """;
 
         Integer categoryId = 1;
+
         //Perform
         mockMvc.perform(put("/api/ingredient-categories/{categoryId}", categoryId)
                 .contentType(MediaType.APPLICATION_JSON)

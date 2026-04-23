@@ -101,13 +101,33 @@ class CategoryServiceTest {
         this.vegetables.setImgUrl(categoryUpdateRequestDto.getImgUrl());
 
         //Mock
-        when(categoryRepository.nameExists(any(String.class))).thenReturn(false);
         when(categoryRepository.findById(categoryId)).thenReturn(Optional.of(this.vegetables));
+
         //Act
         categoryService.updateCategory(categoryId, categoryUpdateRequestDto);
+
         //Verify
-        verify(categoryRepository).nameExists(any(String.class));
         verify(categoryRepository, times(1)).findById(categoryId);
+    }
+
+    @Test
+    void updateCategory_equalsName() {
+        //Arrest
+        Integer categoryId = this.savedVegetables.getId();
+
+        this.savedVegetables.setName(categoryUpdateRequestDto.getName());
+        this.savedVegetables.setImgUrl(categoryUpdateRequestDto.getImgUrl());
+
+        //Mock
+        when(categoryRepository.findById(categoryId))
+                .thenReturn(Optional.of(this.savedVegetables));
+
+        //Act
+        categoryService.updateCategory(categoryId, this.categoryUpdateRequestDto);
+
+        //Verify
+        verify(categoryRepository, times(1))
+                .findById(categoryId);
     }
 
     @Test
@@ -115,7 +135,7 @@ class CategoryServiceTest {
         //Arrest
         Integer categoryId = this.savedVegetables.getId();
 
-        this.vegetables.setName(categoryUpdateRequestDto.getName());
+        this.vegetables.setName("existsName");
         this.vegetables.setImgUrl(categoryUpdateRequestDto.getImgUrl());
 
         //Mock

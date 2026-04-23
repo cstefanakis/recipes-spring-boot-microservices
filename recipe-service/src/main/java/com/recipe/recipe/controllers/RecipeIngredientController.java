@@ -25,7 +25,9 @@ public class RecipeIngredientController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createRecipeIngredient(@Valid @RequestBody RecipeIngredientCreateRequestDto recipeIngredientCreateRequestDto){
+
         recipeIngredientService.createRecipeIngredient(recipeIngredientCreateRequestDto);
+
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")

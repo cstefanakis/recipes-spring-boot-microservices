@@ -92,4 +92,17 @@ class RecipeIngredientRepositoryTest {
         assertNotNull(result);
         assertEquals(recipeOwnerId, result);
     }
+
+    @Test
+    void existsByIngredientIdAndRecipeId() {
+        //Arrange
+        Integer ingredientId = this.recipeIngredient.getIngredientId();
+        Integer recipeId = this.recipe.getId();
+
+        //Act
+        boolean result = recipeIngredientRepository.existsByIngredientIdAndRecipeId(ingredientId, recipeId);
+
+        //Assert
+        assertTrue(result);
+    }
 }

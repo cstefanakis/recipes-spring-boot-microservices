@@ -27,7 +27,9 @@ public class IngredientService {
     private final RecipeClient recipeClient;
 
     public void createIngredient(IngredientCreateRequestDto ingredientCreateRequestDto){
+
         Ingredient ingredient = toEntity(ingredientCreateRequestDto);
+
         ingredientRepository.save(ingredient);
     }
 
@@ -54,7 +56,9 @@ public class IngredientService {
     }
 
     public Ingredient updateIngredient(Integer ingredientId, IngredientUpdateRequestDto ingredientUpdateRequestDto){
+
         Ingredient ingredient = getIngredientById(ingredientId);
+
         return updateToEntity(ingredient, ingredientUpdateRequestDto);
     }
 
@@ -73,14 +77,30 @@ public class IngredientService {
                 .map(categoryService::getCategoryById)
                 .toList();
 
-        ingredient.setName(nameDto == null
-                ? ingredient.getName()
-                : validatedIngredientName(nameDto));
+        ingredient.setName(
+                updatedName(ingredient.getName(), nameDto)
+        );
+
         ingredient.setCategories(ingredientsId.isEmpty()
                 ? ingredient.getCategories()
                 : categories);
 
         return ingredientRepository.save(ingredient);
+    }
+
+    private String updatedName(String name, String nameDto) {
+
+        if(nameDto == null){
+            return name;
+        }
+
+        if(name.equals(nameDto)){
+            return name;
+        }
+
+        validatedIngredientName(nameDto);
+
+        return nameDto;
     }
 
     private Ingredient toEntity(IngredientCreateRequestDto ingredientCreateRequestDto) {
@@ -99,10 +119,13 @@ public class IngredientService {
     }
 
     private String validatedIngredientName(String name) {
+
         boolean isNameExists = ingredientRepository.nameExists(name);
+
         if(isNameExists) {
             throw new EntityExistsException(String.format("Ingredient with name %s already exists", name));
         }
+
         return name;
     }
 
@@ -114,6 +137,7 @@ public class IngredientService {
     }
 
     private IngredientSimpleResponseDto toIngredientSimpleResponseDto(Ingredient ingredient) {
+
         return IngredientSimpleResponseDto.builder()
                 .id(ingredient.getId())
                 .name(ingredient.getName())
@@ -122,12 +146,18 @@ public class IngredientService {
     }
 
     public Page<IngredientSimpleResponseDto> getAllSimpleIngredients(Pageable pageable) {
-        Page<Ingredient> ingredients = ingredientRepository.findAll(pageable);
+
+        Page<Ingredient> ingredients =
+                ingredientRepository.findAll(pageable);
+
         return ingredients.map(this::toIngredientSimpleResponseDto);
     }
 
     public Page<IngredientSimpleResponseDto> getAllSimpleIngredientsByCategoryId(Integer categoryId, Pageable pageable) {
-        Page<Ingredient> ingredients = ingredientRepository.findAllByCategoryId(categoryId, pageable);
+
+        Page<Ingredient> ingredients =
+                ingredientRepository.findAllByCategoryId(categoryId, pageable);
+
         return ingredients.map(this::toIngredientSimpleResponseDto);
     }
 
@@ -135,6 +165,7 @@ public class IngredientService {
                                                                                    Pageable pageable) {
         Page<Ingredient> ingredients = ingredientRepository.findAllByName(ingredientName,
                 pageable);
+
         return ingredients.map(this::toIngredientSimpleResponseDto);
     }
 

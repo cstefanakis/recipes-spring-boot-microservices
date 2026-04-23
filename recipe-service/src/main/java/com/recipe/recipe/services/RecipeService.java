@@ -77,18 +77,20 @@ public class RecipeService {
             Integer authorId = recipeUpdateRequestDto.getAuthorId();
             List<Category> categories = categoryService.getCategoriesByIds(recipeUpdateRequestDto.getCategoriesId());
 
-            recipe.setTitle(titleDto == null
-                    ? recipe.getTitle()
-                    : validatedTitle(titleDto));
+            recipe.setTitle(updatedTitle(recipe.getTitle(), titleDto));
+
             recipe.setDescription(descriptionDto == null
                     ? recipe.getDescription()
                     : descriptionDto);
+
             recipe.setImgUrl(imgUrlDto == null
                     ? recipe.getImgUrl()
                     : imgUrlDto);
+
             recipe.setUserId(authorId == null
                     ? recipe.getUserId()
                     : authorId);
+
             recipe.setCategories(categories);
 
             recipeRepository.save(recipe);
@@ -96,6 +98,21 @@ public class RecipeService {
         } else {
             throw new RuntimeException("You don't have permission");
         }
+    }
+
+    private String updatedTitle(String title, String titleDto) {
+
+        if(titleDto == null){
+            return title;
+        }
+
+        if(title.equals(titleDto)){
+            return title;
+        }
+
+        validatedTitle(titleDto);
+
+        return titleDto;
     }
 
     public Recipe getRecipeById(Integer recipeId) {
