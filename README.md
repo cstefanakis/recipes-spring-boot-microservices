@@ -1,6 +1,14 @@
 # 🍲 Recipes Microservices Platform (Spring Boot + Spring Cloud)
 
-A distributed backend system for managing recipes, ingredients, recipe steps, and authentication, built with **Spring Boot** and **Spring Cloud**.
+This project is a **Spring Boot microservices-based backend system** designed for managing recipes, ingredients, and user-generated cooking data in a scalable and modular architecture.
+
+The system is built using **Spring Cloud components** and follows modern distributed system principles, including service separation, centralized configuration, API Gateway routing, and service discovery.
+
+Each microservice is responsible for a specific domain, such as recipes, ingredients, authentication, or recipe steps, ensuring high cohesion and low coupling across the system.
+
+The platform supports secure authentication using **JWT-based security**, role-based access control (USER / ADMIN), and inter-service communication via **OpenFeign**.
+
+The architecture is designed to simulate a real production environment, focusing on scalability, maintainability, and clean separation of concerns.
 
 ---
 
