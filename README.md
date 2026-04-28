@@ -35,6 +35,8 @@ The system consists of the following microservices:
 - JWT token generation
 - User profile endpoints
 
+## 🧱 Architecture Diagram
+
 ```mermaid
 flowchart TD
 
@@ -59,7 +61,7 @@ flowchart TD
     Recipe --> Config
     Ingredient --> Config
     Step --> Config
-
+```
 
 ### 👤 User Management (Auth domain)
 - User details retrieval
