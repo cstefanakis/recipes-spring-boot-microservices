@@ -569,7 +569,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY3MTYxOCwiZXhwIjoxNzc2Njc1MjE4fQ.smXUzWrHfweM8vwYPADwheAOjzzQgU7b3fJNOqfJN5c",
                   "type": "string"
                 }
               ]
@@ -878,7 +878,7 @@
                   "bearer": [
                     {
                       "key": "token",
-                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY3MTYxOCwiZXhwIjoxNzc2Njc1MjE4fQ.smXUzWrHfweM8vwYPADwheAOjzzQgU7b3fJNOqfJN5c",
                       "type": "string"
                     }
                   ]
@@ -887,7 +887,7 @@
                 "header": [],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\r\n    \"ingredientId\" : 1,\r\n    \"unit\" : \"KILOGRAM\",\r\n    \"quantity\" : 0.5,\r\n    \"recipeId\" : 1\r\n}",
+                  "raw": "{\r\n    \"ingredientId\" : 1,\r\n    \"unit\" : \"KILOGRAM\",\r\n    \"quantity\" : 0.5,\r\n    \"recipeId\" : 2\r\n}",
                   "options": {
                     "raw": {
                       "language": "json"
@@ -920,7 +920,7 @@
                   "bearer": [
                     {
                       "key": "token",
-                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                      "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY3NTUzNSwiZXhwIjoxNzc2Njc5MTM1fQ.RYGd2xmnV9RM53R02Kj8Cc3Vnojm660KeB1_MhU4CdY",
                       "type": "string"
                     }
                   ]
@@ -1069,7 +1069,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNzc2ODQ5NzQ0LCJleHAiOjE3NzY4NTMzNDR9.KLb36-5GgQRboBLb3XPKGefA-nz7S8UpqUSrABqmAZo",
                   "type": "string"
                 }
               ]
@@ -1081,7 +1081,7 @@
               "raw": ""
             },
             "url": {
-              "raw": "http://localhost:8082/api/recipes/1",
+              "raw": "http://localhost:8082/api/recipes/2",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1090,7 +1090,7 @@
               "path": [
                 "api",
                 "recipes",
-                "1"
+                "2"
               ]
             }
           },
@@ -1107,7 +1107,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNzc2ODQ5NzQ0LCJleHAiOjE3NzY4NTMzNDR9.KLb36-5GgQRboBLb3XPKGefA-nz7S8UpqUSrABqmAZo",
                   "type": "string"
                 }
               ]
@@ -1144,7 +1144,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY3MTYxOCwiZXhwIjoxNzc2Njc1MjE4fQ.smXUzWrHfweM8vwYPADwheAOjzzQgU7b3fJNOqfJN5c",
                   "type": "string"
                 }
               ]
@@ -1173,31 +1173,29 @@
           "response": []
         },
         {
-          "name": "Update Recipe By Id",
+          "name": "Get Recipes By User Id",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
           "request": {
             "auth": {
               "type": "bearer",
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNzc2ODgwMjI3LCJleHAiOjE3NzY4ODM4Mjd9.zJIpdbM2v-5lwhKvsK_EJLXMtJgmVubIyIAPYO1P2lA",
                   "type": "string"
                 }
               ]
             },
-            "method": "PUT",
+            "method": "GET",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"title\" : \"Carbonara\",\r\n    \"description\" : \"V překladu znamená název carbonara špagety po uhlířsku, a tak se nabízí vysvětlení, že si je připravovali italští uhlíři. Pravděpodobnější však je, že jídlo vzniklo v poválečném období v Římě jako způsob zpracování vajec a slaniny z amerických zásob. Není tak vlastně jasné, jestli ho vymysleli Američané nebo Italové. Slaninu vybírejte pouze italskou – pancetta se vyrábí nasolením vepřového boku, guanciale pochází z líček. Oproti české slanině se neudí, ale pouze se nakládají do soli, případně dalšího koření nebo pepře. \",\r\n    \"imgUrl\" : \"https://cdn.administrace.tv/2022/08/07/hd/4a86da06bf1dd67578428a5aad67b1d7.jpg\",\r\n    \"categoriesId\" : [1]\r\n}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
+              "raw": ""
             },
             "url": {
-              "raw": "http://localhost:8082/api/recipes/1",
+              "raw": "http://localhost:8082/api/recipes/author-recipes/5",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1206,7 +1204,48 @@
               "path": [
                 "api",
                 "recipes",
-                "1"
+                "author-recipes",
+                "5"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Recipe By Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNzc2ODgwMjI3LCJleHAiOjE3NzY4ODM4Mjd9.zJIpdbM2v-5lwhKvsK_EJLXMtJgmVubIyIAPYO1P2lA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"title\" : \"Carbonara\",\r\n    \"description\" : \"V překladu znamená název carbonara špagety po uhlířsku, a tak se nabízí vysvětlení, že si je připravovali italští uhlíři. Pravděpodobnější však je, že jídlo vzniklo v poválečném období v Římě jako způsob zpracování vajec a slaniny z amerických zásob. Není tak vlastně jasné, jestli ho vymysleli Američané nebo Italové. Slaninu vybírejte pouze italskou – pancetta se vyrábí nasolením vepřového boku, guanciale pochází z líček. Oproti české slanině se neudí, ale pouze se nakládají do soli, případně dalšího koření nebo pepře. \",\r\n    \"imgUrl\" : \"https://cdn.administrace.tv/2022/08/07/hd/4a86da06bf1dd67578428a5aad67b1d7.jpg\",\r\n    \"categoriesId\" : [1],\r\n    \"authorId\" : 5\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8082/api/recipes/2",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8082",
+              "path": [
+                "api",
+                "recipes",
+                "2"
               ]
             }
           },
@@ -1220,7 +1259,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY3MTYxOCwiZXhwIjoxNzc2Njc1MjE4fQ.smXUzWrHfweM8vwYPADwheAOjzzQgU7b3fJNOqfJN5c",
                   "type": "string"
                 }
               ]
@@ -1237,7 +1276,7 @@
               }
             },
             "url": {
-              "raw": "http://localhost:8082/api/recipes/1",
+              "raw": "http://localhost:8082/api/recipes/2",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1246,7 +1285,7 @@
               "path": [
                 "api",
                 "recipes",
-                "1"
+                "2"
               ]
             }
           },
@@ -1263,7 +1302,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInN1YiI6InRlc3RAdGVzdC5jb20iLCJpYXQiOjE3NzU2NDE2NTIsImV4cCI6MTc3NTY0NTI1Mn0.9r4wcaz75Xy9fK7gTEO9F3AK5FMqAyeZWeC_-F3x_dw",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY2ODE4MCwiZXhwIjoxNzc2NjcxNzgwfQ.wxQtgjFWi-2VWh6NdSAvlHfqN-n-VI6eEaITAh8ZlDA",
                   "type": "string"
                 }
               ]
@@ -1308,7 +1347,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\" : \"test@test.com\",\r\n    \"password\" : \"strongPass\",\r\n    \"fullName\" : \"Name Surename\"\r\n}",
+              "raw": "{\r\n    \"email\" : \"user02@test.com\",\r\n    \"username\" : \"user2\",\r\n    \"password\" : \"user\",\r\n    \"fullName\" : \"Name Surename\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1338,7 +1377,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"email\" : \"test@test.com\",\r\n    \"password\" : \"strongPass\"\r\n}",
+              "raw": "{\r\n    \"emailOrUsername\" : \"admin\",\r\n    \"password\" : \"admin\"\r\n}\r\n",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1372,7 +1411,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzc1Mzc3OTkxLCJleHAiOjE3NzUzODE1OTF9.c0BCHOnr-0bB_Ts9rzjB2Kbd1LRd8qbDa-laUg5eTqU",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY2ODE4MCwiZXhwIjoxNzc2NjcxNzgwfQ.wxQtgjFWi-2VWh6NdSAvlHfqN-n-VI6eEaITAh8ZlDA",
                   "type": "string"
                 }
               ]
@@ -1410,14 +1449,14 @@
       "name": "Users",
       "item": [
         {
-          "name": "Users",
+          "name": "Me",
           "request": {
             "auth": {
               "type": "bearer",
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzc1Mzc3OTkxLCJleHAiOjE3NzUzODE1OTF9.c0BCHOnr-0bB_Ts9rzjB2Kbd1LRd8qbDa-laUg5eTqU",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY2ODE4MCwiZXhwIjoxNzc2NjcxNzgwfQ.wxQtgjFWi-2VWh6NdSAvlHfqN-n-VI6eEaITAh8ZlDA",
                   "type": "string"
                 }
               ]
@@ -1447,7 +1486,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzc1NTU3NDAzLCJleHAiOjE3NzU1NjEwMDN9.mtqn2dh8J6TZZlObjUJ5lU99y2byZEPRMUjm6Of1yqg",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsInN1YiI6ImFkbWluIiwiaWF0IjoxNzc2ODgwMjI3LCJleHAiOjE3NzY4ODM4Mjd9.zJIpdbM2v-5lwhKvsK_EJLXMtJgmVubIyIAPYO1P2lA",
                   "type": "string"
                 }
               ]
@@ -1455,15 +1494,14 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "http://localhost:8084/users/",
+              "raw": "http://localhost:8084/users",
               "protocol": "http",
               "host": [
                 "localhost"
               ],
               "port": "8084",
               "path": [
-                "users",
-                ""
+                "users"
               ]
             }
           },
@@ -1477,7 +1515,7 @@
               "bearer": [
                 {
                   "key": "token",
-                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzc1NTQ2NTY1LCJleHAiOjE3NzU1NTAxNjV9.ViKIMqeyysJT_ZkSDQP33mtin6kvrqjIb_DdzdK9lKY",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY2ODE4MCwiZXhwIjoxNzc2NjcxNzgwfQ.wxQtgjFWi-2VWh6NdSAvlHfqN-n-VI6eEaITAh8ZlDA",
                   "type": "string"
                 }
               ]
@@ -1485,7 +1523,7 @@
             "method": "DELETE",
             "header": [],
             "url": {
-              "raw": "http://localhost:8084/users/1",
+              "raw": "http://localhost:8084/users/6",
               "protocol": "http",
               "host": [
                 "localhost"
@@ -1493,7 +1531,87 @@
               "port": "8084",
               "path": [
                 "users",
-                "1"
+                "6"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Role",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9VU0VSIiwic3ViIjoidXNlciIsImlhdCI6MTc3NjY2ODE4MCwiZXhwIjoxNzc2NjcxNzgwfQ.wxQtgjFWi-2VWh6NdSAvlHfqN-n-VI6eEaITAh8ZlDA",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "http://localhost:8084/users/role/6?role=USER",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "users",
+                "role",
+                "6"
+              ],
+              "query": [
+                {
+                  "key": "role",
+                  "value": "USER"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User By Id",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiUk9MRV9BRE1JTiIsInN1YiI6InVzZXIiLCJpYXQiOjE3NzY2NjY2OTgsImV4cCI6MTc3NjY3MDI5OH0._Z_fxWlILNEPPB4P1Det0MOc1dAj-qjTRsYRKv5sn5I",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"fullName\" : \"updated fullName\",\r\n    \"email\" : \"updated@email.com\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8084/users/5",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8084",
+              "path": [
+                "users",
+                "5"
               ]
             }
           },

@@ -69,10 +69,10 @@ public class IngredientController {
     @GetMapping("/{ingredientId}")
     public ResponseEntity<IngredientSimpleResponseDto> getSimpleIngredientById(@PathVariable ("ingredientId") Integer ingredientId){
 
-        IngredientSimpleResponseDto IngredientSimpleResponseDto =
+        IngredientSimpleResponseDto ingredientSimpleResponseDto =
                 ingredientService.getIngredientSimpleResponseDtoById(ingredientId);
 
-        return ResponseEntity.ok(IngredientSimpleResponseDto);
+        return ResponseEntity.ok(ingredientSimpleResponseDto);
     }
 
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
