@@ -35,6 +35,32 @@ The system consists of the following microservices:
 - JWT token generation
 - User profile endpoints
 
+```mermaid
+flowchart TD
+
+    Client[Client / Postman / React Frontend] --> Gateway[API Gateway]
+
+    Gateway --> Auth[Auth Service]
+    Gateway --> Recipe[Recipe Service]
+    Gateway --> Ingredient[Ingredients Service]
+    Gateway --> Step[Recipe Step Service]
+
+    Auth --> AuthDB[(Auth DB)]
+    Recipe --> RecipeDB[(Recipe DB)]
+    Ingredient --> IngredientDB[(Ingredient DB)]
+    Step --> StepDB[(Step DB)]
+
+    Auth --> Discovery[Discovery Service]
+    Recipe --> Discovery
+    Ingredient --> Discovery
+    Step --> Discovery
+
+    Auth --> Config[Config Server]
+    Recipe --> Config
+    Ingredient --> Config
+    Step --> Config
+
+
 ### 👤 User Management (Auth domain)
 - User details retrieval
 - Role management (USER / ADMIN)
