@@ -287,12 +287,13 @@ cd recipes-spring-boot-microservices
 mvn clean install
 
 ### 3. Run services in orderConfig Server
-1. Discovery Service
-2. API Gateway
-3. Auth Service
-4. Ingredients Service
-5. Recipe Service
-6. Recipe Step Service
+1. Config Server
+2. Discovery Service
+3. API Gateway
+4. Auth Service
+5. Ingredients Service
+6. Recipe Service
+7. Recipe Step Service
 
 Future Improvements
 - 🌐 Frontend application using **React**
