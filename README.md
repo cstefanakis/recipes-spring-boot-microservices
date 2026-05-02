@@ -283,17 +283,27 @@ bash
 git clone https://github.com/cstefanakis/recipes-spring-boot-microservices.git
 cd recipes-spring-boot-microservices
 
+### 2. Set up PostgreSQL databases
+Make sure PostgreSQL is running and create the required databases:
+CREATE DATABASE ingredients;
+CREATE DATABASE recipes;
+CREATE DATABASE recipe_steps;
+
+Update your credentials if needed in each service configuration:
+
+
 ### 2. Build all services
 mvn clean install
 
 ### 3. Run services in orderConfig Server
-1. Config Server
-2. Discovery Service
-3. API Gateway
-4. Auth Service
-5. Ingredients Service
-6. Recipe Service
-7. Recipe Step Service
+1. PostgreSQL (must be running first)
+2. Config Server
+3. Discovery Service
+4. API Gateway
+5. Auth Service
+6. Ingredients Service
+7. Recipe Service
+8. Recipe Step Service
 
 Future Improvements
 - 🌐 Frontend application using **React**
