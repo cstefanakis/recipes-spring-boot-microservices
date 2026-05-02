@@ -279,7 +279,7 @@ All endpoints are exposed through the **API Gateway**.
 ## ▶️ Getting Started
 
 ### 1. Clone repository
-bash
+```bash
 git clone https://github.com/cstefanakis/recipes-spring-boot-microservices.git
 cd recipes-spring-boot-microservices
 
@@ -291,11 +291,36 @@ CREATE DATABASE recipe_steps;
 
 Update your credentials if needed in each service configuration:
 
+3. Centralized Configuration (Config Server)
+This project uses Spring Cloud Config Server with configuration stored in the repository under:
+configurations/
+Each service loads its configuration from files such as:
 
-### 2. Build all services
+gateway.yaml
+ingredients-service.yaml
+recipe-service.yaml
+recipe-step-service.yaml
+
+⚠️ Important:
+
+The file name must match spring.application.name
+
+Example:
+
+spring.application.name=ingredients-service
+→ loads configurations/ingredients-service.yaml
+
+Each microservice must include:
+
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+
+
+### 4. Build all services
 mvn clean install
 
-### 3. Run services in orderConfig Server
+### 5. Run services in orderConfig Server
 1. PostgreSQL (must be running first)
 2. Config Server
 3. Discovery Service
